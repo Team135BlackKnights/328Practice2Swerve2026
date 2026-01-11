@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,5 +17,11 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+  public static class SwerveConstants {
+    public static final Translation2d moduleLocationFrontLeft = new Translation2d(1,1);
+    public static final Translation2d moduleLocationFrontRight = new Translation2d(1,1);
+    public static final Translation2d moduleLocationBackLeft = new Translation2d(1,1);
+    public static final Translation2d moduleLocationBackRight = new Translation2d(1,1);
   }
 }
