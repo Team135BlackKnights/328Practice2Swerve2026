@@ -20,6 +20,7 @@ public class Swerve {
         SwerveModuleState backRight = moduleStates[3];
     }
 
+    currentAngle = new Rotation2d.fromRadians(m_turningEncoder.getDistance());
 
 
 
