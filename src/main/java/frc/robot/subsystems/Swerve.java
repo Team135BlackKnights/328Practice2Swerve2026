@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -11,16 +9,23 @@ import frc.robot.Constants.SwerveConstants;
 public class Swerve extends SubsystemBase{
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
-    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID);
-    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID);
-    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID);
-    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID);
+    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians);
+    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians);
+    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians);
+    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians);
 
-
-
-    public void setFrontLeftDrive(){
-        frontLeftModule.setDriveVoltage(8);
+    @Override
+    public void periodic(){
+        frontLeftModule.updateStatePID();
+        frontRightModule.updateStatePID();
+        backLeftModule.updateStatePID();
+        backRightModule.updateStatePID();
     }
+
+
+    // public void setFrontLeftDrive(){
+    //     frontLeftModule.setDriveVoltage(8);
+    // }
 
     public void setSpeed(double xSpeed, double ySpeed, double rotSpeed){
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotSpeed);
@@ -30,6 +35,11 @@ public class Swerve extends SubsystemBase{
         SwerveModuleState backLeft = moduleStates[2];
         SwerveModuleState backRight = moduleStates[3];
         
+        frontLeftModule.setDesiredModuleState(frontLeft);
+        frontRightModule.setDesiredModuleState(frontRight);
+        backLeftModule.setDesiredModuleState(backLeft);
+        backRightModule.setDesiredModuleState(backRight);
+
     }
 
     // public SwerveModuleState optimizeWithCosineCompensation(

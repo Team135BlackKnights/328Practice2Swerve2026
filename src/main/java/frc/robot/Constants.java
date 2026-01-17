@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.fasterxml.jackson.databind.cfg.EnumFeature;
-
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -31,23 +29,33 @@ public final class Constants {
     public static final int frontLeftTurnID = 0;
     public static final int frontLeftDriveID = 1;
     public static final int frontLeftEncoderID = 2;
+    public static final double frontLeftOffsetRadians = 0;
 
     public static final int frontRightTurnID = 3;
     public static final int frontRightDriveID = 4;
-    public static final int frontRightEncoderID = 5; 
+    public static final int frontRightEncoderID = 5;
+    public static final double frontRightOffsetRadians = 0;
 
     public static final int backLeftTurnID = 6;
     public static final int backLeftDriveID = 7;
     public static final int backLeftEncoderID = 8;
+    public static final double backLeftOffsetRadians = 0;
 
     public static final int backRightTurnID = 9;
     public static final int backRightDriveID = 10;
     public static final int backRightEncoderID = 11;
+    public static final double backRightOffsetRadians = 0;
 
     public static final InvertedValue turnInversion = InvertedValue.Clockwise_Positive;
     public static final InvertedValue driveInversion = InvertedValue.Clockwise_Positive;
     public static final NeutralModeValue turnNeutralMode = NeutralModeValue.Coast; 
     public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake; 
+
+    public static final double[] turnPID = new double[] {0,0,0};
+    public static final double[] drivePID = new double[] {0,0,0};
+
+    public static final double gearRatioSpeed = (1/5.9); 
+    public static final double wheelRadius = 2 * 0.0254;
   }
 }
 
