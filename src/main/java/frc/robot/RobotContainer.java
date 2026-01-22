@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.TestSwerve;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -21,9 +22,12 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public static final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  public static final CommandXboxController m_ManipuatorControler = 
+      new CommandXboxController(OperatorConstants.kManipuatorControllerPort);
+  
 
   Swerve m_Swerve = new Swerve();
-  SwerveC m_SwerveC = new SwerveC(m_Swerve);
+  TestSwerve m_SwerveC = new TestSwerve(m_Swerve);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

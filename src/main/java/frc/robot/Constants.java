@@ -19,31 +19,32 @@ import edu.wpi.first.math.geometry.Translation2d;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kManipuatorControllerPort = 0;
   }
   public static class SwerveConstants {
-    public static final Translation2d moduleLocationFrontLeft = new Translation2d(1,1);
-    public static final Translation2d moduleLocationFrontRight = new Translation2d(1,1);
-    public static final Translation2d moduleLocationBackLeft = new Translation2d(1,1);
-    public static final Translation2d moduleLocationBackRight = new Translation2d(1,1);
+    public static final Translation2d moduleLocationFrontLeft = new Translation2d(0.1875,0.377);
+    public static final Translation2d moduleLocationFrontRight = new Translation2d(0.1875,-0.377);
+    public static final Translation2d moduleLocationBackLeft = new Translation2d(-0.1875,0.377);
+    public static final Translation2d moduleLocationBackRight = new Translation2d(-0.1875,-0.377);
 
-    public static final int frontLeftTurnID = 0;
-    public static final int frontLeftDriveID = 1;
-    public static final int frontLeftEncoderID = 2;
+    public static final int frontLeftTurnID = 9;
+    public static final int frontLeftDriveID = 6;
+    public static final int frontLeftEncoderID = 1;
     public static final double frontLeftOffsetRadians = 0;
 
-    public static final int frontRightTurnID = 3;
-    public static final int frontRightDriveID = 4;
-    public static final int frontRightEncoderID = 5;
+    public static final int frontRightTurnID = 8;
+    public static final int frontRightDriveID = 11;
+    public static final int frontRightEncoderID = 4;
     public static final double frontRightOffsetRadians = 0;
 
-    public static final int backLeftTurnID = 6;
-    public static final int backLeftDriveID = 7;
-    public static final int backLeftEncoderID = 8;
+    public static final int backLeftTurnID = 5;
+    public static final int backLeftDriveID = 12;
+    public static final int backLeftEncoderID = 2;
     public static final double backLeftOffsetRadians = 0;
 
-    public static final int backRightTurnID = 9;
+    public static final int backRightTurnID = 7;
     public static final int backRightDriveID = 10;
-    public static final int backRightEncoderID = 11;
+    public static final int backRightEncoderID = 3;
     public static final double backRightOffsetRadians = 0;
 
     public static final InvertedValue turnInversion = InvertedValue.Clockwise_Positive;
@@ -51,8 +52,8 @@ public final class Constants {
     public static final NeutralModeValue turnNeutralMode = NeutralModeValue.Coast; 
     public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake; 
 
-    public static final double[] turnPID = new double[] {0,0,0};
-    public static final double[] drivePID = new double[] {0,0,0};
+    public static final double[] turnPID = new double[] {1,0,0};
+    public static final double[] drivePID = new double[] {1,0,0};
 
     public static final double gearRatioSpeed = (1/5.9); 
     public static final double wheelRadius = 2 * 0.0254;

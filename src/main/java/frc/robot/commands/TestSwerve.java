@@ -12,14 +12,17 @@ public class TestSwerve extends Command{
         m_Swerve = subsystem;
     }
 
-    // @Override
-    // public void initialize() {
-    //     m_Swerve.setFrontLeftDrive();
-    // }
+    @Override
+    public void initialize() {
+        
+    }
+
+
 
     @Override
     public void execute(){
-
+        m_Swerve.setFrontLeftDrive();
+        System.out.println("hi bitch");
     }
 
     @Override

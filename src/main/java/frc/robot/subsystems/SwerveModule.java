@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.CAN;
 import frc.robot.Constants.SwerveConstants;
 
 
@@ -24,11 +26,11 @@ public class SwerveModule {
     
     private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
     private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
-    
-    public SwerveModule(int turnID, int driveID, int encoderID, double offset){
-        turnMotor = new TalonFX(turnID);
-        driveMotor = new TalonFX(driveID);
-        turnEncoder = new CANcoder(encoderID);
+
+    public SwerveModule(int turnID, int driveID, int encoderID, double offset, CANBus bus){
+        turnMotor = new TalonFX(turnID, bus);
+        driveMotor = new TalonFX(driveID, bus);
+        turnEncoder = new CANcoder(encoderID, bus);
         offsetRadians = offset;
 
         turnController.enableContinuousInput(-Math.PI, Math.PI * 2);
@@ -59,19 +61,21 @@ public class SwerveModule {
 
         TalonFXConfigurator driveConfigurator = driveMotor.getConfigurator();
         driveConfigurator.apply(driveConfigs); 
+
+        desiredState = new SwerveModuleState(0, new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians));
     }
 
-    // public void setDriveVoltage(double voltage){
-    //     driveMotor.setVoltage(voltage);
-    // }
+    public void setDriveVoltage(double voltage){
+        driveMotor.setVoltage(voltage);
+    }
 
-    // public void setTurnVoltage(double voltage){
-    //     turnMotor.setVoltage(voltage);
-    // }
+    public void setTurnVoltage(double voltage){
+        turnMotor.setVoltage(voltage);
+    }
 
-    // public double getTurnPosition(){
-    //     return turnEncoder.getAbsolutePosition().getValueAsDouble();
-    // }
+    public double getTurnPosition(){
+        return turnEncoder.getAbsolutePosition().getValueAsDouble();
+    }
 
     public void setDesiredModuleState(SwerveModuleState moduleState){
         desiredState = moduleState;
