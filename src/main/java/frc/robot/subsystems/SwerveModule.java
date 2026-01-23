@@ -33,7 +33,7 @@ public class SwerveModule {
         turnEncoder = new CANcoder(encoderID, bus);
         offsetRadians = offset;
 
-        turnController.enableContinuousInput(-Math.PI, Math.PI * 2);
+        turnController.enableContinuousInput(-Math.PI, Math.PI);
 
         final TalonFXConfiguration turnConfigs = new TalonFXConfiguration().withMotorOutput(
             new MotorOutputConfigs()
@@ -47,7 +47,6 @@ public class SwerveModule {
 
         TalonFXConfigurator turnConfigurator = turnMotor.getConfigurator();
         turnConfigurator.apply(turnConfigs); 
-
 
         final TalonFXConfiguration driveConfigs = new TalonFXConfiguration().withMotorOutput(
             new MotorOutputConfigs()
@@ -119,5 +118,4 @@ public class SwerveModule {
 
 
 
-    //now we have the current turn and drive velocity we need to calculate direction and 
 }

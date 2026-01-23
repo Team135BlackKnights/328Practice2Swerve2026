@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int kDriverControllerPort = 2;
     public static final int kManipuatorControllerPort = 0;
   }
   public static class SwerveConstants {
@@ -30,22 +30,22 @@ public final class Constants {
     public static final int frontLeftTurnID = 9;
     public static final int frontLeftDriveID = 6;
     public static final int frontLeftEncoderID = 1;
-    public static final double frontLeftOffsetRadians = 0;
+    public static final double frontLeftOffsetRadians = (Math.PI);
 
     public static final int frontRightTurnID = 8;
     public static final int frontRightDriveID = 11;
     public static final int frontRightEncoderID = 4;
-    public static final double frontRightOffsetRadians = 0;
+    public static final double frontRightOffsetRadians = -(Math.PI); //this is good
 
     public static final int backLeftTurnID = 5;
     public static final int backLeftDriveID = 12;
     public static final int backLeftEncoderID = 2;
-    public static final double backLeftOffsetRadians = 0;
+    public static final double backLeftOffsetRadians = Math.PI/2; //this is good
 
     public static final int backRightTurnID = 7;
     public static final int backRightDriveID = 10;
     public static final int backRightEncoderID = 3;
-    public static final double backRightOffsetRadians = 0;
+    public static final double backRightOffsetRadians = Math.PI/3;
 
     public static final InvertedValue turnInversion = InvertedValue.Clockwise_Positive;
     public static final InvertedValue driveInversion = InvertedValue.Clockwise_Positive;

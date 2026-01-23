@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveC;
-import frc.robot.commands.TestSwerve;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -27,10 +26,11 @@ public class RobotContainer {
   
 
   Swerve m_Swerve = new Swerve();
-  TestSwerve m_SwerveC = new TestSwerve(m_Swerve);
+  SwerveC m_SwerveC = new SwerveC(m_Swerve);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     m_Swerve.setDefaultCommand(m_SwerveC);
     // Configure the trigger bindings
     configureBindings();

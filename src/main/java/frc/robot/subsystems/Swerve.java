@@ -7,31 +7,32 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 
 public class Swerve extends SubsystemBase{
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
-    CANBus bus = new CANBus(" E13B8EB250374E5320202047380C10FF");
+    CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
     //public static CANBus bus = new CANBus("canivore", "./logs/example.hoot");
     SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
     SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
     SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
     SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
-
+    
     @Override
     public void periodic(){
         frontLeftModule.updateStatePID();
         frontRightModule.updateStatePID();
         backLeftModule.updateStatePID();
         backRightModule.updateStatePID();
-    }
-
-
-    public void setFrontLeftDrive(){
-        frontLeftModule.setDriveVoltage(3);
-        System.out.println("///////////");
+        System.out.println("FR:" + frontLeftModule.getTurnPosition());
+        System.out.println("FL:" + frontRightModule.getTurnPosition());
+        System.out.println("BL:" + backLeftModule.getTurnPosition());
+        System.out.println("BR:" + backRightModule.getTurnPosition());
+    
     }
 
     public void setSpeed(double xSpeed, double ySpeed, double rotSpeed){
@@ -48,6 +49,8 @@ public class Swerve extends SubsystemBase{
         backRightModule.setDesiredModuleState(backRight);
 
     }
+        
+    
 
     // public SwerveModuleState optimizeWithCosineCompensation(
     //         SwerveModuleState desiredState,
