@@ -22,10 +22,10 @@ public final class Constants {
     public static final int kManipuatorControllerPort = 0;
   }
   public static class SwerveConstants {
-    public static final Translation2d moduleLocationFrontLeft = new Translation2d(0.1875,0.377);
-    public static final Translation2d moduleLocationFrontRight = new Translation2d(0.1875,-0.377);
-    public static final Translation2d moduleLocationBackLeft = new Translation2d(-0.1875,0.377);
-    public static final Translation2d moduleLocationBackRight = new Translation2d(-0.1875,-0.377);
+    public static final Translation2d moduleLocationFrontLeft = new Translation2d(0.377,0.1875);
+    public static final Translation2d moduleLocationFrontRight = new Translation2d(0.377,-0.1875);
+    public static final Translation2d moduleLocationBackLeft = new Translation2d(-0.377,0.1875);
+    public static final Translation2d moduleLocationBackRight = new Translation2d(-0.377,-0.1875);
 
     public static final int frontLeftTurnID = 9;
     public static final int frontLeftDriveID = 6;

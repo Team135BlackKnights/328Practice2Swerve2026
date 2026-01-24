@@ -39,7 +39,7 @@ public class Swerve extends SubsystemBase{
     public void setSpeed(double xSpeed, double ySpeed, double rotSpeed){
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotSpeed);
         SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
-        SwerveModuleState frontLeft = moduleStates[0];//TODO optimize
+        SwerveModuleState frontLeft = moduleStates[0];
         SwerveModuleState frontRight = moduleStates[1];
         SwerveModuleState backLeft = moduleStates[2];
         SwerveModuleState backRight = moduleStates[3];
