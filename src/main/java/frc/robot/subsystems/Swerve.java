@@ -21,17 +21,18 @@ public class Swerve extends SubsystemBase{
     SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
     SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
     SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
-    
+
+
     @Override
     public void periodic(){
         frontLeftModule.updateStatePID();
         frontRightModule.updateStatePID();
         backLeftModule.updateStatePID();
         backRightModule.updateStatePID();
-        System.out.println("FR:" + frontLeftModule.getTurnPosition());
-        System.out.println("FL:" + frontRightModule.getTurnPosition());
-        System.out.println("BL:" + backLeftModule.getTurnPosition());
-        System.out.println("BR:" + backRightModule.getTurnPosition());
+        // System.out.println("FR:" + frontLeftModule.getTurnPosition());
+        // System.out.println("FL:" + frontRightModule.getTurnPosition());
+        // System.out.println("BL:" + backLeftModule.getTurnPosition());
+        // System.out.println("BR:" + backRightModule.getTurnPosition());
     
     }
 
@@ -42,6 +43,11 @@ public class Swerve extends SubsystemBase{
         SwerveModuleState frontRight = moduleStates[1];
         SwerveModuleState backLeft = moduleStates[2];
         SwerveModuleState backRight = moduleStates[3];
+
+        System.out.println("FR:" + frontLeft);
+        System.out.println("FL:" + frontRight);
+        System.out.println("BL:" + backLeft);
+        System.out.println("BR:" + backRight);
         
         frontLeftModule.setDesiredModuleState(frontLeft);
         frontRightModule.setDesiredModuleState(frontRight);

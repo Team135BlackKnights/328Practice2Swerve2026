@@ -18,7 +18,7 @@ public class SwerveC extends Command{
     @Override
     public void execute(){
         //TODO units are wrong here
-        m_Swerve.setSpeed(RobotContainer.m_driverController.getLeftX(), RobotContainer.m_driverController.getLeftY(), RobotContainer.m_driverController.getRightX());
+        m_Swerve.setSpeed(-0*RobotContainer.m_driverController.getLeftX(), 0*RobotContainer.m_driverController.getLeftY(), 1+0*RobotContainer.m_driverController.getRightX());
         
     }
 

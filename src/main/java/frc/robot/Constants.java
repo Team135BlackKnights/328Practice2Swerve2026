@@ -30,12 +30,12 @@ public final class Constants {
     public static final int frontLeftTurnID = 9;
     public static final int frontLeftDriveID = 6;
     public static final int frontLeftEncoderID = 1;
-    public static final double frontLeftOffsetRadians = (Math.PI);
+    public static final double frontLeftOffsetRadians = -1*Math.PI/12;
 
     public static final int frontRightTurnID = 8;
     public static final int frontRightDriveID = 11;
     public static final int frontRightEncoderID = 4;
-    public static final double frontRightOffsetRadians = -(Math.PI); //this is good
+    public static final double frontRightOffsetRadians = 8*Math.PI/9; //this is good
 
     public static final int backLeftTurnID = 5;
     public static final int backLeftDriveID = 12;
@@ -45,7 +45,7 @@ public final class Constants {
     public static final int backRightTurnID = 7;
     public static final int backRightDriveID = 10;
     public static final int backRightEncoderID = 3;
-    public static final double backRightOffsetRadians = Math.PI/3;
+    public static final double backRightOffsetRadians =  6*Math.PI/9;
 
     public static final InvertedValue turnInversion = InvertedValue.Clockwise_Positive;
     public static final InvertedValue driveInversion = InvertedValue.Clockwise_Positive;
