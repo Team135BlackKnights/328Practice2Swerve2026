@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
-public class Swerve extends SubsystemBase{
+public class SwerveS extends SubsystemBase{
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
     CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");

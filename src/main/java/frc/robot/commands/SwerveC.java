@@ -1,16 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Swerve;
-import frc.robot.Constants;
+import frc.robot.subsystems.SwerveS;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.SwerveModule;
 
 public class SwerveC extends Command{
     boolean isFinished = false;
-    final Swerve m_Swerve;
+    final SwerveS m_Swerve;
 
-    public SwerveC(Swerve subsystem){
+    public SwerveC(SwerveS subsystem){
         addRequirements(subsystem);
         m_Swerve = subsystem;
     }
@@ -18,7 +16,7 @@ public class SwerveC extends Command{
     @Override
     public void execute(){
         //TODO units are wrong here
-        m_Swerve.setSpeed(-0*RobotContainer.m_driverController.getLeftX(), 0*RobotContainer.m_driverController.getLeftY(), 1+0*RobotContainer.m_driverController.getRightX());
+        m_Swerve.setSpeed(-RobotContainer.m_driverController.getLeftX(), RobotContainer.m_driverController.getLeftY(), RobotContainer.m_driverController.getRightX());
         
     }
 

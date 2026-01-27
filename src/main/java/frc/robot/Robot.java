@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  
 
   @Override
   public void autonomousPeriodic() {
@@ -57,7 +59,7 @@ public class Robot extends TimedRobot {
     double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
 
     // convert to radians per second for our drive method
-    targetingAngularVelocity *= Swerve.kMaxAngularSpeed;
+    targetingAngularVelocity *= SwerveS.kMaxAngularSpeed;
 
     //invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
@@ -72,7 +74,7 @@ public class Robot extends TimedRobot {
   {    
     double kP = .1;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
-    targetingForwardSpeed *= Swerve.kMaxSpeed;
+    targetingForwardSpeed *= SwerveS.kMaxSpeed;
     targetingForwardSpeed *= -1.0;
     return targetingForwardSpeed;
   }
@@ -82,14 +84,14 @@ public class Robot extends TimedRobot {
     // negative values when we push forward.
     var xSpeed =
         -m_xspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), 0.02))
-            * Swerve.kMaxSpeed;
+            * SwerveS.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     var ySpeed =
         -m_yspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), 0.02))
-            * Swerve.kMaxSpeed;
+            * SwerveS.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
@@ -98,13 +100,13 @@ public class Robot extends TimedRobot {
     // the right by default.
     var rot =
         -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
-            * Swerve.kMaxAngularSpeed;
+            * SwerveS.kMaxAngularSpeed;
 
-    // while the A-button is pressed, overwrite some of the driving values with the output of our limelight methods
+    // while the X-button is pressed, overwrite some of the driving values with the output of our limelight methods
 
     
 
-    if(RobotContainer.m_driverController.getXButton())
+    if(RobotContainer.xDriverButtonTrigger.getAsBoolean())
     {
         final var rot_limelight = limelight_aim_proportional();
         rot = rot_limelight;

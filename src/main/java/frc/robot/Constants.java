@@ -19,7 +19,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 2;
-    public static final int kManipuatorControllerPort = 0;
+    public static final int kManipulatorControllerPort = 0;
   }
   public static class SwerveConstants {
     public static final Translation2d moduleLocationFrontLeft = new Translation2d(0.377,0.1875);
@@ -57,6 +57,14 @@ public final class Constants {
 
     public static final double gearRatioSpeed = (1/5.9); 
     public static final double wheelRadius = 2 * 0.0254;
+  }
+
+  public static class IntakeConstants {
+    public static final double[] intakePID = new double[] {1,0,0};
+    public static final int intakeVertMotorID = 0;
+    public static final int intakeVertEncoderID = 0;
+
+    
   }
 }
 

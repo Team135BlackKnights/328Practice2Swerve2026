@@ -5,9 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.MoveIntakeDownC;
 import frc.robot.commands.SwerveC;
-import frc.robot.subsystems.Swerve;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.SwerveS;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
@@ -20,19 +22,32 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  public static final XboxController m_driverController =
-      new XboxController(OperatorConstants.kDriverControllerPort);
-  public static final XboxController m_ManipuatorControler = 
-      new XboxController(OperatorConstants.kManipuatorControllerPort);
+  public static final CommandXboxController m_driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  public static final CommandXboxController m_manipulatorController = 
+      new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
+  public static final Trigger xDriverButtonTrigger = m_driverController.x();
+  public static final Trigger yDriverButtonTrigger = m_driverController.y();
+  public static final Trigger aDriverButtonTrigger = m_driverController.a();
+  public static final Trigger bDriverButtonTrigger = m_driverController.b();
+  
+  public static final Trigger xManipulatorButtonTrigger = m_manipulatorController.x();
+  public static final Trigger yManipulatorButtonTrigger = m_manipulatorController.y();
+  public static final Trigger aManipulatorButtonTrigger = m_manipulatorController.a();
+  public static final Trigger bManipulatorButtonTrigger = m_manipulatorController.b();
 
-  Swerve m_Swerve = new Swerve();
-  SwerveC m_SwerveC = new SwerveC(m_Swerve);
+
+  SwerveS m_SwerveS = new SwerveS();
+  IntakeS m_IntakeS = new IntakeS();
+
+  SwerveC m_SwerveC = new SwerveC(m_SwerveS);
+  MoveIntakeDownC m_MoveIntakeDownC = new MoveIntakeDownC(m_IntakeS);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_Swerve.setDefaultCommand(m_SwerveC);
+    m_SwerveS.setDefaultCommand(m_SwerveC);
     // Configure the trigger bindings
     configureBindings();
   }
@@ -51,5 +66,12 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+
+
+    //xButtonTrigger.whileTrue(m_IntakeC); /TODO - this is how you do that
+
+    aManipulatorButtonTrigger.whileTrue(m_MoveIntakeDownC);
+
+
   }
 }
