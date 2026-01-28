@@ -6,7 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.MoveIntakeDownC;
+import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.XLock;
+import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,18 +34,24 @@ public class RobotContainer {
   public static final Trigger yDriverButtonTrigger = m_driverController.y();
   public static final Trigger aDriverButtonTrigger = m_driverController.a();
   public static final Trigger bDriverButtonTrigger = m_driverController.b();
-  
+  public static final Trigger lDriverBumperTrigger = m_driverController.leftBumper();
+  public static final Trigger rDriverBumperTrigger = m_driverController.rightBumper();
+
   public static final Trigger xManipulatorButtonTrigger = m_manipulatorController.x();
   public static final Trigger yManipulatorButtonTrigger = m_manipulatorController.y();
   public static final Trigger aManipulatorButtonTrigger = m_manipulatorController.a();
   public static final Trigger bManipulatorButtonTrigger = m_manipulatorController.b();
-
+  public static final Trigger lManipulatorBumperTrigger = m_manipulatorController.leftBumper();
+  public static final Trigger rManipulatorBumperTrigger = m_manipulatorController.rightBumper();
 
   SwerveS m_SwerveS = new SwerveS();
   IntakeS m_IntakeS = new IntakeS();
+  HoodAngleS m_HoodAngleS = new HoodAngleS ();
 
   SwerveC m_SwerveC = new SwerveC(m_SwerveS);
   MoveIntakeDownC m_MoveIntakeDownC = new MoveIntakeDownC(m_IntakeS);
+  XLock m_XLock = new XLock(m_SwerveS);
+  ShooterHoodC ShooterHoodC = new ShooterHoodC(m_HoodAngleS);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -71,7 +80,7 @@ public class RobotContainer {
     //xButtonTrigger.whileTrue(m_IntakeC); /TODO - this is how you do that
 
     aManipulatorButtonTrigger.whileTrue(m_MoveIntakeDownC);
-
-
+    xDriverButtonTrigger.whileTrue(m_XLock);
+    lManipulatorBumperTrigger.whileTrue(ShooterHoodC);
   }
 }

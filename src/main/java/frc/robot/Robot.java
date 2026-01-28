@@ -102,11 +102,11 @@ public class Robot extends TimedRobot {
         -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
             * SwerveS.kMaxAngularSpeed;
 
-    // while the X-button is pressed, overwrite some of the driving values with the output of our limelight methods
+    // while the Y-button is pressed, overwrite some of the driving values with the output of our limelight methods
 
     
 
-    if(RobotContainer.xDriverButtonTrigger.getAsBoolean())
+    if(RobotContainer.yDriverButtonTrigger.getAsBoolean())
     {
         final var rot_limelight = limelight_aim_proportional();
         rot = rot_limelight;

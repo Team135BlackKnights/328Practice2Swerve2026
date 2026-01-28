@@ -1,7 +1,10 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class SwerveC extends Command{
@@ -17,7 +20,6 @@ public class SwerveC extends Command{
     public void execute(){
         //TODO units are wrong here
         m_Swerve.setSpeed(-RobotContainer.m_driverController.getLeftX(), RobotContainer.m_driverController.getLeftY(), RobotContainer.m_driverController.getRightX());
-        
     }
 
     @Override

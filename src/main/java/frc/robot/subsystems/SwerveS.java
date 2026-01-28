@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -20,6 +21,9 @@ public class SwerveS extends SubsystemBase{
 
     public static final double kMaxSpeed = 3.0; // 3 meters per second
     public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+
+    public static boolean xLock = false;
+
 
     @Override
     public void periodic(){
@@ -53,8 +57,16 @@ public class SwerveS extends SubsystemBase{
         backRightModule.setDesiredModuleState(backRight);
 
     }
-        
+
+    public void setModuleStates(SwerveModuleState frontLeft, SwerveModuleState frontRight, SwerveModuleState backLeft, SwerveModuleState backRight){
+        frontLeftModule.setDesiredModuleState(frontLeft);
+        frontRightModule.setDesiredModuleState(frontRight);
+        backLeftModule.setDesiredModuleState(backLeft);
+        backRightModule.setDesiredModuleState(backRight);
+    }
     
+    
+
 
     // public SwerveModuleState optimizeWithCosineCompensation(
     //         SwerveModuleState desiredState,
