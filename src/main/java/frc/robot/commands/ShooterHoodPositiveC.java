@@ -1,0 +1,29 @@
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.HoodAngleS;
+
+public class ShooterHoodPositiveC extends Command{
+    boolean isFinished = false;
+    final HoodAngleS m_HoodAngleS;
+
+    public ShooterHoodPositiveC(HoodAngleS subsystem){
+        addRequirements(subsystem);
+        m_HoodAngleS = subsystem;
+    }
+    
+    @Override
+    public void execute(){
+       m_HoodAngleS.moveRange(5);
+    }
+
+    @Override
+    public boolean isFinished(){
+        return isFinished;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        
+    }
+}

@@ -6,7 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.MoveIntakeDownC;
-import frc.robot.commands.ShooterHoodC;
+import frc.robot.commands.ShooterHoodNegativeC;
+import frc.robot.commands.ShooterHoodPositiveC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HoodAngleS;
@@ -51,7 +52,8 @@ public class RobotContainer {
   SwerveC m_SwerveC = new SwerveC(m_SwerveS);
   MoveIntakeDownC m_MoveIntakeDownC = new MoveIntakeDownC(m_IntakeS);
   XLock m_XLock = new XLock(m_SwerveS);
-  ShooterHoodC ShooterHoodC = new ShooterHoodC(m_HoodAngleS);
+  ShooterHoodNegativeC ShooterHoodNegativeC = new ShooterHoodNegativeC(m_HoodAngleS);
+  ShooterHoodPositiveC ShooterHoodPositiveC = new ShooterHoodPositiveC(m_HoodAngleS);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -81,6 +83,7 @@ public class RobotContainer {
 
     aManipulatorButtonTrigger.whileTrue(m_MoveIntakeDownC);
     xDriverButtonTrigger.whileTrue(m_XLock);
-    lManipulatorBumperTrigger.whileTrue(ShooterHoodC);
+    lManipulatorBumperTrigger.whileTrue(ShooterHoodNegativeC);
+    rManipulatorBumperTrigger.whileTrue(ShooterHoodPositiveC);
   }
 }
