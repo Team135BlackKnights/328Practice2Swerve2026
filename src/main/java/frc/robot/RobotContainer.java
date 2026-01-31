@@ -6,12 +6,14 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.MoveIntakeDownC;
+import frc.robot.commands.ShooterC;
 import frc.robot.commands.ShooterHoodNegativeC;
 import frc.robot.commands.ShooterHoodPositiveC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -31,29 +33,36 @@ public class RobotContainer {
   public static final CommandXboxController m_manipulatorController = 
       new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
-  public static final Trigger xDriverButtonTrigger = m_driverController.x();
-  public static final Trigger yDriverButtonTrigger = m_driverController.y();
-  public static final Trigger aDriverButtonTrigger = m_driverController.a();
-  public static final Trigger bDriverButtonTrigger = m_driverController.b();
-  public static final Trigger lDriverBumperTrigger = m_driverController.leftBumper();
-  public static final Trigger rDriverBumperTrigger = m_driverController.rightBumper();
+  public static final Trigger xDriverButton = m_driverController.x();
+  public static final Trigger yDriverButton = m_driverController.y();
+  public static final Trigger aDriverButton = m_driverController.a();
+  public static final Trigger bDriverButton = m_driverController.b();
+  public static final Trigger lDriverBumper = m_driverController.leftBumper();
+  public static final Trigger rDriverBumper = m_driverController.rightBumper();
+  public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
+  public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
 
-  public static final Trigger xManipulatorButtonTrigger = m_manipulatorController.x();
-  public static final Trigger yManipulatorButtonTrigger = m_manipulatorController.y();
-  public static final Trigger aManipulatorButtonTrigger = m_manipulatorController.a();
-  public static final Trigger bManipulatorButtonTrigger = m_manipulatorController.b();
-  public static final Trigger lManipulatorBumperTrigger = m_manipulatorController.leftBumper();
-  public static final Trigger rManipulatorBumperTrigger = m_manipulatorController.rightBumper();
+
+  public static final Trigger xManipulatorButton = m_manipulatorController.x();
+  public static final Trigger yManipulatorButton = m_manipulatorController.y();
+  public static final Trigger aManipulatorButton = m_manipulatorController.a();
+  public static final Trigger bManipulatorButton = m_manipulatorController.b();
+  public static final Trigger lManipulatorBumper = m_manipulatorController.leftBumper();
+  public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
+  public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
+  public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
 
   SwerveS m_SwerveS = new SwerveS();
   IntakeS m_IntakeS = new IntakeS();
   HoodAngleS m_HoodAngleS = new HoodAngleS ();
+  ShooterS m_ShooterS = new ShooterS ();
 
   SwerveC m_SwerveC = new SwerveC(m_SwerveS);
   MoveIntakeDownC m_MoveIntakeDownC = new MoveIntakeDownC(m_IntakeS);
   XLock m_XLock = new XLock(m_SwerveS);
-  ShooterHoodNegativeC ShooterHoodNegativeC = new ShooterHoodNegativeC(m_HoodAngleS);
-  ShooterHoodPositiveC ShooterHoodPositiveC = new ShooterHoodPositiveC(m_HoodAngleS);
+  ShooterHoodNegativeC m_ShooterHoodNegativeC = new ShooterHoodNegativeC(m_HoodAngleS);
+  ShooterHoodPositiveC m_ShooterHoodPositiveC = new ShooterHoodPositiveC(m_HoodAngleS);
+  ShooterC m_ShooterC = new ShooterC(m_ShooterS);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -81,9 +90,12 @@ public class RobotContainer {
 
     //xButtonTrigger.whileTrue(m_IntakeC); /TODO - this is how you do that
 
-    aManipulatorButtonTrigger.whileTrue(m_MoveIntakeDownC);
-    xDriverButtonTrigger.whileTrue(m_XLock);
-    lManipulatorBumperTrigger.whileTrue(ShooterHoodNegativeC);
-    rManipulatorBumperTrigger.whileTrue(ShooterHoodPositiveC);
+    aDriverButton.whileTrue(m_MoveIntakeDownC);
+    xDriverButton.whileTrue(m_XLock);
+    lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
+    rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
+    aManipulatorButton.whileTrue(m_SwerveC);
+    rManipulatorTrigger.whileTrue(m_ShooterC);
+
   }
 }

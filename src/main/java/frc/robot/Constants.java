@@ -65,14 +65,16 @@ public final class Constants {
     public static final int intakeVertEncoderID = 0;
   }
 
-   public static class HoodConstants {
-    public static final double[] hoodPID = new double[] {1,0,0};
+  public static class HoodConstants {
     public static final int hoodMotorID = 0;
     public static final int hoodEncoderID = 0;
     public static final double minHoodRange = 0;
     public static final double maxHoodRange = 3.5;
   }
-
+  
+  public static class ShooterConstants {
+    public static final int shooterHoodID = 0;
+  }
   
 }
 
