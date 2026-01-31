@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
     
 
-    if(RobotContainer.yDriverButtonTrigger.getAsBoolean())
+    if(RobotContainer.yDriverButton.getAsBoolean())
     {
         final var rot_limelight = limelight_aim_proportional();
         rot = rot_limelight;

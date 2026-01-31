@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class IntakeS extends SubsystemBase {
+public class MoveIntakeS extends SubsystemBase {
     private final Spark m_motor = new Spark(Constants.IntakeConstants.intakeVertMotorID);
     private final DutyCycleEncoder m_Encoder = new DutyCycleEncoder(Constants.IntakeConstants.intakeVertEncoderID);
 
     private PIDController intakeController = new PIDController(Constants.IntakeConstants.intakePID[0], Constants.IntakeConstants.intakePID[1], Constants.IntakeConstants.intakePID[2]);
 
-    public void moveTo(double position){
-        double intakeVoltage = intakeController.calculate(position, m_Encoder.get());
+    public void moveTo(double desiredPosition){
+        double intakeVoltage = intakeController.calculate(desiredPosition, m_Encoder.get());
         m_motor.setVoltage(intakeVoltage); 
     }
 

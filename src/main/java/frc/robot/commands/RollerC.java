@@ -1,20 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.HoodAngleS;
+import frc.robot.subsystems.IntakeRollerS;
 
-public class ShooterHoodNegativeC extends Command{
+public class RollerC extends Command{
     boolean isFinished = false;
-    final HoodAngleS m_HoodAngleS;
+    final IntakeRollerS m_IntakeRollerS;
 
-    public ShooterHoodNegativeC(HoodAngleS subsystem){
+    public RollerC(IntakeRollerS subsystem){
         addRequirements(subsystem);
-        m_HoodAngleS = subsystem;
+        m_IntakeRollerS = subsystem;
     }
     
     @Override
     public void execute(){
-       m_HoodAngleS.moveRange(-5);
+       m_IntakeRollerS.rollerSpeed(10);
     }
 
     @Override
@@ -27,3 +27,4 @@ public class ShooterHoodNegativeC extends Command{
         
     }
 }
+

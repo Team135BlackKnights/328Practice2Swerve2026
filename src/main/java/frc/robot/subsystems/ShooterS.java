@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterS extends SubsystemBase{
-    private final Spark m_motor = new Spark(Constants.ShooterConstants.shooterHoodID);
+    private final Spark m_motor = new Spark(Constants.ShooterConstants.shootermotorID);
 
     public void fireSpeed(double shooterVoltage){
             m_motor.setVoltage(shooterVoltage); 

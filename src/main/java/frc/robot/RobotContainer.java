@@ -5,14 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.MoveIntakeDownC;
+import frc.robot.commands.MoveIntakeC;
+import frc.robot.commands.RollerC;
 import frc.robot.commands.ShooterC;
-import frc.robot.commands.ShooterHoodNegativeC;
-import frc.robot.commands.ShooterHoodPositiveC;
+import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HoodAngleS;
-import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.IntakeRollerS;
+import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -53,16 +54,20 @@ public class RobotContainer {
   public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
 
   SwerveS m_SwerveS = new SwerveS();
-  IntakeS m_IntakeS = new IntakeS();
+  MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
   HoodAngleS m_HoodAngleS = new HoodAngleS ();
   ShooterS m_ShooterS = new ShooterS ();
+  IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
 
   SwerveC m_SwerveC = new SwerveC(m_SwerveS);
-  MoveIntakeDownC m_MoveIntakeDownC = new MoveIntakeDownC(m_IntakeS);
+  MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
+  MoveIntakeC m_MoveIntakeUpC = new MoveIntakeC(m_MoveIntakeS, 0);
   XLock m_XLock = new XLock(m_SwerveS);
-  ShooterHoodNegativeC m_ShooterHoodNegativeC = new ShooterHoodNegativeC(m_HoodAngleS);
-  ShooterHoodPositiveC m_ShooterHoodPositiveC = new ShooterHoodPositiveC(m_HoodAngleS);
+  ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, -5);
+  ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, 5);
+  ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
   ShooterC m_ShooterC = new ShooterC(m_ShooterS);
+  RollerC m_RollerC = new RollerC(m_IntakeRollerS);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -90,12 +95,15 @@ public class RobotContainer {
 
     //xButtonTrigger.whileTrue(m_IntakeC); /TODO - this is how you do that
 
-    aDriverButton.whileTrue(m_MoveIntakeDownC);
-    xDriverButton.whileTrue(m_XLock);
+    aDriverButton.toggleOnTrue(m_MoveIntakeDownC);
+    aDriverButton.toggleOnFalse(m_MoveIntakeUpC);
+    xDriverButton.toggleOnTrue(m_XLock);
+    bDriverButton.toggleOnTrue(m_RollerC);    
     lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
     rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
-    aManipulatorButton.whileTrue(m_SwerveC);
+    rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
+    
+    
     rManipulatorTrigger.whileTrue(m_ShooterC);
-
   }
 }

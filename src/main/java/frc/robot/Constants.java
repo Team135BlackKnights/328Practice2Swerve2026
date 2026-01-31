@@ -73,8 +73,11 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shooterHoodID = 0;
+    public static final int shootermotorID = 0;
   }
-  
+
+  public static class IntakeRollerConstants {
+    public static final int rollerMotorID = 0;
+  }
 }
 

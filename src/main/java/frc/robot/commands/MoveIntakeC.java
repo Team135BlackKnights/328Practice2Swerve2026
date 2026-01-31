@@ -1,20 +1,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.MoveIntakeS;
 
-public class MoveIntakeDownC extends Command{
+public class MoveIntakeC extends Command{
     boolean isFinished = false;
-    final IntakeS m_IntakeS;
+    final MoveIntakeS m_IntakeS;
+    final double position;
 
-    public MoveIntakeDownC(IntakeS subsystem){
+    public MoveIntakeC(MoveIntakeS subsystem, double p){
         addRequirements(subsystem);
         m_IntakeS = subsystem;
+        position = p;
     }
     
     @Override
     public void execute(){
-       m_IntakeS.moveTo(0);
+       m_IntakeS.moveTo(position);
     }
 
     @Override

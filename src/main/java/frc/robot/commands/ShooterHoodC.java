@@ -3,18 +3,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.HoodAngleS;
 
-public class ShooterHoodPositiveC extends Command{
+public class ShooterHoodC extends Command{
     boolean isFinished = false;
     final HoodAngleS m_HoodAngleS;
+    final double voltage;
 
-    public ShooterHoodPositiveC(HoodAngleS subsystem){
+    public ShooterHoodC(HoodAngleS subsystem, double v){
         addRequirements(subsystem);
         m_HoodAngleS = subsystem;
+        voltage = v;
     }
     
     @Override
     public void execute(){
-       m_HoodAngleS.moveRange(5);
+       m_HoodAngleS.moveRange(voltage);
     }
 
     @Override
