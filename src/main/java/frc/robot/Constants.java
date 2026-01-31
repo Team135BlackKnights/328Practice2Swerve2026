@@ -70,15 +70,20 @@ public final class Constants {
     public static final int hoodEncoderID = 1;
     public static final double minHoodRange = 0;
     public static final double maxHoodRange = 3.5;
+    public static final double hoodAngleVoltagePositive = 5.0;
+    public static final double hoodAngleVoltageNegative = -5.0;
   }
   
   public static class ShooterConstants {
     public static final int shootermotorID = 32;
     public static final int shootermotor2ID = 34;
+    public static final double shooter1Voltage = 10;
+    public static final double shooter2Voltage = 10;
   }
 
   public static class IntakeRollerConstants {
     public static final int rollerMotorID = 33;
+    public static final double rollerVoltage = 10;
   }
 }
 

@@ -63,12 +63,12 @@ public class RobotContainer {
   MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
   MoveIntakeC m_MoveIntakeUpC = new MoveIntakeC(m_MoveIntakeS, 0);
   XLock m_XLock = new XLock(m_SwerveS);
-  ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, -5);
-  ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, 5);
+  ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
+  ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
   ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
-  ShooterC m_ShooterC = new ShooterC(m_ShooterS, 10, 10);
+  ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2Voltage);
   ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
-  IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, 10);
+  IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
   // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
