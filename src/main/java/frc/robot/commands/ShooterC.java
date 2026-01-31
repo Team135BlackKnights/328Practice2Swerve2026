@@ -6,15 +6,17 @@ import frc.robot.subsystems.ShooterS;
 public class ShooterC extends Command{
     boolean isFinished = false;
     final ShooterS m_ShooterS;
+    final double v;
 
-    public ShooterC(ShooterS subsystem){
+    public ShooterC(ShooterS subsystem, double voltage){
         addRequirements(subsystem);
         m_ShooterS = subsystem;
+        v = voltage;
     }
     
     @Override
     public void execute(){
-       m_ShooterS.fireSpeed(10);
+       m_ShooterS.fireSpeed(v);
     }
 
     @Override

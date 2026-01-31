@@ -6,15 +6,17 @@ import frc.robot.subsystems.IntakeRollerS;
 public class RollerC extends Command{
     boolean isFinished = false;
     final IntakeRollerS m_IntakeRollerS;
+    final double voltage;
 
-    public RollerC(IntakeRollerS subsystem){
+    public RollerC(IntakeRollerS subsystem, double v){
         addRequirements(subsystem);
         m_IntakeRollerS = subsystem;
+        voltage = v;
     }
     
     @Override
     public void execute(){
-       m_IntakeRollerS.rollerSpeed(10);
+       m_IntakeRollerS.rollerSpeed(voltage);
     }
 
     @Override
