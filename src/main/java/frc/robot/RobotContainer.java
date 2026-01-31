@@ -66,8 +66,8 @@ public class RobotContainer {
   ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, -5);
   ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, 5);
   ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
-  ShooterC m_ShooterC = new ShooterC(m_ShooterS, 10);
-  ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0);
+  ShooterC m_ShooterC = new ShooterC(m_ShooterS, 10, 10);
+  ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
   RollerC m_RollerC = new RollerC(m_IntakeRollerS, 10);
   // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
 
@@ -97,10 +97,10 @@ public class RobotContainer {
 
     //xButtonTrigger.whileTrue(m_IntakeC); /TODO - this is how you do that
 
-    aDriverButton.toggleOnTrue(m_MoveIntakeDownC);
-    aDriverButton.toggleOnFalse(m_MoveIntakeUpC);
-    xDriverButton.toggleOnTrue(m_XLock);
-    bDriverButton.toggleOnTrue(m_RollerC);    
+    //aDriverButton.toggleOnTrue(m_MoveIntakeDownC);
+    //aDriverButton.toggleOnFalse(m_MoveIntakeUpC);
+    //xDriverButton.toggleOnTrue(m_XLock);
+    //bDriverButton.toggleOnTrue(m_RollerC);    
     lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
     rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
     rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)

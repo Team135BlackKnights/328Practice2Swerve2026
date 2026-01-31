@@ -19,7 +19,20 @@ public class SwerveC extends Command{
     @Override
     public void execute(){
         //TODO units are wrong here
-        m_Swerve.setSpeed(-RobotContainer.m_driverController.getLeftX(), RobotContainer.m_driverController.getLeftY(), RobotContainer.m_driverController.getRightX());
+
+        double x = RobotContainer.m_driverController.getLeftX();
+        double y = RobotContainer.m_driverController.getLeftY();
+        double angle = Math.atan2(y,x);
+        double magnitude = Math.hypot(x, y);
+        double a = 0.6;
+        magnitude = a*Math.pow(magnitude,5)+magnitude*(1-a);
+        x = Math.cos(angle) * magnitude;
+        y = Math.sin(angle) * magnitude;
+
+        double rot = RobotContainer.m_driverController.getRightX();
+        rot = a*Math.pow(rot,5)+rot*(1-a);
+
+        m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
     }
 
     @Override
