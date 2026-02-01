@@ -1,15 +1,20 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 //import com.ctre.phoenix6.swerve.SwerveModule;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.SwerveS;
 //import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.SwerveS;
+
+
 
 public class SwerveC extends Command{
     boolean isFinished = false;
     final SwerveS m_Swerve;
+    
 
     public SwerveC(SwerveS subsystem){
         addRequirements(subsystem);
@@ -32,7 +37,9 @@ public class SwerveC extends Command{
         double rot = RobotContainer.m_driverController.getRightX();
         rot = a*Math.pow(rot,5)+rot*(1-a);
 
-        m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
+        // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
+        final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
+        m_Swerve.setSpeed(cspeeds.vxMetersPerSecond, cspeeds.vyMetersPerSecond, cspeeds.omegaRadiansPerSecond);
     }
 
     @Override

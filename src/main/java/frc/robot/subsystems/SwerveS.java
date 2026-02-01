@@ -64,9 +64,6 @@ public class SwerveS extends SubsystemBase{
         backRightModule.setDesiredModuleState(backRight);
     }
     
-    
-
-
     // public SwerveModuleState optimizeWithCosineCompensation(
     //         SwerveModuleState desiredState,
     //         Rotation2d currentAngle) {
