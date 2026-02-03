@@ -11,6 +11,8 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -47,11 +49,11 @@ public class RobotContainer {
     public static final Trigger yDriverButton = m_driverController.y();
     public static final Trigger aDriverButton = m_driverController.a();
     public static final Trigger bDriverButton = m_driverController.b();
+    public static final Trigger startDriverButton = m_driverController.start();
     public static final Trigger lDriverBumper = m_driverController.leftBumper();
     public static final Trigger rDriverBumper = m_driverController.rightBumper();
     public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
     public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
-  
   
     public static final Trigger xManipulatorButton = m_manipulatorController.x();
     public static final Trigger yManipulatorButton = m_manipulatorController.y();
@@ -105,15 +107,18 @@ public class RobotContainer {
   
   
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
-  
-      aDriverButton.toggleOnTrue(m_MoveIntakeDownC);
-      aDriverButton.toggleOnFalse(m_MoveIntakeUpC);
       xDriverButton.toggleOnTrue(m_XLock);
-      bDriverButton.toggleOnTrue(m_IntakeRollerC);    
+      aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+
+
+
+      
+      aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
+      aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
+      bManipulatorButton.toggleOnTrue(m_IntakeRollerC);    
       lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
       rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
       rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
-      
       rManipulatorTrigger.whileTrue(m_ShooterC);
       rManipulatorTrigger.whileFalse(m_ShooterStopC);
   
@@ -146,7 +151,7 @@ public class RobotContainer {
       invert = -1;
     }
     // Create field relative ChassisSpeeds for controlling Swerve
-    ChassisSpeeds cspeeds = new ChassisSpeeds(0,0,0); // only the machine god knows how vscode things cspeeds isn't used
+    ChassisSpeeds cspeeds = new ChassisSpeeds(0,0,0); 
   
     cspeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x * invert, y * invert, rot, gyro.getRotation2d());
     return cspeeds;
