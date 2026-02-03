@@ -41,7 +41,7 @@ public class RobotContainer {
   public static final CommandXboxController m_manipulatorController = 
       new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
-  private final static Pigeon2 gyro = new Pigeon2(1, "rio");
+  private final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "rio");
   
     public static final Trigger xDriverButton = m_driverController.x();
     public static final Trigger yDriverButton = m_driverController.y();
@@ -149,6 +149,6 @@ public class RobotContainer {
     ChassisSpeeds cspeeds = new ChassisSpeeds(0,0,0); // only the machine god knows how vscode things cspeeds isn't used
   
     cspeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x * invert, y * invert, rot, gyro.getRotation2d());
-  return cspeeds;
+    return cspeeds;
   }
 }

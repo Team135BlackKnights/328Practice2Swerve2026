@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 //import com.ctre.phoenix6.swerve.SwerveModule;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 //import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveS;
@@ -23,7 +24,7 @@ public class SwerveC extends Command{
     
     @Override
     public void execute(){
-        //TODO units are wrong here
+        //i dont think units are wrong here, they're in m/s and that's cool
 
         double x = RobotContainer.m_driverController.getLeftX();
         double y = RobotContainer.m_driverController.getLeftY();
@@ -39,7 +40,7 @@ public class SwerveC extends Command{
 
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
         final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
-        m_Swerve.setSpeed(cspeeds.vxMetersPerSecond, cspeeds.vyMetersPerSecond, cspeeds.omegaRadiansPerSecond);
+        m_Swerve.setSpeed(Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, Constants.SwerveConstants.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
     }
 
     @Override
