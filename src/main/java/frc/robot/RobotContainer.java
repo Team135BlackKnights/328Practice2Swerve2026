@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,7 +45,7 @@ public class RobotContainer {
   public static final CommandXboxController m_manipulatorController = 
       new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
-  private final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "rio");
+  private final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
   
     public static final Trigger xDriverButton = m_driverController.x();
     public static final Trigger yDriverButton = m_driverController.y();
@@ -127,32 +130,23 @@ public class RobotContainer {
     
     // int invert = 1;
   
-    public static ChassisSpeeds fieldOrientedDrive(double x, double y, double rot){
-  
-      /*  this is copied from SwerveC. i think it makes the robot go smoother idk
-          double x = RobotContainer.m_driverController.getLeftX();
-          double y = RobotContainer.m_driverController.getLeftY();
-          double angle = Math.atan2(y,x);
-          double magnitude = Math.hypot(x, y);
-          double a = 0.6;
-          magnitude = a*Math.pow(magnitude,5)+magnitude*(1-a);
-          x = Math.cos(angle) * magnitude;
-          y = Math.sin(angle) * magnitude;
-  
-          double rot = RobotContainer.m_driverController.getRightX();
-          rot = a*Math.pow(rot,5)+rot*(1-a);
-      */
+  public static ChassisSpeeds fieldOrientedDrive(double x, double y, double rot){
   
     // The origin is always blue. When our alliance is red, X and Y need to be inverted
-      Optional<Alliance> alliance = DriverStation.getAlliance();
+    /*
+    Optional<Alliance> alliance = DriverStation.getAlliance();
     int invert = 1;
     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
       invert = -1;
     }
-    // Create field relative ChassisSpeeds for controlling Swerve
-    ChassisSpeeds cspeeds = new ChassisSpeeds(0,0,0); 
-  
-    cspeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x * invert, y * invert, rot, gyro.getRotation2d());
-    return cspeeds;
+      */
+      
+    Optional<Alliance> invert = DriverStation.getAlliance();
+    Rotation2d gyroDirection = gyro.getRotation2d();
+    if (invert.get().equals(Alliance.Red)){
+      gyroDirection = gyroDirection.plus(new Rotation2d(Math.PI));
+    }
+    return ChassisSpeeds.fromFieldRelativeSpeeds(x,y, rot, gyroDirection);
+
   }
 }

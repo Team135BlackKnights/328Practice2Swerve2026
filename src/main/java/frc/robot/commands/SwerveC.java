@@ -26,7 +26,7 @@ public class SwerveC extends Command{
     public void execute(){
         //i dont think units are wrong here, they're in m/s and that's cool
 
-        double x = RobotContainer.m_driverController.getLeftX();
+        double x = -RobotContainer.m_driverController.getLeftX();
         double y = RobotContainer.m_driverController.getLeftY();
         double angle = Math.atan2(y,x);
         double magnitude = Math.hypot(x, y);
@@ -41,6 +41,7 @@ public class SwerveC extends Command{
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
         final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
         m_Swerve.setSpeed(Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, Constants.SwerveConstants.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
+
     }
 
     @Override

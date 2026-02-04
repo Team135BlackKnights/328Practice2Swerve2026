@@ -45,10 +45,10 @@ public class SwerveS extends SubsystemBase{
         SwerveModuleState backLeft = moduleStates[2];
         SwerveModuleState backRight = moduleStates[3];
 
-        System.out.println("FR:" + frontLeft);
-        System.out.println("FL:" + frontRight);
-        System.out.println("BL:" + backLeft);
-        System.out.println("BR:" + backRight);
+        // System.out.println("FR:" + frontLeft);
+        // System.out.println("FL:" + frontRight);
+        // System.out.println("BL:" + backLeft);
+        // System.out.println("BR:" + backRight);
         
         frontLeftModule.setDesiredModuleState(frontLeft);
         frontRightModule.setDesiredModuleState(frontRight);
