@@ -60,7 +60,11 @@ public final class Constants {
 
     public static final double linearSpeedMultiplier = 7.5;
     public static final double radianSpeedMultiplier = 10;
+    public static final double maxLinearSpeedMPS = 0;
+    public static final double maxRadSpeedRPS = 0;
   }
+
+  public static final double robotMassKG = 100;
 
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,0};

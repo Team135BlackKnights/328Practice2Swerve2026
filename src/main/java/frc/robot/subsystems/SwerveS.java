@@ -2,10 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.controllers.PPLTVController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,8 +16,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.RobotContainer;
 
 public class SwerveS extends SubsystemBase{
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
@@ -28,13 +29,9 @@ public class SwerveS extends SubsystemBase{
     SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
     SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
     SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
-
-    public static final double kMaxSpeed = 3.0; // 3 meters per second
-    public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
-
-    public static boolean xLock = false;
     
-
+    public static final double kMaxSpeed = 3.0;
+    public static final double kMaxAngularSpeed = Math.PI;
 
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
     m_kinematics, RobotContainer.gyro.getRotation2d(),
@@ -139,7 +136,8 @@ public class SwerveS extends SubsystemBase{
         } catch (Exception e) {
             // Handle exception as needed
             e.printStackTrace();
-            config = new RobotConfig(kMaxAngularSpeed, kMaxSpeed, null, kMaxAngularSpeed);
+            config = null;
+            // config = new RobotConfig(Constants.robotMassKG, 0, new ModuleConfig(Constants.SwerveConstants.wheelRadius, Constants.SwerveConstants.maxLinearSpeedMPS, 1000, 2, 12, 1), Constants.SwerveConstants.moduleLocationFrontLeft,Constants.SwerveConstants.moduleLocationFrontRight,Constants.SwerveConstants.moduleLocationBackLeft,Constants.SwerveConstants.moduleLocationBackRight);
         }
 
         // Configure AutoBuilder last
@@ -166,6 +164,8 @@ public class SwerveS extends SubsystemBase{
                 },
                 this // Reference to this subsystem to set requirements
         );
+
+
   }
 }
 
