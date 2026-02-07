@@ -75,6 +75,18 @@ public class SwerveModule {
         return turnEncoder.getAbsolutePosition().getValueAsDouble();
     }
 
+    public Rotation2d getTurnPositionRotation2D(){
+        return new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI);
+    }
+    
+    public double getPosition(){
+        return driveMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getDriveSpeed(){
+        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadius;
+    }
+
     public void setDesiredModuleState(SwerveModuleState moduleState){
         desiredState = moduleState;
     }
@@ -101,7 +113,7 @@ public class SwerveModule {
     // }
 
     public void updateStatePID(){
-        double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadius;//5.9:1 and 2 in
+        double currentDriveVelocity = getDriveSpeed();//5.9:1 and 2 in
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));

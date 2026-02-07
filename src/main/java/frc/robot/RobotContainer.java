@@ -45,7 +45,7 @@ public class RobotContainer {
   public static final CommandXboxController m_manipulatorController = 
       new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
-  private final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
+  public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
   
     public static final Trigger xDriverButton = m_driverController.x();
     public static final Trigger yDriverButton = m_driverController.y();

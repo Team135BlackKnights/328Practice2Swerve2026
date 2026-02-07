@@ -1,11 +1,22 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PPLTVController;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveS extends SubsystemBase{
@@ -22,9 +33,20 @@ public class SwerveS extends SubsystemBase{
     public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
 
     public static boolean xLock = false;
+    
 
 
-    @Override
+    SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+    m_kinematics, RobotContainer.gyro.getRotation2d(),
+    new SwerveModulePosition[] {
+        new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+  }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
+
+    Pose2d m_pose = new Pose2d();
+      
     public void periodic(){
         frontLeftModule.updateStatePID();
         frontRightModule.updateStatePID();
@@ -34,7 +56,25 @@ public class SwerveS extends SubsystemBase{
         // System.out.println("FL:" + frontRightModule.getTurnPosition());
         // System.out.println("BL:" + backLeftModule.getTurnPosition());
         // System.out.println("BR:" + backRightModule.getTurnPosition());
-    
+        var gyroAngle = RobotContainer.gyro.getRotation2d();
+        // Update the pose
+        m_pose = m_odometry.update(gyroAngle,
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+        });
+
+    }
+
+    public ChassisSpeeds getState(){
+        return m_kinematics.toChassisSpeeds(
+            new SwerveModuleState(frontLeftModule.getDriveSpeed(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModuleState(frontRightModule.getDriveSpeed(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModuleState(backLeftModule.getDriveSpeed(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModuleState(backRightModule.getDriveSpeed(), backRightModule.getTurnPositionRotation2D())
+        );
     }
 
     public void setSpeed(double xSpeed, double ySpeed, double rotSpeed){
@@ -55,6 +95,10 @@ public class SwerveS extends SubsystemBase{
         backLeftModule.setDesiredModuleState(backLeft);
         backRightModule.setDesiredModuleState(backRight);
 
+    }
+
+    public void setSpeedFromState(ChassisSpeeds state){
+        setSpeed(state.vxMetersPerSecond, state.vyMetersPerSecond, state.omegaRadiansPerSecond);
     }
 
     public void setModuleStates(SwerveModuleState frontLeft, SwerveModuleState frontRight, SwerveModuleState backLeft, SwerveModuleState backRight){
@@ -80,6 +124,50 @@ public class SwerveS extends SubsystemBase{
     // }
 
 
+
+    public SwerveS() {
+        // All other subsystem initialization
+        // ...
+
+        
+
+        // Load the RobotConfig from the GUI settings. You should probably
+        // store this in your Constants file
+        RobotConfig config;
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+            config = new RobotConfig(kMaxAngularSpeed, kMaxSpeed, null, kMaxAngularSpeed);
+        }
+
+        // Configure AutoBuilder last
+        AutoBuilder.configure(
+                ()->(m_pose), // Robot pose supplier
+                (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
+                this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                ),
+                config, // The robot configuration
+                () -> {
+                // Boolean supplier that controls when the path will be mirrored for the red alliance
+                // This will flip the path being followed to the red side of the field.
+                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+                },
+                this // Reference to this subsystem to set requirements
+        );
+  }
 }
+
 
 
