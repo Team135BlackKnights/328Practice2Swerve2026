@@ -68,13 +68,13 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,0};
-    public static final int intakeVertMotorID = 28;
-    public static final int intakeVertEncoderID = 0;
+    public static final int intakeVertMotorID = 17;
+    public static final int intakeVertEncoderID = 18;
   }
 
   public static class HoodConstants {
-    public static final int hoodMotorID = 30;
-    public static final int hoodEncoderID = 1;
+    public static final int hoodMotorID = 15;
+    public static final int hoodEncoderID = 16;
     public static final double minHoodRange = 0;
     public static final double maxHoodRange = 3.5;
     public static final double hoodAngleVoltagePositive = 5.0;
@@ -82,10 +82,8 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shootermotorID = 32;
-    public static final int shootermotor2ID = 34;
-    public static final double shooter1Voltage = 10;
-    public static final double shooter2Voltage = 10;
+    public static final int shootermotorID = 14;
+    public static final double shooter1Voltage = 7;
   }
 
   public static class IntakeRollerConstants {
@@ -95,6 +93,10 @@ public final class Constants {
 
   public static class PigeonConstants {
     public static final int pigeonID = 0;
+  }
+  public static class HangConstants{
+    public static final int hangMotorID = 19;
+    public static final double hangVoltage = 8;
   }
 }
 

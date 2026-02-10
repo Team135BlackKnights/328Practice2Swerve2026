@@ -14,6 +14,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,12 +24,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeRollerC;
 import frc.robot.commands.MoveIntakeC;
 import frc.robot.commands.ShooterC;
 import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
+import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
@@ -78,6 +81,7 @@ public class RobotContainer {
     HoodAngleS m_HoodAngleS = new HoodAngleS ();
     ShooterS m_ShooterS = new ShooterS ();
     IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
+    HangS m_HangS = new HangS();
   
     SwerveC m_SwerveC = new SwerveC(m_SwerveS);
     MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
@@ -86,9 +90,12 @@ public class RobotContainer {
     ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
     ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
     ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
-    ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2Voltage);
-    ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
+    ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage);
+    ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
+    IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
+    HangC m_HangC = new HangC(m_HangS, 8);
+
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -127,19 +134,18 @@ public class RobotContainer {
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       xDriverButton.toggleOnTrue(m_XLock);
       aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+      bDriverButton.toggleOnTrue(m_HangC);
 
 
-
-      
       aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
       aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
-      bManipulatorButton.toggleOnTrue(m_IntakeRollerC);    
+      bManipulatorButton.toggleOnTrue(m_IntakeRollerC);
+      bManipulatorButton.toggleOnFalse(m_IntakeRollerOffC);   
       lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
       rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
       rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
       rManipulatorTrigger.whileTrue(m_ShooterC);
       rManipulatorTrigger.whileFalse(m_ShooterStopC);
-  
     }
   
     // field oriented code. snowball's chance in flames it'll work
