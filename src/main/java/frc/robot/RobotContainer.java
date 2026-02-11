@@ -90,11 +90,11 @@ public class RobotContainer {
     ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
     ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
     ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
-    ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage);
-    ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0);
+    ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
+    ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
     IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
-    HangC m_HangC = new HangC(m_HangS, 8);
+    HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
 
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
@@ -139,8 +139,8 @@ public class RobotContainer {
 
       aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
       aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
-      bManipulatorButton.toggleOnTrue(m_IntakeRollerC);
-      bManipulatorButton.toggleOnFalse(m_IntakeRollerOffC);   
+      yDriverButton.toggleOnTrue(m_IntakeRollerC);
+      yDriverButton.toggleOnFalse(m_IntakeRollerOffC);   
       lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
       rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
       rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)

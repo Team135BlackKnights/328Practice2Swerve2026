@@ -122,7 +122,7 @@ public class SwerveS extends SubsystemBase{
 
 
 
-    public SwerveS() {
+    public void swervePathPlanner() {
         // All other subsystem initialization
         // ...
 
@@ -167,6 +167,7 @@ public class SwerveS extends SubsystemBase{
 
 
   }
+
 }
 
 
