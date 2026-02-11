@@ -4,17 +4,17 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotation;
+
 
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.measure.Voltage;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -66,7 +66,47 @@ public class RobotContainer {
     public static final Trigger rDriverBumper = m_driverController.rightBumper();
     public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
     public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
-  
+
+    public static final Trigger dpadDriverRight = new Trigger(() -> {
+      double pov = m_driverController.getHID().getPOV();
+      if (pov > 45 && pov < 135){
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadDriverUp = new Trigger(() -> {
+      double pov = m_driverController.getHID().getPOV();
+      if (pov > 335 || pov < 45){
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadDriverDown = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 135 && pov < 240){
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadDriverLeft = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 240 && pov < 315){
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
     public static final Trigger xManipulatorButton = m_manipulatorController.x();
     public static final Trigger yManipulatorButton = m_manipulatorController.y();
     public static final Trigger aManipulatorButton = m_manipulatorController.a();
@@ -75,7 +115,9 @@ public class RobotContainer {
     public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
     public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
     public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
-  
+    
+    
+
     SwerveS m_SwerveS = new SwerveS();
     MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
     HoodAngleS m_HoodAngleS = new HoodAngleS ();
@@ -90,6 +132,7 @@ public class RobotContainer {
     ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
     ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
     ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
+
     ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
     ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
@@ -136,7 +179,6 @@ public class RobotContainer {
       aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
       bDriverButton.toggleOnTrue(m_HangC);
 
-
       aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
       aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
       yDriverButton.toggleOnTrue(m_IntakeRollerC);
@@ -146,8 +188,14 @@ public class RobotContainer {
       rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
       rManipulatorTrigger.whileTrue(m_ShooterC);
       rManipulatorTrigger.whileFalse(m_ShooterStopC);
+      lManipulatorTrigger.whileTrue(m_IntakeRollerC);
+      lManipulatorTrigger.whileFalse(m_IntakeRollerOffC);   
+
+      dpadDriverUp.whileTrue(m_MoveIntakeUpC);
+      dpadDriverDown.whileTrue(m_MoveIntakeDownC);
+      
     }
-  
+
     // field oriented code. snowball's chance in flames it'll work
     
     // int invert = 1;
