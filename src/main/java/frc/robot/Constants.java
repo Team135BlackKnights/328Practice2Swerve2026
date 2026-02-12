@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 2;
+    public static final int kDriverControllerPort = 1;
     public static final int kManipulatorControllerPort = 0;
   }
   public static class SwerveConstants {
@@ -68,7 +68,7 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,0};
-    public static final int intakeVertMotorID = 17;
+    public static final int intakeVertMotorID = 4;
     public static final int intakeVertEncoderID = 18;
   }
 
@@ -82,14 +82,14 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shootermotorID = 14;
+    public static final int shootermotorID = 3;
     public static final int shootermotor2ID = 20;
     public static final double shooter1Voltage = 7;
     public static final int shooter2voltage = 7;
   }
 
   public static class IntakeRollerConstants {
-    public static final int rollerMotorID = 13;
+    public static final int rollerMotorID = 5;
     public static final double rollerVoltage = 4;
   }
 

@@ -12,8 +12,8 @@ public class ShooterC extends Command{
     public ShooterC(ShooterS subsystem, double voltage, double voltage2){
         addRequirements(subsystem);
         m_ShooterS = subsystem;
-        v = voltage;
-        v2 = voltage2;
+        v = -voltage;
+        v2 = -voltage2;
     }
     
     @Override

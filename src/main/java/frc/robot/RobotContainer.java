@@ -70,6 +70,7 @@ public class RobotContainer {
     public static final Trigger dpadDriverRight = new Trigger(() -> {
       double pov = m_driverController.getHID().getPOV();
       if (pov > 45 && pov < 135){
+        System.out.println("driver right dpad");
         return true;
       } 
       else{
@@ -80,6 +81,7 @@ public class RobotContainer {
     public static final Trigger dpadDriverUp = new Trigger(() -> {
       double pov = m_driverController.getHID().getPOV();
       if (pov > 335 || pov < 45){
+        System.out.println("driver up dpad");
         return true;
       } 
       else{
@@ -88,8 +90,9 @@ public class RobotContainer {
     });
 
     public static final Trigger dpadDriverDown = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
+      double pov = m_driverController.getHID().getPOV();
       if (pov > 135 && pov < 240){
+        System.out.println("driver down dpad");
         return true;
       } 
       else{
@@ -98,8 +101,9 @@ public class RobotContainer {
     });
 
     public static final Trigger dpadDriverLeft = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
+      double pov = m_driverController.getHID().getPOV();
       if (pov > 240 && pov < 315){
+        System.out.println("driver left dpad");
         return true;
       } 
       else{
@@ -146,6 +150,7 @@ public class RobotContainer {
        // ...
 
     // Build an auto chooser. This will use Commands.none() as the default option.
+    m_SwerveS.swervePathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
 
     // Another option that allows you to specify the default auto by its name
@@ -175,24 +180,29 @@ public class RobotContainer {
   
   
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
-      xDriverButton.toggleOnTrue(m_XLock);
-      aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      bDriverButton.toggleOnTrue(m_HangC);
+      
+      //xDriverButton.toggleOnTrue(m_XLock);
+      //aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+      //bDriverButton.toggleOnTrue(m_HangC);
 
-      aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
-      aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
-      yDriverButton.toggleOnTrue(m_IntakeRollerC);
-      yDriverButton.toggleOnFalse(m_IntakeRollerOffC);   
-      lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
-      rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
-      rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
-      rManipulatorTrigger.whileTrue(m_ShooterC);
-      rManipulatorTrigger.whileFalse(m_ShooterStopC);
-      lManipulatorTrigger.whileTrue(m_IntakeRollerC);
-      lManipulatorTrigger.whileFalse(m_IntakeRollerOffC);   
+      //aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
+      //aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
+      //yManipulatorButton.toggleOnTrue(m_IntakeRollerC);
+      //yManipulatorButton.toggleOnFalse(m_IntakeRollerOffC);   
+      //lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
+      //rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
+      //rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
+      //rManipulatorTrigger.whileTrue(m_ShooterC);
+      //rManipulatorTrigger.whileFalse(m_ShooterStopC);
+      //lManipulatorTrigger.whileTrue(m_IntakeRollerC);
+      //lManipulatorTrigger.whileFalse(m_IntakeRollerOffC); 
+      aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
+      bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));
+      xDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("x manip button")));
+      // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
+      yDriverButton.whileTrue(m_ShooterC);
+      
 
-      dpadDriverUp.whileTrue(m_MoveIntakeUpC);
-      dpadDriverDown.whileTrue(m_MoveIntakeDownC);
       
     }
 
