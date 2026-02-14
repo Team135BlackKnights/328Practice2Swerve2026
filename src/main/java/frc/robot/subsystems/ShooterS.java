@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterS extends SubsystemBase{
-    private final SparkMax m_motor = new SparkMax(Constants.ShooterConstants.shootermotorID, MotorType.kBrushless);
+    private final SparkMax m_motor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
 
     public void fire(double shooter1Voltage){
             m_motor.setVoltage(shooter1Voltage); 

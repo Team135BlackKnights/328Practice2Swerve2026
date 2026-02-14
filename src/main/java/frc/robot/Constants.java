@@ -82,7 +82,7 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shootermotorID = 14;
+    public static final int shooterMotorID = 14;
     public static final double shooter1Voltage = 7;
   }
 
@@ -97,6 +97,12 @@ public final class Constants {
   public static class HangConstants{
     public static final int hangMotorID = 19;
     public static final double hangVoltage = 8;
+  }
+
+  public static class IndexerConstants {
+    public static final int indexerMotorID = 13;
+    public static final double indexerVoltage = 3;
+    public static final boolean indexerRunValue = true;
   }
 }
 
