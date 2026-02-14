@@ -12,13 +12,18 @@ public class ShooterC extends Command{
     public ShooterC(ShooterS subsystem, double voltage, double voltage2){
         addRequirements(subsystem);
         m_ShooterS = subsystem;
-        v = -voltage;
-        v2 = -voltage2;
+        v = voltage;
+        v2 = voltage2;
     }
     
     @Override
+
+    public void initialize(){
+        System.out.println("STARTING SHOOTER...");
+        m_ShooterS.fire(v,v2);
+    }
+    @Override
     public void execute(){
-       m_ShooterS.fire(v,v2);
     }
 
     @Override
@@ -28,7 +33,8 @@ public class ShooterC extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        
+        System.out.println("STOPPING SHOOTER...");
+        m_ShooterS.fire(0,0);
     }
 }
 

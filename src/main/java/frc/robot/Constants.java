@@ -68,13 +68,15 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,0};
-    public static final int intakeVertMotorID = 4;
-    public static final int intakeVertEncoderID = 18;
+    public static final int intakeVertMotorID = 20;
+    public static final int intakeVertEncoderID = 21;
+    public static final double desiredPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
+    public static final double upPositionP = 0; //depending on how PIDs go this could be different(tm)
   }
 
   public static class HoodConstants {
-    public static final int hoodMotorID = 15;
-    public static final int hoodEncoderID = 16;
+    public static final int hoodMotorID = 22;
+    public static final int hoodEncoderID = 23;
     public static final double minHoodRange = 0;
     public static final double maxHoodRange = 3.5;
     public static final double hoodAngleVoltagePositive = 5.0;
@@ -82,14 +84,14 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shooterMotorID = 3;
-    public static final int shooterMotor2ID = 20;
-    public static final double shooter1Voltage = 7;
-    public static final int shooter2voltage = 7;
+    public static final int shooterMotorID = 24;
+    public static final int shooterMotor2ID = 25;
+    public static final double shooter1Voltage = -7;
+    public static final int shooter2voltage = -7;
   }
 
   public static class IntakeRollerConstants {
-    public static final int rollerMotorID = 5;
+    public static final int rollerMotorID = 26;
     public static final double rollerVoltage = 4;
   }
 
@@ -97,12 +99,12 @@ public final class Constants {
     public static final int pigeonID = 0;
   }
   public static class HangConstants{
-    public static final int hangMotorID = 19;
+    public static final int hangMotorID = 27;
     public static final double hangVoltage = 8;
   }
 
   public static class IndexerConstants {
-    public static final int indexerMotorID = 13;
+    public static final int indexerMotorID = 28;
     public static final double indexerVoltage = 3;
     public static final boolean indexerRunValue = true;
   }

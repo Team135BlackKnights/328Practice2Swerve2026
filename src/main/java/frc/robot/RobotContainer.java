@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -113,6 +114,51 @@ public class RobotContainer {
       }
     });
 
+
+    public static final Trigger dpadManipRight = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 45 && pov < 135){
+        System.out.println("manip right dpad");
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadManipUp = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 335 || pov < 45){
+        System.out.println("manip up dpad");
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadManipDown = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 135 && pov < 240){
+        System.out.println("manip down dpad");
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
+    public static final Trigger dpadManipLeft = new Trigger(() -> {
+      double pov = m_manipulatorController.getHID().getPOV();
+      if (pov > 240 && pov < 315){
+        System.out.println("manip left dpad");
+        return true;
+      } 
+      else{
+        return false;
+      }
+    });
+
     public static final Trigger xManipulatorButton = m_manipulatorController.x();
     public static final Trigger yManipulatorButton = m_manipulatorController.y();
     public static final Trigger aManipulatorButton = m_manipulatorController.a();
@@ -140,8 +186,7 @@ public class RobotContainer {
     ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
     ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
 
-    ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
-    ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
+   // ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
     IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
     HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
@@ -187,26 +232,24 @@ public class RobotContainer {
   
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       
-      //xDriverButton.toggleOnTrue(m_XLock);
-      //aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      //bDriverButton.toggleOnTrue(m_HangC);
+      xDriverButton.toggleOnTrue(m_XLock);
+      aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+      bDriverButton.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
 
-      //aManipulatorButton.toggleOnTrue(m_MoveIntakeDownC);
-      //aManipulatorButton.toggleOnFalse(m_MoveIntakeUpC);
-      //yManipulatorButton.toggleOnTrue(m_IntakeRollerC);
-      //yManipulatorButton.toggleOnFalse(m_IntakeRollerOffC);   
-      //lManipulatorBumper.whileTrue(m_ShooterHoodNegativeC);
-      //rManipulatorBumper.whileTrue(m_ShooterHoodPositiveC);
-      //rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC); //fancy logic(look up truth table for OR to understand)
-      //rManipulatorTrigger.whileTrue(m_ShooterC);
-      //rManipulatorTrigger.whileFalse(m_ShooterStopC);
-      //lManipulatorTrigger.whileTrue(m_IntakeRollerC);
-      //lManipulatorTrigger.whileFalse(m_IntakeRollerOffC); 
-      aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
-      bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));
-      xDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("x manip button")));
+      xManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
+      yManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)));
+      
+      xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
+      lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
+      rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
+      // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
+      
+      rManipulatorBumper.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
+
+      // aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
+      // bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));
+      // xDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("x manip button")));
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
-      yDriverButton.whileTrue(m_ShooterC);
       
 
       
