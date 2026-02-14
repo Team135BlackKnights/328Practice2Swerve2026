@@ -58,6 +58,9 @@ public class RobotContainer {
   
   private final SendableChooser<Command> autoChooser;
 
+
+  public static double linearSpeedMultiplier = 7.5;
+  public static double radianSpeedMultiplier = 10;
   public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
   
     public static final Trigger xDriverButton = m_driverController.x();
@@ -235,7 +238,7 @@ public class RobotContainer {
       xDriverButton.toggleOnTrue(m_XLock);
       bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
-      //aDriverButton.onTrue(new InstantCommand(() -> ));
+      aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
       bManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
       yManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)));

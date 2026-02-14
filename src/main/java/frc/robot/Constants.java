@@ -58,8 +58,6 @@ public final class Constants {
     public static final double gearRatioSpeed = (1/5.9); 
     public static final double wheelRadius = 2 * 0.0254;
 
-    public static final double linearSpeedMultiplier = 7.5;
-    public static final double radianSpeedMultiplier = 10;
     public static final double maxLinearSpeedMPS = 0;
     public static final double maxRadSpeedRPS = 0;
   }
