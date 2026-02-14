@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.HangC;
+import frc.robot.commands.IndexerC;
 import frc.robot.commands.IntakeRollerC;
 import frc.robot.commands.MoveIntakeC;
 import frc.robot.commands.ShooterC;
@@ -33,6 +34,7 @@ import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
+import frc.robot.subsystems.IndexerS;
 import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.ShooterS;
@@ -128,6 +130,7 @@ public class RobotContainer {
     ShooterS m_ShooterS = new ShooterS ();
     IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
     HangS m_HangS = new HangS();
+    IndexerS m_IndexerS = new IndexerS();
   
     SwerveC m_SwerveC = new SwerveC(m_SwerveS);
     MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
@@ -141,8 +144,13 @@ public class RobotContainer {
     ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
     IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
+<<<<<<< HEAD
     HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
 
+=======
+    HangC m_HangC = new HangC(m_HangS, Constants.HangConstants.hangVoltage);
+    IndexerC m_IndexerC = new IndexerC(m_IndexerS, Constants.IndexerConstants.indexerVoltage);
+>>>>>>> badd695923d1c79a85d23debbc59246c54b21700
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -157,11 +165,14 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
+      
+      m_IndexerS.setDefaultCommand(m_IndexerC);//should constantly run indexer, if not work, bind to button(driver controller) as back up. 
       m_SwerveS.setDefaultCommand(m_SwerveC);
       // Configure the trigger bindings
       configureBindings();
     }
+
+    
 
     /**
      * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -220,7 +231,7 @@ public class RobotContainer {
       invert = -1;
     }
       */
-      
+
     Optional<Alliance> invert = DriverStation.getAlliance();
     Rotation2d gyroDirection = gyro.getRotation2d();
     if (invert.get().equals(Alliance.Red)){

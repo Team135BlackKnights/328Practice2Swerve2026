@@ -100,5 +100,11 @@ public final class Constants {
     public static final int hangMotorID = 19;
     public static final double hangVoltage = 8;
   }
+
+  public static class IndexerConstants {
+    public static final int indexerMotorID = 13;
+    public static final double indexerVoltage = 3;
+    public static final boolean indexerRunValue = true;
+  }
 }
 
