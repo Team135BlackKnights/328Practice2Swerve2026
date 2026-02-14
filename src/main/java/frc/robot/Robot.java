@@ -11,6 +11,10 @@ import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -38,7 +42,13 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  
+  UsbCamera camera1;
+  //UsbCamera camera2;
+  //UsbCamera camera3;
+  VideoSink server1;
+  //VideoSink server2;
+  //VideoSink server3;
+    
 
   @Override
   public void autonomousPeriodic() {
@@ -49,6 +59,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     drive(true);
+
   }
 
   // simple proportional turning control with Limelight.
@@ -169,7 +180,23 @@ public class Robot extends LoggedRobot {
     * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
     * to the dashboard. Just add this to the robot class constructor.
     */
-    CameraServer.startAutomaticCapture();
+    
+    camera1 = CameraServer.startAutomaticCapture(0);
+    //camera2 = CameraServer.startAutomaticCapture(1);
+    //camera3 = CameraServer.startAutomaticCapture(2);
+
+    server1 = CameraServer.getServer();
+    //server2 = CameraServer.getServer();
+    //server3 = CameraServer.getServer();
+
+    camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    //camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    //camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+
+    server1.setSource(camera1);
+    //server2.setSource(camera2);
+    //server3.setSource(camera3);
+    
     
   }
 
