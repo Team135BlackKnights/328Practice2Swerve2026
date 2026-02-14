@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -129,6 +130,14 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    /**
+    * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
+    * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
+    * to the dashboard. Just add this to the robot class constructor.
+    */
+    CameraServer.startAutomaticCapture();
+    
   }
 
   /**
