@@ -233,24 +233,22 @@ public class RobotContainer {
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       
       xDriverButton.toggleOnTrue(m_XLock);
-      aDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      bDriverButton.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
+      bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+      rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
+      //aDriverButton.onTrue(new InstantCommand(() -> ));
 
-      xManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
+      bManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
       yManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)));
-      
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
       rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
-      // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
-      
-      rManipulatorBumper.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
+      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
 
       // aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
       // bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));
       // xDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("x manip button")));
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
-      
+      // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
       
     }
