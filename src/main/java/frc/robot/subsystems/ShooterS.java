@@ -8,9 +8,9 @@ import frc.robot.Constants;
 
 public class ShooterS extends SubsystemBase{
     private final SparkMax m_motor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
-    //private final SparkMax m_motor2 = new SparkMax(Constants.ShooterConstants.shootermotor2ID, MotorType.kBrushless);
+    private final SparkMax m_motor2 = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
     public void fire(double shooter1Voltage, double shooter2Voltage){
             m_motor.setVoltage(shooter1Voltage);
-            //m_motor2.setVoltage(shooter2Voltage);
+            m_motor2.setVoltage(shooter2Voltage);
         }
 }

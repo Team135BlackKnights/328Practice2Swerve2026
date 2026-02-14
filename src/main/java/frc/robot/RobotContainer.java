@@ -144,13 +144,8 @@ public class RobotContainer {
     ShooterC m_ShooterStopC = new ShooterC(m_ShooterS, 0, 0);
     IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
     IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
-<<<<<<< HEAD
     HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
-
-=======
-    HangC m_HangC = new HangC(m_HangS, Constants.HangConstants.hangVoltage);
     IndexerC m_IndexerC = new IndexerC(m_IndexerS, Constants.IndexerConstants.indexerVoltage);
->>>>>>> badd695923d1c79a85d23debbc59246c54b21700
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
