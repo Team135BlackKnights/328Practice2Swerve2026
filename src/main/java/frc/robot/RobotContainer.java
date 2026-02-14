@@ -173,26 +173,26 @@ public class RobotContainer {
     
     
 
-    SwerveS m_SwerveS = new SwerveS();
-    MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
-    HoodAngleS m_HoodAngleS = new HoodAngleS ();
-    ShooterS m_ShooterS = new ShooterS ();
-    IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
-    HangS m_HangS = new HangS();
-    IndexerS m_IndexerS = new IndexerS();
+    static SwerveS m_SwerveS = new SwerveS();
+    static MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
+    static HoodAngleS m_HoodAngleS = new HoodAngleS ();
+    static ShooterS m_ShooterS = new ShooterS ();
+    static IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
+    static HangS m_HangS = new HangS();
+    static IndexerS m_IndexerS = new IndexerS();
   
     SwerveC m_SwerveC = new SwerveC(m_SwerveS);
-    MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
-    MoveIntakeC m_MoveIntakeUpC = new MoveIntakeC(m_MoveIntakeS, 0);
+    // MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
+    // MoveIntakeC m_MoveIntakeUpC = new MoveIntakeC(m_MoveIntakeS, 0);
     XLock m_XLock = new XLock(m_SwerveS);
-    ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
-    ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
-    ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
+    // ShooterHoodC m_ShooterHoodNegativeC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltageNegative);
+    // ShooterHoodC m_ShooterHoodPositiveC = new ShooterHoodC(m_HoodAngleS, Constants.HoodConstants.hoodAngleVoltagePositive);
+    // ShooterHoodC m_ShooterHoodStopC = new ShooterHoodC(m_HoodAngleS, 0);
 
-   // ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
-    IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
-    IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
-    HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
+    // ShooterC m_ShooterC = new ShooterC(m_ShooterS, Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
+    // IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
+    // IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
+    // HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
     IndexerC m_IndexerC = new IndexerC(m_IndexerS, Constants.IndexerConstants.indexerVoltage);
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
@@ -240,8 +240,9 @@ public class RobotContainer {
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
       aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
-      bManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
-      yManipulatorButton.toggleOnTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)));
+      bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.desiredPositionP),m_MoveIntakeS)));
+      yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)));
+      
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
       rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
