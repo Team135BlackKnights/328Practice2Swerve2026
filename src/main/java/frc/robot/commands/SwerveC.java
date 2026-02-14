@@ -40,7 +40,7 @@ public class SwerveC extends Command{
 
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
         final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
-        m_Swerve.setSpeed(Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, Constants.SwerveConstants.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, Constants.SwerveConstants.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
+        m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
         
     }
 
