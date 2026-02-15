@@ -246,7 +246,7 @@ public class RobotContainer {
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
       rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
+      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 2.5)));
 
       // aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
       // bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));

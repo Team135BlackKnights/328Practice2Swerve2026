@@ -69,7 +69,7 @@ public final class Constants {
     public static final int intakeVertMotorID = 20;
     public static final int intakeVertEncoderID = 21;
     public static final double desiredPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
-    public static final double upPositionP = 0; //depending on how PIDs go this could be different(tm)
+    public static final double upPositionP = 0.1; //depending on how PIDs go this could be different(tm)
   }
 
   public static class HoodConstants {
@@ -82,8 +82,8 @@ public final class Constants {
   }
   
   public static class ShooterConstants {
-    public static final int shooterMotorID = 24;
-    public static final int shooterMotor2ID = 25;
+    public static final int shooterMotorID = 24;//kicker
+    public static final int shooterMotor2ID = 25;//top
     public static final double shooter1Voltage = -7;
     public static final int shooter2voltage = -7;
   }
