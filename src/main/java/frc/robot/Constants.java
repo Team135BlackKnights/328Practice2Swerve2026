@@ -52,7 +52,7 @@ public final class Constants {
     public static final NeutralModeValue turnNeutralMode = NeutralModeValue.Coast; 
     public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake; 
 
-    public static final double[] turnPID = new double[] {3,0,0};
+    public static final double[] turnPID = new double[] {1,0,0};
     public static final double[] drivePID = new double[] {1,0,0};
 
     public static final double gearRatioSpeed = (1/5.9); 
@@ -65,7 +65,7 @@ public final class Constants {
   public static final double robotMassKG = 100;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {1,0,0};
+    public static final double[] intakePID = new double[] {1,0,1};
     public static final int intakeVertMotorID = 20;
     public static final int intakeVertEncoderID = 21;
     public static final double desiredPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
@@ -102,9 +102,9 @@ public final class Constants {
   }
 
   public static class IndexerConstants {
-    public static final int indexerMotorID = 28;
-    public static final double indexerVoltage = 3;
-    public static final boolean indexerRunValue = true;
+    public static final int indexerMotorID = 20;
+    public static final double indexerVoltage = -3;
+    public static final boolean indexerRunValue = false; 
   }
 }
 

@@ -193,9 +193,11 @@ public class RobotContainer {
     // IntakeRollerC m_IntakeRollerC = new IntakeRollerC(m_IntakeRollerS, Constants.IntakeRollerConstants.rollerVoltage);
     // IntakeRollerC m_IntakeRollerOffC = new IntakeRollerC(m_IntakeRollerS, 0);
     // HangC m_HangC = new HangC(m_HangS, Constants.IntakeRollerConstants.rollerVoltage);
-    IndexerC m_IndexerC = new IndexerC(m_IndexerS, Constants.IndexerConstants.indexerVoltage);
+    // IndexerC m_IndexerC = new IndexerC(m_IndexerS, Constants.IndexerConstants.indexerVoltage);
     // RollerC m_RollerStopC = new RollerC(m_IntakeRollerS, 0); should be unnecessary bcz m_RollerC is on a toggleOnTrue
   
+    //ParallelCommandGroup shootAndIndex = new ParallelCommandGroup(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(-2, -2)), Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
        // ...
@@ -209,13 +211,10 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
       
-      m_IndexerS.setDefaultCommand(m_IndexerC);//should constantly run indexer, if not work, bind to button(driver controller) as back up. 
       m_SwerveS.setDefaultCommand(m_SwerveC);
       // Configure the trigger bindings
       configureBindings();
     }
-
-    
 
     /**
      * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -235,6 +234,7 @@ public class RobotContainer {
   
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       
+      
       xDriverButton.toggleOnTrue(m_XLock);
       bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
@@ -246,14 +246,19 @@ public class RobotContainer {
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
       rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 2.5)));
-
+      
+      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
+      //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))); // to change it to both on 
+      
       // aDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("a manip button")));
       // bDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("b manip button")));
       // xDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("x manip button")));
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
       // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
+      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+
+      rManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       
     }
 
