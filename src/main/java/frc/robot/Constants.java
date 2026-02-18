@@ -89,8 +89,8 @@ public final class Constants {
   }
 
   public static class IntakeRollerConstants {
-    public static final int rollerMotorID = 26;
-    public static final double rollerVoltage = -6;
+    public static final int rollerMotorID = 31;
+    public static final double rollerVoltage = -8;
   }
 
   public static class PigeonConstants {
