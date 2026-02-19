@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
@@ -48,7 +50,7 @@ public class Robot extends LoggedRobot {
   VideoSink server1;
   //VideoSink server2;
   //VideoSink server3;
-    
+  NetworkTableEntry cameraSelection;  
 
   @Override
   public void autonomousPeriodic() {
@@ -59,7 +61,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     drive(true);
-
+    
+    /* switches btwn multiple cameras
+    if (RobotContainer.lDriverStickButton.getAsBoolean()){
+      cameraSelection.setString(camera2.getName());
+    }
+    */
   }
 
   // simple proportional turning control with Limelight.
@@ -197,7 +204,7 @@ public class Robot extends LoggedRobot {
     //server2.setSource(camera2);
     //server3.setSource(camera3);
     
-    
+    cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     
   }
 

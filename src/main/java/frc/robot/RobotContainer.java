@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -72,6 +73,7 @@ public class RobotContainer {
     public static final Trigger rDriverBumper = m_driverController.rightBumper();
     public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
     public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
+    public static final Trigger lDriverStickButton = m_driverController.leftStick();
 
     public static final Trigger dpadDriverRight = new Trigger(() -> {
       double pov = m_driverController.getHID().getPOV();
@@ -247,6 +249,8 @@ public class RobotContainer {
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodTopSetpoint),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.setVoltage(0)));
       rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodBottomSetpoint),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.setVoltage(0)));
       
+
+
       //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
       //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))); // to change it to both on 
       
