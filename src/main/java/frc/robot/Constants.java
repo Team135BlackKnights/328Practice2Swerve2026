@@ -68,8 +68,11 @@ public final class Constants {
     public static final double[] intakePID = new double[] {1,0,1};
     public static final int intakeVertMotorID = 20;
     public static final int intakeVertEncoderID = 21;
-    public static final double downPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
-    public static final double upPositionP = 0.1; //depending on how PIDs go this could be different(tm)
+    public static final double downPositionSetpoint = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
+    public static final double upPositionSetpoint = 0.1; //depending on how PIDs go this could be different(tm)
+    public static final double intakeUpVoltage = 0.5;
+    public static final double intakeDownVoltage = -0.5;
+
   }
 
   public static class HoodConstants {
@@ -77,8 +80,15 @@ public final class Constants {
     public static final int hoodEncoderID = 23;
     public static final double minHoodRange = 0;
     public static final double maxHoodRange = 3.5;
-    public static final double hoodAngleVoltagePositive = 5.0;
-    public static final double hoodAngleVoltageNegative = -5.0;
+
+  
+    public static final double hoodAngleVoltagePositive = 0.5;
+    public static final double hoodAngleVoltageNegative = -0.5;
+
+    public static final double hoodTopSetpoint = 0.25;
+    public static final double hoodBottomSetpoint = 0.0;
+
+    public static final double[] hoodPID = new double[] {1,0,1};
   }
   
   public static class ShooterConstants {

@@ -16,7 +16,7 @@ public class ShooterHoodC extends Command{
     
     @Override
     public void execute(){
-       m_HoodAngleS.moveRange(voltage);
+       m_HoodAngleS.moveHood(voltage);
     }
 
     @Override

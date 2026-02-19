@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,13 +15,10 @@ public class MoveIntakeS extends SubsystemBase {
 
     private PIDController intakeController = new PIDController(Constants.IntakeConstants.intakePID[0], Constants.IntakeConstants.intakePID[1], Constants.IntakeConstants.intakePID[2]);
 
-    private double clamp(double a, double min, double max){
-        return  Math.max(Math.min(a, max), min);
-    }
-
+    
     public void moveTo(double desiredPosition){
         double intakeVoltage = intakeController.calculate(m_Encoder.get(), desiredPosition);
-        intakeVoltage = clamp(intakeVoltage, -0.5, 0.5);
+        intakeVoltage = MathUtil.clamp(intakeVoltage, Constants.IntakeConstants.intakeDownVoltage, Constants.IntakeConstants.intakeUpVoltage);
         m_motor.setVoltage(intakeVoltage); 
     }
 
