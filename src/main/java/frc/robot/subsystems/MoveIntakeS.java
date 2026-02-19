@@ -14,9 +14,19 @@ public class MoveIntakeS extends SubsystemBase {
 
     private PIDController intakeController = new PIDController(Constants.IntakeConstants.intakePID[0], Constants.IntakeConstants.intakePID[1], Constants.IntakeConstants.intakePID[2]);
 
+    private double clamp(double a, double min, double max){
+        return  Math.max(Math.min(a, max), min);
+    }
+
     public void moveTo(double desiredPosition){
-        double intakeVoltage = intakeController.calculate(desiredPosition, m_Encoder.get());
+        double intakeVoltage = intakeController.calculate(m_Encoder.get(), desiredPosition);
+        intakeVoltage = clamp(intakeVoltage, -0.5, 0.5);
         m_motor.setVoltage(intakeVoltage); 
+    }
+
+    public void setVoltage(double voltage){
+        //TODO clamp setvoltage
+        m_motor.setVoltage(voltage);
     }
 
 

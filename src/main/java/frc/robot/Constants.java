@@ -68,7 +68,7 @@ public final class Constants {
     public static final double[] intakePID = new double[] {1,0,1};
     public static final int intakeVertMotorID = 20;
     public static final int intakeVertEncoderID = 21;
-    public static final double desiredPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
+    public static final double downPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
     public static final double upPositionP = 0.1; //depending on how PIDs go this could be different(tm)
   }
 
@@ -84,13 +84,13 @@ public final class Constants {
   public static class ShooterConstants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//top
-    public static final double shooter1Voltage = -7;
-    public static final int shooter2voltage = -7;
+    public static final double shooter1Voltage = -6;
+    public static final int shooter2voltage = -6;
   }
 
   public static class IntakeRollerConstants {
     public static final int rollerMotorID = 31;
-    public static final double rollerVoltage = -8;
+    public static final double rollerVoltage = 6;
   }
 
   public static class PigeonConstants {
@@ -103,7 +103,7 @@ public final class Constants {
 
   public static class IndexerConstants {
     public static final int indexerMotorID = 20;
-    public static final double indexerVoltage = -3;
+    public static final double indexerVoltage = -5;
     public static final boolean indexerRunValue = false; 
   }
 }
