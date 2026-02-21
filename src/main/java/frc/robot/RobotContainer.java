@@ -8,15 +8,16 @@ package frc.robot;
 
 import java.util.Optional;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
+
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,12 +27,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.HangC;
-import frc.robot.commands.IndexerC;
-import frc.robot.commands.IntakeRollerC;
-import frc.robot.commands.MoveIntakeC;
-import frc.robot.commands.ShooterC;
-import frc.robot.commands.ShooterHoodC;
+
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HangS;
@@ -59,10 +55,13 @@ public class RobotContainer {
   
   private final SendableChooser<Command> autoChooser;
 
+  double hoodSetpoint = 0;
+
+  static CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
 
   public static double linearSpeedMultiplier = 7.5;
   public static double radianSpeedMultiplier = 10;
-  public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
+  public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, bus);
   
     public static final Trigger xDriverButton = m_driverController.x();
     public static final Trigger yDriverButton = m_driverController.y();
@@ -236,7 +235,7 @@ public class RobotContainer {
   
       //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       
-      
+      // yDriverButton is bound to limelight (see Robot.java)
       xDriverButton.toggleOnTrue(m_XLock);
       bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
@@ -246,9 +245,18 @@ public class RobotContainer {
       yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionSetpoint),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
       
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
-      lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodTopSetpoint),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.setVoltage(0)));
-      rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodBottomSetpoint),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.setVoltage(0)));
-      
+      dpadManipDown.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
+
+      lManipulatorBumper.onTrue(new InstantCommand(() -> {
+        hoodSetpoint = MathUtil.clamp(hoodSetpoint += 0.05, 0.0, 0.25);
+        Commands.run(() -> m_HoodAngleS.moveHood(hoodSetpoint));
+      }));
+
+      rManipulatorBumper.onTrue(new InstantCommand(() -> {
+        hoodSetpoint = MathUtil.clamp(hoodSetpoint -= 0.05, 0.0, 0.25);
+        Commands.run(() -> m_HoodAngleS.moveHood(hoodSetpoint));
+      }));
+
 
 
       //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
@@ -265,21 +273,8 @@ public class RobotContainer {
       rManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       
     }
-
-    // field oriented code. snowball's chance in flames it'll work
-    
-    // int invert = 1;
-  
+      
   public static ChassisSpeeds fieldOrientedDrive(double x, double y, double rot){
-  
-    // The origin is always blue. When our alliance is red, X and Y need to be inverted
-    /*
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    int invert = 1;
-    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-      invert = -1;
-    }
-      */
 
     Optional<Alliance> invert = DriverStation.getAlliance();
     Rotation2d gyroDirection = gyro.getRotation2d();

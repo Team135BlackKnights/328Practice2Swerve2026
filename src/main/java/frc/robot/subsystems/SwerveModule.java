@@ -94,7 +94,7 @@ public class SwerveModule {
     // public void updateStateBangBang(double driveVoltage, double turnVoltage){
     //     double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble();
     //     double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI;
-    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;//TODO fix +- so it dont go backwards also units
+    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;
     //     double angularError = desiredState.angle.getRadians() - currentTurnPosition; 
     //     if(angularError < -0.01){
     //         turnMotor.setVoltage(turnVoltage);
@@ -113,7 +113,7 @@ public class SwerveModule {
     // }
 
     public void updateStatePID(){
-        double currentDriveVelocity = getDriveSpeed();//5.9:1 and 2 in
+        double currentDriveVelocity = getDriveSpeed(); //5.9:1 and 2 in
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));

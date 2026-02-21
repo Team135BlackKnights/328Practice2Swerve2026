@@ -33,6 +33,7 @@ public class HoodAngleS extends SubsystemBase {
     */
 
     // same as moveintake subsystem
+    
     public void moveHood(double setpoint){
         double voltage = intakeController.calculate(m_Encoder.get(), setpoint);
         voltage = MathUtil.clamp(voltage, Constants.HoodConstants.hoodAngleVoltageNegative, Constants.HoodConstants.hoodAngleVoltagePositive);

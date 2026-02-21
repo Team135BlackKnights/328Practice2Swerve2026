@@ -23,7 +23,7 @@ public class MoveIntakeS extends SubsystemBase {
     }
 
     public void setVoltage(double voltage){
-        //TODO clamp setvoltage
+        voltage = MathUtil.clamp(voltage, Constants.IntakeConstants.intakeDownVoltage, Constants.IntakeConstants.intakeUpVoltage);
         m_motor.setVoltage(voltage);
     }
 
