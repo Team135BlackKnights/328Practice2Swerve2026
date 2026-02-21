@@ -116,5 +116,12 @@ public final class Constants {
     public static final double indexerVoltage = -5;
     public static final boolean indexerRunValue = false; 
   }
+
+  public static class HopperConstants {
+    public static final double[] hopperPID = new double[] {0,0,0};
+    public static final double hopperMaxVoltage = 1;
+    public static final double inSetpoint = 0.0;
+    public static final double outSetpoint = 0.25;
+  }
 }
 
