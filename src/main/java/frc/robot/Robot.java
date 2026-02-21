@@ -7,6 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.HoodAngleS;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -35,6 +39,9 @@ import com.revrobotics.util.StatusLogger;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   //  private final Swerve m_swerve = new Swerve(); used in the last setSpeed by limelight, irrevelent
+  private final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
+  private final HoodAngleS m_HoodAngleS = new HoodAngleS();
+  private final Hopper m_HopperS = new Hopper();
 
   private final RobotContainer m_robotContainer;
 
@@ -62,11 +69,20 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     
+    // depending on how the PIDs work use this if we want to start the PIDs from the beginning instead of just at the start
+    // startPID()
+
     /* switches btwn multiple cameras
     if (RobotContainer.lDriverStickButton.getAsBoolean()){
       cameraSelection.setString(camera2.getName());
     }
     */
+  }
+
+  private void startPID() {
+    Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint),m_MoveIntakeS);
+    Commands.run(() -> m_HoodAngleS.moveHood(0),m_HoodAngleS);
+    Commands.run(() -> m_HopperS.retractHopper(),m_HopperS);
   }
 
   // simple proportional turning control with Limelight.

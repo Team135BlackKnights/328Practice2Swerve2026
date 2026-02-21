@@ -32,6 +32,7 @@ import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.IndexerS;
 import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
@@ -181,6 +182,7 @@ public class RobotContainer {
     static IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
     static HangS m_HangS = new HangS();
     static IndexerS m_IndexerS = new IndexerS();
+    static Hopper m_HopperS = new Hopper();
   
     SwerveC m_SwerveC = new SwerveC(m_SwerveS);
     // MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
@@ -246,6 +248,9 @@ public class RobotContainer {
       
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       dpadManipDown.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
+
+      dpadManipLeft.onTrue(Commands.run(() -> m_HopperS.extendHopper(), m_HopperS));
+      dpadManipRight.onTrue(Commands.run(() -> m_HopperS.retractHopper(), m_HopperS));
 
       lManipulatorBumper.onTrue(new InstantCommand(() -> {
         hoodSetpoint = MathUtil.clamp(hoodSetpoint += 0.05, 0.0, 0.25);
