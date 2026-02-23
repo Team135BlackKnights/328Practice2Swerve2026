@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import org.opencv.core.Mat;
-
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
@@ -21,14 +19,8 @@ public class Hopper extends SubsystemBase{
         m_motor.setVoltage(MathUtil.clamp(v, 0, Constants.HopperConstants.hopperMaxVoltage));
     }
 
-    public void extendHopper() {
-        double voltage = m_Controller.calculate(m_Encoder.get(), Constants.HopperConstants.outSetpoint);
-        voltage = MathUtil.clamp(voltage, 0, Constants.HopperConstants.hopperMaxVoltage);
-        m_motor.setVoltage(voltage);
-    }
-
-    public void retractHopper() {
-        double voltage = m_Controller.calculate(m_Encoder.get(), Constants.HopperConstants.inSetpoint);
+    public void moveHopper(double setpoint) {
+        double voltage = m_Controller.calculate(m_Encoder.get(), setpoint);
         voltage = MathUtil.clamp(voltage, 0, Constants.HopperConstants.hopperMaxVoltage);
         m_motor.setVoltage(voltage);
     }

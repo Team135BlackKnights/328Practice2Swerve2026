@@ -56,7 +56,7 @@ public class RobotContainer {
   
   private final SendableChooser<Command> autoChooser;
 
-  double hoodSetpoint = 0;
+  public static double hoodSetpoint = 0;
 
   static CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
 
@@ -235,7 +235,6 @@ public class RobotContainer {
       // cancelling on release.
   
   
-      //xButtonTrigger.whileTrue(m_IntakeC); this is how you do that
       
       // yDriverButton is bound to limelight (see Robot.java)
       xDriverButton.toggleOnTrue(m_XLock);
@@ -243,23 +242,29 @@ public class RobotContainer {
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
       aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
-      bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
-      yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionSetpoint),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
+      bManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));
+      yManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint));
+
+      //bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
+      //yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionSetpoint),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
       
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       dpadManipDown.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
 
-      dpadManipLeft.onTrue(Commands.run(() -> m_HopperS.extendHopper(), m_HopperS));
-      dpadManipRight.onTrue(Commands.run(() -> m_HopperS.retractHopper(), m_HopperS));
+      dpadManipLeft.onTrue(new InstantCommand(() -> Robot.hopperSetpoint = Constants.HopperConstants.outSetpoint));
+      dpadManipRight.onTrue(new InstantCommand(() -> Robot.hopperSetpoint = Constants.HopperConstants.inSetpoint));
+
+      //dpadManipLeft.onTrue(Commands.run(() -> m_HopperS.extendHopper(), m_HopperS));
+      //dpadManipRight.onTrue(Commands.run(() -> m_HopperS.retractHopper(), m_HopperS));
 
       lManipulatorBumper.onTrue(new InstantCommand(() -> {
-        hoodSetpoint = MathUtil.clamp(hoodSetpoint += 0.05, 0.0, 0.25);
-        Commands.run(() -> m_HoodAngleS.moveHood(hoodSetpoint));
+        hoodSetpoint = MathUtil.clamp(hoodSetpoint += 0.05, Constants.HoodConstants.minHoodRange, Constants.HoodConstants.maxHoodRange);
+        Robot.hoodSetpoint = hoodSetpoint;
       }));
 
       rManipulatorBumper.onTrue(new InstantCommand(() -> {
-        hoodSetpoint = MathUtil.clamp(hoodSetpoint -= 0.05, 0.0, 0.25);
-        Commands.run(() -> m_HoodAngleS.moveHood(hoodSetpoint));
+        hoodSetpoint = MathUtil.clamp(hoodSetpoint -= 0.05, Constants.HoodConstants.minHoodRange, Constants.HoodConstants.maxHoodRange);
+        Robot.hoodSetpoint = hoodSetpoint;
       }));
 
 

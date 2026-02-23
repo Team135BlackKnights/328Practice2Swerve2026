@@ -78,7 +78,7 @@ public final class Constants {
   public static class HoodConstants {
     public static final int hoodMotorID = 22;
     public static final int hoodEncoderID = 23;
-    public static final double minHoodRange = 0;
+    public static final double minHoodRange = 0; // these numbers are both for limiting PID
     public static final double maxHoodRange = 3.5;
 
   

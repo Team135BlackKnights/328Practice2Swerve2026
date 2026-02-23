@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.MoveIntakeS;
@@ -45,8 +46,11 @@ public class Robot extends LoggedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  public static double intakeSetpoint = 0;
+  public static double hopperSetpoint = 0;
+  public static double hoodSetpoint = 0;
 
-    // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
+  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
@@ -69,8 +73,7 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     
-    // depending on how the PIDs work use this if we want to start the PIDs from the beginning instead of just at the start
-    // startPID()
+    periodicPID(intakeSetpoint, hopperSetpoint, hoodSetpoint);
 
     /* switches btwn multiple cameras
     if (RobotContainer.lDriverStickButton.getAsBoolean()){
@@ -79,10 +82,18 @@ public class Robot extends LoggedRobot {
     */
   }
 
+  private void periodicPID(double intakeSetpoint, double hopperSetpoint, double hoodSetpoint){
+
+    m_MoveIntakeS.moveTo(intakeSetpoint);
+    m_HopperS.moveHopper(hopperSetpoint);
+    m_HoodAngleS.moveHood(hoodSetpoint);
+
+  }
+
   private void startPID() {
     Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint),m_MoveIntakeS);
-    Commands.run(() -> m_HoodAngleS.moveHood(0),m_HoodAngleS);
-    Commands.run(() -> m_HopperS.retractHopper(),m_HopperS);
+    Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodTopSetpoint),m_HoodAngleS);
+    Commands.run(() -> m_HopperS.moveHopper(Constants.HopperConstants.inSetpoint),m_HopperS);
   }
 
   // simple proportional turning control with Limelight.
@@ -222,6 +233,7 @@ public class Robot extends LoggedRobot {
     
     cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     
+    startPID();
   }
 
   /**
