@@ -21,7 +21,7 @@ public class Hopper extends SubsystemBase{
 
     public void moveHopper(double setpoint) {
         double voltage = m_Controller.calculate(m_Encoder.get(), setpoint);
-        voltage = MathUtil.clamp(voltage, 0, Constants.HopperConstants.hopperMaxVoltage);
+        voltage = MathUtil.clamp(voltage, Constants.HopperConstants.hopperMinVoltage, Constants.HopperConstants.hopperMaxVoltage);
         m_motor.setVoltage(voltage);
     }
 }

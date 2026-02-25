@@ -239,7 +239,8 @@ public class RobotContainer {
       // yDriverButton is bound to limelight (see Robot.java)
       xDriverButton.toggleOnTrue(m_XLock);
       bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
+      //TODO fix hang controls
+      //rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
       aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
       bManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));

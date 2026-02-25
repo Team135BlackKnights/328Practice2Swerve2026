@@ -108,7 +108,11 @@ public final class Constants {
   }
   public static class HangConstants{
     public static final int hangMotorID = 27;
-    public static final double hangVoltage = 8;
+    public static final double hangMaxVoltage = 8;
+    public static final double hangMinVoltage = -8;
+    public static final double[] hangPID = new double[] {0,0,0};
+    public static final double hangDownSetpoint = 0.0;
+    public static final double hangUpSetpoint = 0.3;
   }
 
   public static class IndexerConstants {
@@ -120,6 +124,7 @@ public final class Constants {
   public static class HopperConstants {
     public static final double[] hopperPID = new double[] {0,0,0};
     public static final double hopperMaxVoltage = 1;
+    public static final double hopperMinVoltage = -1;
     public static final double inSetpoint = 0.0;
     public static final double outSetpoint = 0.25;
   }
