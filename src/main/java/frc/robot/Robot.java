@@ -73,6 +73,7 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     
+    // TODO enable when PID tuning
     // periodicPID(intakeSetpoint, hopperSetpoint, hoodSetpoint);
 
     /* switches btwn multiple cameras
@@ -137,14 +138,14 @@ public class Robot extends LoggedRobot {
   private void drive(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    var xSpeed =
+    double xSpeed =
         -m_xspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), 0.02))
             * SwerveS.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
-    var ySpeed =
+    double ySpeed =
         -m_yspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), 0.02))
             * SwerveS.kMaxSpeed;
 
@@ -153,7 +154,7 @@ public class Robot extends LoggedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
   
     // the right by default.
-    var rot =
+    double rot =
         -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
             * SwerveS.kMaxAngularSpeed;
 
@@ -163,10 +164,10 @@ public class Robot extends LoggedRobot {
 
     if(RobotContainer.yDriverButton.getAsBoolean())
     {
-        final var rot_limelight = limelight_aim_proportional();
+        final double rot_limelight = limelight_aim_proportional();
         rot = rot_limelight;
 
-        final var forward_limelight = limelight_range_proportional();
+        final double forward_limelight = limelight_range_proportional();
         xSpeed = forward_limelight;
 
         //while using Limelight, turn off field-relative driving.
@@ -239,7 +240,8 @@ public class Robot extends LoggedRobot {
     
     cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     
-    startPID();
+    //TODO fix pids or delete if unwanted
+    //startPID();
   }
 
   /**

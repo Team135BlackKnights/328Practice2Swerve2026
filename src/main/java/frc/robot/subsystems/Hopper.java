@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+//not used but good to have
 public class Hopper extends SubsystemBase{
     private final SparkMax m_motor = new SparkMax(Constants.HoodConstants.hoodMotorID, MotorType.kBrushless);
     private final DutyCycleEncoder m_Encoder = new DutyCycleEncoder(Constants.HoodConstants.hoodEncoderID);
     private final PIDController m_Controller = new PIDController(Constants.HopperConstants.hopperPID[0], Constants.HopperConstants.hopperPID[1], Constants.HopperConstants.hopperPID[2]); 
 
     public void setVoltage(double v) {
-        m_motor.setVoltage(MathUtil.clamp(v, 0, Constants.HopperConstants.hopperMaxVoltage));
+        m_motor.setVoltage(MathUtil.clamp(v, Constants.HopperConstants.hopperMinVoltage, Constants.HopperConstants.hopperMaxVoltage));
     }
 
     public void moveHopper(double setpoint) {

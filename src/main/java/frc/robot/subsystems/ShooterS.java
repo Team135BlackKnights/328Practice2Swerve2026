@@ -17,6 +17,8 @@ public class ShooterS extends SubsystemBase{
     private final SparkMax m_motor2 = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
     private final RelativeEncoder shooterEncoder = m_motor.getEncoder();
     private final RelativeEncoder kickupEncoder = m_motor2.getEncoder();
+
+    //TODO shooter PID (likely only velocity)
     public ShooterS(){
         SparkMaxConfig config = new SparkMaxConfig();
         m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
