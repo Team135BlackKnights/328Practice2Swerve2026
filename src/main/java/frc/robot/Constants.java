@@ -89,6 +89,8 @@ public final class Constants {
     public static final double hoodBottomSetpoint = 0.0;
 
     public static final double[] hoodPID = new double[] {1,0,1};
+
+    public static final double constantProportionality = 0.5;
   }
   
   public static class ShooterConstants {

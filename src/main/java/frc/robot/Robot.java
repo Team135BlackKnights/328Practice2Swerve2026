@@ -73,7 +73,7 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     
-    periodicPID(intakeSetpoint, hopperSetpoint, hoodSetpoint);
+    // periodicPID(intakeSetpoint, hopperSetpoint, hoodSetpoint);
 
     /* switches btwn multiple cameras
     if (RobotContainer.lDriverStickButton.getAsBoolean()){
@@ -171,6 +171,12 @@ public class Robot extends LoggedRobot {
 
         //while using Limelight, turn off field-relative driving.
         fieldRelative = false;
+
+        RobotContainer.m_SwerveS.setSpeed(xSpeed, ySpeed, rot);
+
+        // this changes the hood angle in proportion of the distance to the apriltag
+        // made so it will avoid division by 0
+        hoodSetpoint = (1 / Math.max(Constants.HoodConstants.constantProportionality, 0.001)) * LimelightHelpers.getTA("limelight"); 
     }
 
     // m_swerve.setSpeed(xSpeed, ySpeed, rot); i dont know why limelight has this here but it's there

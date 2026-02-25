@@ -205,14 +205,14 @@ public class RobotContainer {
     public RobotContainer() {
        // ...
 
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    m_SwerveS.swervePathPlanner();
-    autoChooser = AutoBuilder.buildAutoChooser();
+      // Build an auto chooser. This will use Commands.none() as the default option.
+      m_SwerveS.swervePathPlanner();
+      autoChooser = AutoBuilder.buildAutoChooser();
 
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+      // Another option that allows you to specify the default auto by its name
+      // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+      SmartDashboard.putData("Auto Chooser", autoChooser);
       
       m_SwerveS.setDefaultCommand(m_SwerveC);
       // Configure the trigger bindings
