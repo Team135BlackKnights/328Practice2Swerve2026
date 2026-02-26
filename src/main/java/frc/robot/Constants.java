@@ -64,10 +64,11 @@ public final class Constants {
 
   public static final double robotMassKG = 100;
 
+  //TODO: see what can ports the encoders want to be on (same or different ones)
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,1};
-    public static final int intakeVertMotorID = 20;
-    public static final int intakeVertEncoderID = 21;
+    public static final int intakeVertMotorID = 26;
+    public static final int intakeVertEncoderID = 26;
     public static final double downPositionSetpoint = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
     public static final double upPositionSetpoint = 0.1; //depending on how PIDs go this could be different(tm)
     public static final double intakeUpVoltage = 0.5;

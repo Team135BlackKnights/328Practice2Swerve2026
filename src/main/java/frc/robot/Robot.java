@@ -33,13 +33,15 @@ import org.littletonrobotics.urcl.URCL;
 import com.revrobotics.util.StatusLogger;
 
 /**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
+ * The methods in this class are called automatically corresponding to each
+ * mode, as described in
+ * the TimedRobot documentation. If you change the name of this class or the
+ * package after creating
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
-  //  private final Swerve m_swerve = new Swerve(); used in the last setSpeed by limelight, irrevelent
+  // private final Swerve m_swerve = new Swerve(); used in the last setSpeed by limelight, irrevelent
   private final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
   private final HoodAngleS m_HoodAngleS = new HoodAngleS();
   private final Hopper m_HopperS = new Hopper();
@@ -56,34 +58,35 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   UsbCamera camera1;
-  //UsbCamera camera2;
-  //UsbCamera camera3;
+  // UsbCamera camera2;
+  // UsbCamera camera3;
   VideoSink server1;
-  //VideoSink server2;
-  //VideoSink server3;
-  NetworkTableEntry cameraSelection;  
+  // VideoSink server2;
+  // VideoSink server3;
+  NetworkTableEntry cameraSelection;
 
   @Override
   public void autonomousPeriodic() {
     drive(false);
-    //m_swerve.updateOdometry();
+    // m_swerve.updateOdometry();
   }
 
   @Override
   public void teleopPeriodic() {
     drive(true);
-    
+
     // TODO enable when PID tuning
     // periodicPID(intakeSetpoint, hopperSetpoint, hoodSetpoint);
 
-    /* switches btwn multiple cameras
-    if (RobotContainer.lDriverStickButton.getAsBoolean()){
-      cameraSelection.setString(camera2.getName());
-    }
-    */
+    /*
+     * switches btwn multiple cameras
+     * if (RobotContainer.lDriverStickButton.getAsBoolean()){
+     * cameraSelection.setString(camera2.getName());
+     * }
+     */
   }
 
-  private void periodicPID(double intakeSetpoint, double hopperSetpoint, double hoodSetpoint){
+  private void periodicPID(double intakeSetpoint, double hopperSetpoint, double hoodSetpoint) {
 
     m_MoveIntakeS.moveTo(intakeSetpoint);
     m_HopperS.moveHopper(hopperSetpoint);
@@ -92,42 +95,46 @@ public class Robot extends LoggedRobot {
   }
 
   private void startPID() {
-    Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint),m_MoveIntakeS);
-    Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodTopSetpoint),m_HoodAngleS);
-    Commands.run(() -> m_HopperS.moveHopper(Constants.HopperConstants.inSetpoint),m_HopperS);
+    Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionSetpoint), m_MoveIntakeS);
+    Commands.run(() -> m_HoodAngleS.moveHood(Constants.HoodConstants.hoodTopSetpoint), m_HoodAngleS);
+    Commands.run(() -> m_HopperS.moveHopper(Constants.HopperConstants.inSetpoint), m_HopperS);
   }
 
   // simple proportional turning control with Limelight.
-  // "proportional control" is a control algorithm in which the output is proportional to the error.
-  // in this case, we are going to return an angular velocity that is proportional to the 
+  // "proportional control" is a control algorithm in which the output is
+  // proportional to the error.
+  // in this case, we are going to return an angular velocity that is proportional
+  // to the
   // "tx" value from the Limelight.
-  double limelight_aim_proportional()
-  {    
+  double limelight_aim_proportional() {
     // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
+    // this is a hand-tuned number that determines the aggressiveness of our
+    // proportional control loop
     // if it is too high, the robot will oscillate.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
     double kP = .035;
 
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
+    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the
+    // rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.
     double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
 
     // convert to radians per second for our drive method
     targetingAngularVelocity *= SwerveS.kMaxAngularSpeed;
 
-    //invert since tx is positive when the target is to the right of the crosshair
+    // invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
 
     return targetingAngularVelocity;
   }
 
   // simple proportional ranging control with Limelight's "ty" value
-  // this works best if your Limelight's mount height and target mount height are different.
-  // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()
-  {    
+  // this works best if your Limelight's mount height and target mount height are
+  // different.
+  // if your limelight and target are mounted at the same or similar heights, use
+  // "ta" (area) for target ranging rather than "ty"
+  double limelight_range_proportional() {
     double kP = .1;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
     targetingForwardSpeed *= SwerveS.kMaxSpeed;
@@ -138,57 +145,58 @@ public class Robot extends LoggedRobot {
   private void drive(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), 0.02))
-            * SwerveS.kMaxSpeed;
+    double xSpeed = -m_xspeedLimiter
+        .calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), 0.02))
+        * SwerveS.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
-    double ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), 0.02))
-            * SwerveS.kMaxSpeed;
+    double ySpeed = -m_yspeedLimiter
+        .calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), 0.02))
+        * SwerveS.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
-  
+
     // the right by default.
-    double rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
-            * SwerveS.kMaxAngularSpeed;
+    double rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
+        * SwerveS.kMaxAngularSpeed;
 
-    // while the Y-button is pressed, overwrite some of the driving values with the output of our limelight methods
+    // while the Y-button is pressed, overwrite some of the driving values with the
+    // output of our limelight methods
 
-    
+    if (RobotContainer.yDriverButton.getAsBoolean()) {
+      final double rot_limelight = limelight_aim_proportional();
+      rot = rot_limelight;
 
-    if(RobotContainer.yDriverButton.getAsBoolean())
-    {
-        final double rot_limelight = limelight_aim_proportional();
-        rot = rot_limelight;
+      final double forward_limelight = limelight_range_proportional();
+      xSpeed = forward_limelight;
 
-        final double forward_limelight = limelight_range_proportional();
-        xSpeed = forward_limelight;
+      // while using Limelight, turn off field-relative driving.
+      fieldRelative = false;
 
-        //while using Limelight, turn off field-relative driving.
-        fieldRelative = false;
+      RobotContainer.m_SwerveS.setSpeed(xSpeed, ySpeed, rot);
 
-        RobotContainer.m_SwerveS.setSpeed(xSpeed, ySpeed, rot);
-
-        // this changes the hood angle in proportion of the distance to the apriltag
-        // made so it will avoid division by 0
-        hoodSetpoint = (1 / Math.max(Constants.HoodConstants.constantProportionality, 0.001)) * LimelightHelpers.getTA("limelight"); 
+      // this changes the hood angle in proportion of the distance to the apriltag
+      // made so it will avoid division by 0
+      hoodSetpoint = (1 / Math.max(Constants.HoodConstants.constantProportionality, 0.001))
+          * LimelightHelpers.getTA("limelight");
     }
 
-    // m_swerve.setSpeed(xSpeed, ySpeed, rot); i dont know why limelight has this here but it's there
+    // m_swerve.setSpeed(xSpeed, ySpeed, rot); i dont know why limelight has this
+    // here but it's there
   }
 
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -203,9 +211,8 @@ public class Robot extends LoggedRobot {
           default -> "Unknown";
         });
 
-
-        Logger.addDataReceiver(new WPILOGWriter());
-        Logger.addDataReceiver(new NT4Publisher());
+    Logger.addDataReceiver(new WPILOGWriter());
+    Logger.addDataReceiver(new NT4Publisher());
 
     // Initialize URCL
     Logger.registerURCL(URCL.startExternal());
@@ -217,60 +224,70 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
 
     /**
-    * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
-    * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
-    * to the dashboard. Just add this to the robot class constructor.
-    */
-    
+     * Uses the CameraServer class to automatically capture video from a USB webcam
+     * and send it to the
+     * FRC dashboard without doing any vision processing. This is the easiest way to
+     * get camera images
+     * to the dashboard. Just add this to the robot class constructor.
+     */
+
     camera1 = CameraServer.startAutomaticCapture(0);
-    //camera2 = CameraServer.startAutomaticCapture(1);
-    //camera3 = CameraServer.startAutomaticCapture(2);
+    // camera2 = CameraServer.startAutomaticCapture(1);
+    // camera3 = CameraServer.startAutomaticCapture(2);
 
     server1 = CameraServer.getServer();
-    //server2 = CameraServer.getServer();
-    //server3 = CameraServer.getServer();
+    // server2 = CameraServer.getServer();
+    // server3 = CameraServer.getServer();
 
     camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    //camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    //camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    // camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    // camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
 
     server1.setSource(camera1);
-    //server2.setSource(camera2);
-    //server3.setSource(camera3);
-    
+    // server2.setSource(camera2);
+    // server3.setSource(camera3);
+
     cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
-    
-    //TODO fix pids or delete if unwanted
-    //startPID();
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * This function is called every 20 ms, no matter the mode. Use this for items
+   * like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your
+   * {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
-    //TODO m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // TODO m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -297,15 +314,17 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
-
+  public void simulationPeriodic() {
+  }
 
 }

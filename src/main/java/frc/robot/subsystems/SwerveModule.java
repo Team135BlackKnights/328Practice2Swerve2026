@@ -15,18 +15,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.SwerveConstants;
 
-
 public class SwerveModule {
-    private final TalonFX turnMotor; 
-    private final TalonFX driveMotor; 
-    private final CANcoder turnEncoder; 
+    private final TalonFX turnMotor;
+    private final TalonFX driveMotor;
+    private final CANcoder turnEncoder;
     private final double offsetRadians;
-    private SwerveModuleState desiredState; 
-    
-    private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
-    private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
+    private SwerveModuleState desiredState;
 
-    public SwerveModule(int turnID, int driveID, int encoderID, double offset, CANBus bus){
+    private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1],
+            SwerveConstants.turnPID[2]);
+    private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1],
+            SwerveConstants.drivePID[2]);
+
+    public SwerveModule(int turnID, int driveID, int encoderID, double offset, CANBus bus) {
         turnMotor = new TalonFX(turnID, bus);
         driveMotor = new TalonFX(driveID, bus);
         turnEncoder = new CANcoder(encoderID, bus);
@@ -35,87 +36,90 @@ public class SwerveModule {
         turnController.enableContinuousInput(-Math.PI, Math.PI);
 
         final TalonFXConfiguration turnConfigs = new TalonFXConfiguration().withMotorOutput(
-            new MotorOutputConfigs()
-                .withNeutralMode(SwerveConstants.turnNeutralMode)
-                .withInverted(SwerveConstants.turnInversion)
-        ).withCurrentLimits(
-            new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(120))
-                .withStatorCurrentLimitEnable(true)
-        );
+                new MotorOutputConfigs()
+                        .withNeutralMode(SwerveConstants.turnNeutralMode)
+                        .withInverted(SwerveConstants.turnInversion))
+                .withCurrentLimits(
+                        new CurrentLimitsConfigs()
+                                .withStatorCurrentLimit(Amps.of(120))
+                                .withStatorCurrentLimitEnable(true));
 
         TalonFXConfigurator turnConfigurator = turnMotor.getConfigurator();
-        turnConfigurator.apply(turnConfigs); 
+        turnConfigurator.apply(turnConfigs);
 
         final TalonFXConfiguration driveConfigs = new TalonFXConfiguration().withMotorOutput(
-            new MotorOutputConfigs()
-                .withNeutralMode(SwerveConstants.driveNeutralMode)
-                .withInverted(SwerveConstants.driveInversion)
-        ).withCurrentLimits(
-            new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(120))
-                .withStatorCurrentLimitEnable(true)
-        );
+                new MotorOutputConfigs()
+                        .withNeutralMode(SwerveConstants.driveNeutralMode)
+                        .withInverted(SwerveConstants.driveInversion))
+                .withCurrentLimits(
+                        new CurrentLimitsConfigs()
+                                .withStatorCurrentLimit(Amps.of(120))
+                                .withStatorCurrentLimitEnable(true));
 
         TalonFXConfigurator driveConfigurator = driveMotor.getConfigurator();
-        driveConfigurator.apply(driveConfigs); 
+        driveConfigurator.apply(driveConfigs);
 
-        desiredState = new SwerveModuleState(0, new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians));
+        desiredState = new SwerveModuleState(0,
+                new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians));
     }
 
-    public void setDriveVoltage(double voltage){
+    public void setDriveVoltage(double voltage) {
         driveMotor.setVoltage(voltage);
     }
 
-    public void setTurnVoltage(double voltage){
+    public void setTurnVoltage(double voltage) {
         turnMotor.setVoltage(voltage);
     }
 
-    public double getTurnPosition(){
+    public double getTurnPosition() {
         return turnEncoder.getAbsolutePosition().getValueAsDouble();
     }
 
-    public Rotation2d getTurnPositionRotation2D(){
+    public Rotation2d getTurnPositionRotation2D() {
         return new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI);
     }
-    
-    public double getPosition(){
+
+    public double getPosition() {
         return driveMotor.getPosition().getValueAsDouble();
     }
 
-    public double getDriveSpeed(){
-        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadius;
+    public double getDriveSpeed() {
+        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed
+                * SwerveConstants.wheelRadius;
     }
 
-    public void setDesiredModuleState(SwerveModuleState moduleState){
+    public void setDesiredModuleState(SwerveModuleState moduleState) {
         desiredState = moduleState;
     }
 
     // public void updateStateBangBang(double driveVoltage, double turnVoltage){
-    //     double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble();
-    //     double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI;
-    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;
-    //     double angularError = desiredState.angle.getRadians() - currentTurnPosition; 
-    //     if(angularError < -0.01){
-    //         turnMotor.setVoltage(turnVoltage);
-    //     } else if(angularError > 0.01){
-    //         turnMotor.setVoltage(-turnVoltage);
-    //     } else {
-    //         turnMotor.setVoltage(0);
-    //     }
-    //       if(driveVelocityError < -0.01){
-    //         driveMotor.setVoltage(driveVoltage);
-    //     } else if(driveVelocityError > 0.01){
-    //         driveMotor.setVoltage(-driveVoltage);
-    //     } else {
-    //         driveMotor.setVoltage(0);
-    //     }
+    // double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble();
+    // double currentTurnPosition =
+    // turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI;
+    // double driveVelocityError = desiredState.speedMetersPerSecond -
+    // currentDriveVelocity;
+    // double angularError = desiredState.angle.getRadians() - currentTurnPosition;
+    // if(angularError < -0.01){
+    // turnMotor.setVoltage(turnVoltage);
+    // } else if(angularError > 0.01){
+    // turnMotor.setVoltage(-turnVoltage);
+    // } else {
+    // turnMotor.setVoltage(0);
+    // }
+    // if(driveVelocityError < -0.01){
+    // driveMotor.setVoltage(driveVoltage);
+    // } else if(driveVelocityError > 0.01){
+    // driveMotor.setVoltage(-driveVoltage);
+    // } else {
+    // driveMotor.setVoltage(0);
+    // }
     // }
 
-    public void updateStatePID(){
-        double currentDriveVelocity = getDriveSpeed(); //5.9:1 and 2 in
+    public void updateStatePID() {
+        double currentDriveVelocity = getDriveSpeed(); // 5.9:1 and 2 in
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
-        SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+        SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond,
+                desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));
 
         turnController.setSetpoint(optimizedDesiredState.angle.getRadians());
@@ -124,9 +128,6 @@ public class SwerveModule {
         turnMotor.setVoltage(turnController.calculate(currentTurnPosition));
         driveMotor.setVoltage(driveController.calculate(currentDriveVelocity));
 
-
     }
-
-
 
 }
