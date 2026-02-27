@@ -4,26 +4,24 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.SwerveS;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoSink;
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
-
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
 import com.revrobotics.util.StatusLogger;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.MoveIntakeS;
+import frc.robot.subsystems.SwerveS;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -35,9 +33,8 @@ public class Robot extends LoggedRobot {
   //  private final Swerve m_swerve = new Swerve(); used in the last setSpeed by limelight, irrevelent
 
   private final RobotContainer m_robotContainer;
-
-
-    // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
+  public static double intakeSetpoint = 0;
+  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
@@ -59,7 +56,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     drive(true);
-
+    RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
   }
 
   // simple proportional turning control with Limelight.
@@ -192,7 +189,6 @@ public class Robot extends LoggedRobot {
     camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     //camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     //camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-
     server1.setSource(camera1);
     //server2.setSource(camera2);
     //server3.setSource(camera3);

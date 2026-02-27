@@ -59,7 +59,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
 
-  public static double linearSpeedMultiplier = 7.5;
+  public static double linearSpeedMultiplier = 8.5;
   public static double radianSpeedMultiplier = 10;
   public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
   
@@ -170,16 +170,17 @@ public class RobotContainer {
     public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
     public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
     public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
+    public static final Trigger selectManipulatorButton = m_manipulatorController.back();
     
     
 
-    static SwerveS m_SwerveS = new SwerveS();
-    static MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
-    static HoodAngleS m_HoodAngleS = new HoodAngleS ();
-    static ShooterS m_ShooterS = new ShooterS ();
-    static IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
-    static HangS m_HangS = new HangS();
-    static IndexerS m_IndexerS = new IndexerS();
+    public static final SwerveS m_SwerveS = new SwerveS();
+    public static final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
+    public static final HoodAngleS m_HoodAngleS = new HoodAngleS ();
+    public static final ShooterS m_ShooterS = new ShooterS ();
+    public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
+    public static final HangS m_HangS = new HangS();
+    public static final IndexerS m_IndexerS = new IndexerS();
   
     SwerveC m_SwerveC = new SwerveC(m_SwerveS);
     // MoveIntakeC m_MoveIntakeDownC = new MoveIntakeC(m_MoveIntakeS, .25);//mess with p so it work(use the PID in HoodAngles) placeholding :)
@@ -204,8 +205,10 @@ public class RobotContainer {
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     m_SwerveS.swervePathPlanner();
-    autoChooser = AutoBuilder.buildAutoChooser();
-
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.setDefaultOption("Do nothing", Commands.none());
+    autoChooser.addOption("Normal Start Blue", Commands.sequence());
+    
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
@@ -240,8 +243,11 @@ public class RobotContainer {
       rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
       aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
-      bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionP),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
-      yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
+      bManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
+      yManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
+      selectManipulatorButton.onTrue(new InstantCommand(() -> m_MoveIntakeS.zero()));
+      //bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionP),m_MoveIntakeS)));
+      //yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
       
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
       lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
@@ -256,7 +262,8 @@ public class RobotContainer {
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
       // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(4,0), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
+      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*8,-m_manipulatorController.getRightTriggerAxis()*8),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
 
       rManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       

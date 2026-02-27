@@ -66,10 +66,10 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static final double[] intakePID = new double[] {1,0,1};
-    public static final int intakeVertMotorID = 20;
+    public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     public static final double downPositionP = 0.25; //this is the P in PID for lowering intake angle. in constants because easy place to change
-    public static final double upPositionP = 0.1; //depending on how PIDs go this could be different(tm)
+    public static final double upPositionP = 0.0; //depending on how PIDs go this could be different(tm)
   }
 
   public static class HoodConstants {

@@ -42,7 +42,7 @@ public class SwerveS extends SubsystemBase{
         new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
-    Pose2d m_pose = new Pose2d();
+    Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(Math.PI));
       
     public void periodic(){
         frontLeftModule.updateStatePID();
@@ -94,6 +94,9 @@ public class SwerveS extends SubsystemBase{
 
     }
 
+    public Pose2d getPose(){
+        return m_pose;
+    }
     public void setSpeedFromState(ChassisSpeeds state){
         setSpeed(state.vxMetersPerSecond, state.vyMetersPerSecond, state.omegaRadiansPerSecond);
     }
