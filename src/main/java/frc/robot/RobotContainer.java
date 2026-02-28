@@ -170,7 +170,7 @@ public class RobotContainer {
     public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
     public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
     public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
-    public static final Trigger selectManipulatorButton = m_manipulatorController.start();
+    public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
     
     
 
@@ -240,18 +240,19 @@ public class RobotContainer {
       
       xDriverButton.toggleOnTrue(m_XLock);
       bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      rDriverBumper.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
+      //yDriverButton.toggleOnTrue(Commands.run(() -> m_HangS.hangPower(Constants.HangConstants.hangVoltage), m_HangS).finallyDo(() -> m_HangS.hangPower(0)));
       aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
 
-      bManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
-      yManipulatorButton.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
-      selectManipulatorButton.onTrue(new InstantCommand(() -> m_MoveIntakeS.zero()));
+      lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
+      rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
+      leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
       //bManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.downPositionP),m_MoveIntakeS)));
       //yManipulatorButton.whileTrue((Commands.run(() -> m_MoveIntakeS.moveTo(Constants.IntakeConstants.upPositionP),m_MoveIntakeS)).finallyDo(() -> m_MoveIntakeS.setVoltage(0)));
       
       xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
-      lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
-      rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
+      
+      //lManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltagePositive),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
+      //rManipulatorBumper.whileTrue(Commands.run(() -> m_HoodAngleS.moveRange(Constants.HoodConstants.hoodAngleVoltageNegative),m_HoodAngleS).finallyDo(() -> m_HoodAngleS.moveRange(0)));
       
       //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 0)));
       //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))); // to change it to both on 
@@ -263,10 +264,10 @@ public class RobotContainer {
       // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
       //set speed
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage,Constants.ShooterConstants.shooter2voltage), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,-2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage,Constants.ShooterConstants.shooter2voltage), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,-2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
       
       //set speed with triggers
-      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*8,-m_manipulatorController.getRightTriggerAxis()*8),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+      rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*-9,-m_manipulatorController.getRightTriggerAxis()*6.5),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0.5))));
 
       lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       
