@@ -170,7 +170,7 @@ public class RobotContainer {
     public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
     public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
     public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
-    public static final Trigger selectManipulatorButton = m_manipulatorController.back();
+    public static final Trigger selectManipulatorButton = m_manipulatorController.start();
     
     
 
@@ -262,10 +262,13 @@ public class RobotContainer {
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
       // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
-      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(4,0), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*8,-m_manipulatorController.getRightTriggerAxis()*8),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+      //set speed
+      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage,Constants.ShooterConstants.shooter2voltage), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,-2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+      
+      //set speed with triggers
+      //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*8,-m_manipulatorController.getRightTriggerAxis()*8),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
 
-      rManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
+      lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       
     }
 
