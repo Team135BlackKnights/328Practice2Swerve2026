@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -25,10 +29,10 @@ public class SwerveS extends SubsystemBase{
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
     CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
     //public static CANBus bus = new CANBus("canivore", "./logs/example.hoot");
-    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
-    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID, SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
-    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
-    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
+    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
+    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
+    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
+    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     
     public static final double kMaxSpeed = 3.0;
     public static final double kMaxAngularSpeed = Math.PI;
@@ -44,6 +48,7 @@ public class SwerveS extends SubsystemBase{
 
     Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(Math.PI));
       
+
     public void periodic(){
         frontLeftModule.updateStatePID();
         frontRightModule.updateStatePID();

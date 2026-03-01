@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Revolutions;
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,25 +33,26 @@ public final class Constants {
     public static final int frontLeftTurnID = 9;
     public static final int frontLeftDriveID = 6;
     public static final int frontLeftEncoderID = 1;
-    public static final double frontLeftOffsetRadians = -Math.PI/5;
+    public static final double frontLeftOffsetRadians = -0.174560546875;
 
     public static final int frontRightTurnID = 8;
     public static final int frontRightDriveID = 11;
     public static final int frontRightEncoderID = 4;
-    public static final double frontRightOffsetRadians = 8*Math.PI/9; //this is good
+    public static final double frontRightOffsetRadians = -0.297119140625;
 
     public static final int backLeftTurnID = 5;
     public static final int backLeftDriveID = 12;
     public static final int backLeftEncoderID = 2;
-    public static final double backLeftOffsetRadians = Math.PI/2; //this is good
+    public static final double backLeftOffsetRadians = 0.150634765625; //this is good
 
     public static final int backRightTurnID = 7;
     public static final int backRightDriveID = 10;
     public static final int backRightEncoderID = 3;
-    public static final double backRightOffsetRadians =  6*Math.PI/9;
+    public static final double backRightOffsetRadians =  -0.098388671875;
 
     public static final InvertedValue turnInversion = InvertedValue.Clockwise_Positive;
-    public static final InvertedValue driveInversion = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue driveLeftInversion = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue driveRightInversion = InvertedValue.Clockwise_Positive;
     public static final NeutralModeValue turnNeutralMode = NeutralModeValue.Coast; 
     public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake; 
 
@@ -65,7 +69,7 @@ public final class Constants {
   public static final double robotMassKG = 100;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {1,0,0};
+    public static final double[] intakePID = new double[] {0.6,0,0};
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     public static final double downPositionP = 0; 

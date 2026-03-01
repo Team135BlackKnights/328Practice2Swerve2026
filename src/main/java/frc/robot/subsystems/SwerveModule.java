@@ -9,11 +9,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.LoggableTunedNumber;
 
 
 public class SwerveModule {
@@ -26,7 +29,24 @@ public class SwerveModule {
     private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
     private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
 
-    public SwerveModule(int turnID, int driveID, int encoderID, double offset, CANBus bus){
+    private final LoggableTunedNumber turnkP = new LoggableTunedNumber("turn/kP",Constants.SwerveConstants.turnPID[0],true);
+    private final LoggableTunedNumber turnkI = new LoggableTunedNumber("turn/kI",Constants.SwerveConstants.turnPID[1],true);
+    private final LoggableTunedNumber turnkD = new LoggableTunedNumber("turn/kD",Constants.SwerveConstants.turnPID[2],true);
+    private final LoggableTunedNumber drivekP = new LoggableTunedNumber("Intake/kP",Constants.SwerveConstants.drivePID[0],true);
+    private final LoggableTunedNumber drivekI = new LoggableTunedNumber("Intake/kI",Constants.SwerveConstants.drivePID[1],true);
+    private final LoggableTunedNumber drivekD = new LoggableTunedNumber("Intake/kD",Constants.SwerveConstants.drivePID[2],true);
+    
+    //TODO tune swerve PID (drive and turn)
+    public void periodic(){
+    LoggableTunedNumber.ifChanged(hashCode(), () -> {
+        turnController = new PIDController(turnkP.get(), turnkI.get(), turnkD.get());
+    }, turnkP, turnkI, turnkD);
+    LoggableTunedNumber.ifChanged(hashCode(), () -> {
+        driveController = new PIDController(drivekP.get(), drivekI.get(), drivekD.get());
+    }, drivekP, drivekI, drivekD);
+    }   
+
+    public SwerveModule(int turnID, InvertedValue flip, int driveID, int encoderID, double offset, CANBus bus){
         turnMotor = new TalonFX(turnID, bus);
         driveMotor = new TalonFX(driveID, bus);
         turnEncoder = new CANcoder(encoderID, bus);
@@ -40,6 +60,7 @@ public class SwerveModule {
                 .withInverted(SwerveConstants.turnInversion)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
+            //TODO MAKE THIS LESS IT'LL KILL THE BATTERY SO FAST
                 .withStatorCurrentLimit(Amps.of(120))
                 .withStatorCurrentLimitEnable(true)
         );
@@ -50,7 +71,7 @@ public class SwerveModule {
         final TalonFXConfiguration driveConfigs = new TalonFXConfiguration().withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(SwerveConstants.driveNeutralMode)
-                .withInverted(SwerveConstants.driveInversion)
+                .withInverted(flip)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
                 .withStatorCurrentLimit(Amps.of(120))
@@ -114,7 +135,7 @@ public class SwerveModule {
 
     public void updateStatePID(){
         double currentDriveVelocity = getDriveSpeed();//5.9:1 and 2 in
-        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
+        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI; //- offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));
 
