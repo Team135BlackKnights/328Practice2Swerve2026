@@ -51,7 +51,7 @@ public class MoveIntakeS extends SubsystemBase {
         }, kP, kI, kD);
         if (zeroing){
             double now = Timer.getFPGATimestamp();
-            setVoltage(2);
+            setVoltage(3);
             double observedAmps = Math.abs(m_motor.getOutputCurrent());
             if(observedAmps > 20){
                 if (Double.isNaN(zeroSpikeStart)){

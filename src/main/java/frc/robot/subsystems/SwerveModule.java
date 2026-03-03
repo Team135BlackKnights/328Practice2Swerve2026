@@ -135,7 +135,7 @@ public class SwerveModule {
     // }
 
     public void updateStatePID(){
-        double currentDriveVelocity = getDriveSpeed();//5.9:1 and 2 in
+        double currentDriveVelocity = getDriveSpeed();
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));

@@ -58,11 +58,10 @@ public class RobotContainer {
   
   private final SendableChooser<Command> autoChooser;
 
+  public static double linearSpeedMultiplier = 1;
+  public static double radianSpeedMultiplier = 1;
 
-  public static double linearSpeedMultiplier = 8.5;
-  public static double radianSpeedMultiplier = 10;
   public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
-  private double flywheelSpeed = -1*Math.abs(m_manipulatorController.getRightTriggerAxis()*6.5);
   
     public static final Trigger xDriverButton = m_driverController.x();
     public static final Trigger yDriverButton = m_driverController.y();
@@ -264,11 +263,10 @@ public class RobotContainer {
       // yDriverButton.toggleOnTrue(new InstantCommand(() -> System.out.println("y manip button"))); 
       // rManipulatorBumper.or(lManipulatorBumper).whileFalse(m_ShooterHoodStopC);
 
-      //set speed
-      aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(1*9,6.5), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
-      
+      //reverse things
+      aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)).raceWith(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
       //set speed with triggers
-      rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(-m_manipulatorController.getRightTriggerAxis()*-9,flywheelSpeed),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0.5))));
+      rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(9*m_manipulatorController.getRightTriggerAxis(),-9*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
 
       lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
       

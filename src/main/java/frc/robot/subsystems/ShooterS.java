@@ -15,21 +15,22 @@ import frc.robot.Constants;
 public class ShooterS extends SubsystemBase{
     private final SparkMax m_motor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
     private final SparkMax m_motor2 = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
-    private final RelativeEncoder shooterEncoder = m_motor.getEncoder();
-    private final RelativeEncoder kickupEncoder = m_motor2.getEncoder();
+    private final RelativeEncoder kickupEncoder = m_motor.getEncoder();
+    private final RelativeEncoder shooterEncoder = m_motor2.getEncoder();
     public ShooterS(){
         SparkMaxConfig config = new SparkMaxConfig();
+        config.voltageCompensation(12);
         m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_motor2.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-    public void fire(double shooter1Voltage, double shooter2Voltage){
-            m_motor.setVoltage(shooter1Voltage);
-            m_motor2.setVoltage(shooter2Voltage);
+    public void fire(double kickupVoltage, double flywheelVoltage){
+            m_motor.setVoltage(kickupVoltage);
+            m_motor2.setVoltage(flywheelVoltage);
         }
     @Override
     public void periodic(){
-        Logger.recordOutput("Shooter/FlywheelRPM", -shooterEncoder.getVelocity());
-        Logger.recordOutput("Shooter/KickupRPM", -kickupEncoder.getVelocity());
+        Logger.recordOutput("Shooter/KickupRPM", Math.abs(kickupEncoder.getVelocity()));
+        Logger.recordOutput("Shooter/ShooterRPM", Math.abs(-shooterEncoder.getVelocity()));
     }
 }
 
