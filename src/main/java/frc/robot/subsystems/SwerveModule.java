@@ -16,8 +16,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.generated.TunerConstants;
 import frc.robot.LoggableTunedNumber;
-
+import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
     private final TalonFX turnMotor; 
@@ -32,9 +33,9 @@ public class SwerveModule {
     private final LoggableTunedNumber turnkP = new LoggableTunedNumber("turn/kP",Constants.SwerveConstants.turnPID[0],true);
     private final LoggableTunedNumber turnkI = new LoggableTunedNumber("turn/kI",Constants.SwerveConstants.turnPID[1],true);
     private final LoggableTunedNumber turnkD = new LoggableTunedNumber("turn/kD",Constants.SwerveConstants.turnPID[2],true);
-    private final LoggableTunedNumber drivekP = new LoggableTunedNumber("Intake/kP",Constants.SwerveConstants.drivePID[0],true);
-    private final LoggableTunedNumber drivekI = new LoggableTunedNumber("Intake/kI",Constants.SwerveConstants.drivePID[1],true);
-    private final LoggableTunedNumber drivekD = new LoggableTunedNumber("Intake/kD",Constants.SwerveConstants.drivePID[2],true);
+    private final LoggableTunedNumber drivekP = new LoggableTunedNumber("drive/kP",Constants.SwerveConstants.drivePID[0],true);
+    private final LoggableTunedNumber drivekI = new LoggableTunedNumber("drive/kI",Constants.SwerveConstants.drivePID[1],true);
+    private final LoggableTunedNumber drivekD = new LoggableTunedNumber("drive/kD",Constants.SwerveConstants.drivePID[2],true);
     
     //TODO tune swerve PID (drive and turn)
     public void periodic(){
@@ -61,7 +62,7 @@ public class SwerveModule {
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
             //TODO MAKE THIS LESS IT'LL KILL THE BATTERY SO FAST
-                .withStatorCurrentLimit(Amps.of(120))
+                .withStatorCurrentLimit(Amps.of(80))
                 .withStatorCurrentLimitEnable(true)
         );
 
@@ -74,7 +75,7 @@ public class SwerveModule {
                 .withInverted(flip)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(120))
+                .withStatorCurrentLimit(Amps.of(80))
                 .withStatorCurrentLimitEnable(true)
         );
 
@@ -135,7 +136,7 @@ public class SwerveModule {
 
     public void updateStatePID(){
         double currentDriveVelocity = getDriveSpeed();//5.9:1 and 2 in
-        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI; //- offsetRadians;
+        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));
 
@@ -144,7 +145,11 @@ public class SwerveModule {
 
         turnMotor.setVoltage(turnController.calculate(currentTurnPosition));
         driveMotor.setVoltage(driveController.calculate(currentDriveVelocity));
-
+        Logger.recordOutput("turn encoder", turnEncoder.getAbsolutePosition().getValueAsDouble());
+        Logger.recordOutput("turn voltage", turnController.calculate(currentTurnPosition));
+        Logger.recordOutput("drive voltage", driveController.calculate(currentDriveVelocity));
+        Logger.recordOutput("turn setpoint", optimizedDesiredState.angle.getRadians());
+        Logger.recordOutput("drive setpoint", optimizedDesiredState.speedMetersPerSecond);
 
     }
 

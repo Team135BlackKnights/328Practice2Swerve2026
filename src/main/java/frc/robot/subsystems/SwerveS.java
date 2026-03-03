@@ -1,12 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -20,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.RobotContainer;
 
@@ -46,7 +40,7 @@ public class SwerveS extends SubsystemBase{
         new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
-    Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(Math.PI));
+    Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(/* Math.PI */));
       
 
     public void periodic(){

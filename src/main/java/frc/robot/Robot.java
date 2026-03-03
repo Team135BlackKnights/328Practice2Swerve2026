@@ -56,7 +56,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     drive(true);
-    RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    //RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
   }
 
   // simple proportional turning control with Limelight.
