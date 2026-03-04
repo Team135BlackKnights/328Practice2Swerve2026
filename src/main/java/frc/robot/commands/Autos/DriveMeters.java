@@ -1,30 +1,45 @@
 package frc.robot.commands.Autos;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
+import frc.robot.subsystems.IndexerS;
+import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
 
 public class DriveMeters extends Command{
     boolean isFinished = false;
     final SwerveS swerve;
+    final IndexerS indexer;
     final double metersWanted;
     final double degreesWanted;
     static double SPEED_X = 1.5;
     final Pose2d startingPose;
-    public DriveMeters(SwerveS m_swerveS, double metersForward, double degreesTurn){
+    final ShooterS shooter;
+    SwerveModuleState[] states;
+    Rotation2d twist;    
+    
+    public DriveMeters(SwerveS m_swerveS, ShooterS m_shooterS, IndexerS m_indexerS, double metersForward, double degreesTurn){
         addRequirements(m_swerveS);
         swerve = m_swerveS;
+        shooter = m_shooterS;
+        indexer = m_indexerS;
         metersWanted = metersForward;
         degreesWanted = degreesTurn;
         startingPose = swerve.getPose();
         isFinished = false;
-        // SwerveModuleState FLState = new SwerveModuleState(0, Rotation2d.fromDegrees(degreesWanted));
-        // SwerveModuleState FRState = new SwerveModuleState(0, Rotation2d.fromDegrees(degreesWanted));
-        // SwerveModuleState BLState = new SwerveModuleState(0, Rotation2d.fromDegrees(degreesWanted));
-        // SwerveModuleState BRState = new SwerveModuleState(0, Rotation2d.fromDegrees(degreesWanted));
+        twist = new Rotation2d(Math.toRadians(degreesTurn));
+        states[0] = new SwerveModuleState(0, twist);
+        states[1] = new SwerveModuleState(0, twist.plus(new Rotation2d(Math.toRadians(90))));
+        states[2] = new SwerveModuleState(0, twist.plus(new Rotation2d(Math.toRadians(180))));
+        states[3] = new SwerveModuleState(0, twist.plus(new Rotation2d(Math.toRadians(270))));
     }
+    
     
     @Override
     public void execute(){
@@ -34,6 +49,8 @@ public class DriveMeters extends Command{
        }
        if (metersWanted < 0){
         SPEED_X *= -1;
+        swerve.setModuleStates(states[0], states[1], states[2], states[3]);
+        Commands.run(() -> shooter.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage), shooter).finallyDo(() -> shooter.fire(0,0)).raceWith(Commands.run(() -> indexer.setVoltage(Constants.IndexerConstants.indexerVoltage), indexer).finallyDo(() -> indexer.setVoltage(0))).withTimeout(5 /* seconds */);
        }
        swerve.setSpeed(SPEED_X, 0, 0);
     }

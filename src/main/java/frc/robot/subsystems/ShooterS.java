@@ -26,6 +26,10 @@ public class ShooterS extends SubsystemBase{
     public void fire(double kickupVoltage, double flywheelVoltage){
             m_motor.setVoltage(kickupVoltage);
             m_motor2.setVoltage(flywheelVoltage);
+            double kObservedAmps = Math.abs(m_motor.getOutputCurrent());
+            double fObservedAmps = Math.abs(m_motor.getOutputCurrent());
+            System.out.println("Kicker Observeed Amps: " + kObservedAmps);
+            System.out.println("Flywheel Observed Amps: " + fObservedAmps);
         }
     @Override
     public void periodic(){

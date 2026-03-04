@@ -20,7 +20,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.SwerveS;
 
 /**
@@ -39,8 +38,8 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  UsbCamera camera1;
-  UsbCamera camera2;
+  UsbCamera intakeCamera;
+  UsbCamera frontCamera;
   //UsbCamera camera3;
   VideoSink server1;
   VideoSink server2;
@@ -56,7 +55,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     drive(true);
-    //RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
   }
 
   // simple proportional turning control with Limelight.
@@ -178,19 +177,19 @@ public class Robot extends LoggedRobot {
     * to the dashboard. Just add this to the robot class constructor.
     */
     
-    camera1 = CameraServer.startAutomaticCapture(0);
-    //camera2 = CameraServer.startAutomaticCapture(1);
+    intakeCamera = CameraServer.startAutomaticCapture(0);
+    frontCamera = CameraServer.startAutomaticCapture(1);
     //camera3 = CameraServer.startAutomaticCapture(2);
 
     server1 = CameraServer.getServer();
-    //server2 = CameraServer.getServer();
+    server2 = CameraServer.getServer();
     //server3 = CameraServer.getServer();
 
-    camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    //camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    intakeCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    frontCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     //camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    server1.setSource(camera1);
-    //server2.setSource(camera2);
+    server1.setSource(intakeCamera);
+    server2.setSource(frontCamera);
     //server3.setSource(camera3);
     
     
