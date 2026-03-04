@@ -38,12 +38,12 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-  
+
   UsbCamera camera1;
-  //UsbCamera camera2;
+  UsbCamera camera2;
   //UsbCamera camera3;
   VideoSink server1;
-  //VideoSink server2;
+  VideoSink server2;
   //VideoSink server3;
     
 

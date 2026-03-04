@@ -30,7 +30,7 @@ public class ShooterS extends SubsystemBase{
     @Override
     public void periodic(){
         Logger.recordOutput("Shooter/KickupRPM", Math.abs(kickupEncoder.getVelocity()));
-        Logger.recordOutput("Shooter/ShooterRPM", Math.abs(-shooterEncoder.getVelocity()));
+        Logger.recordOutput("Shooter/ShooterRPM", Math.abs(shooterEncoder.getVelocity()));
     }
 }
 
