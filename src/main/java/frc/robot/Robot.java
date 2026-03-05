@@ -13,6 +13,7 @@ import org.littletonrobotics.urcl.URCL;
 import com.revrobotics.util.StatusLogger;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
@@ -41,10 +42,8 @@ public class Robot extends LoggedRobot {
   UsbCamera intakeCamera;
   UsbCamera frontCamera;
   //UsbCamera camera3;
-  VideoSink server1;
-  VideoSink server2;
-  //VideoSink server3;
-    
+  VideoSink server;
+  CvSource output;
 
   @Override
   public void autonomousPeriodic() {
@@ -56,6 +55,11 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    if (RobotContainer.rDriverBumper.getAsBoolean()){
+      server.setSource(intakeCamera);
+    }else if (RobotContainer.lDriverBumper.getAsBoolean()){
+      server.setSource(frontCamera);
+    }
   }
 
   // simple proportional turning control with Limelight.
@@ -179,21 +183,7 @@ public class Robot extends LoggedRobot {
     
     intakeCamera = CameraServer.startAutomaticCapture(0);
     frontCamera = CameraServer.startAutomaticCapture(1);
-    //camera3 = CameraServer.startAutomaticCapture(2);
-
-    server1 = CameraServer.getServer();
-    server2 = CameraServer.getServer();
-    //server3 = CameraServer.getServer();
-
-    intakeCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    frontCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    //camera3.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    server1.setSource(intakeCamera);
-    server2.setSource(frontCamera);
-    //server3.setSource(camera3);
-    
-    
-    
+    server = CameraServer.getServer(); 
   }
 
   /**

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
@@ -29,22 +30,19 @@ public class SwerveModule {
     
     private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
     private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
-
+    private SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(Constants.SwerveConstants.drivePID[3], Constants.SwerveConstants.drivePID[4]);
     private final LoggableTunedNumber turnkP = new LoggableTunedNumber("turn/kP",Constants.SwerveConstants.turnPID[0],true);
     private final LoggableTunedNumber turnkI = new LoggableTunedNumber("turn/kI",Constants.SwerveConstants.turnPID[1],true);
     private final LoggableTunedNumber turnkD = new LoggableTunedNumber("turn/kD",Constants.SwerveConstants.turnPID[2],true);
     private final LoggableTunedNumber drivekP = new LoggableTunedNumber("drive/kP",Constants.SwerveConstants.drivePID[0],true);
     private final LoggableTunedNumber drivekI = new LoggableTunedNumber("drive/kI",Constants.SwerveConstants.drivePID[1],true);
     private final LoggableTunedNumber drivekD = new LoggableTunedNumber("drive/kD",Constants.SwerveConstants.drivePID[2],true);
+    private final LoggableTunedNumber drivekS = new LoggableTunedNumber("drive/kS",Constants.SwerveConstants.drivePID[3],true);
+    private final LoggableTunedNumber drivekV = new LoggableTunedNumber("drive/kV",Constants.SwerveConstants.drivePID[4],true);
     
     //TODO tune swerve PID (drive and turn)
     public void periodic(){
-    LoggableTunedNumber.ifChanged(hashCode(), () -> {
-        turnController = new PIDController(turnkP.get(), turnkI.get(), turnkD.get());
-    }, turnkP, turnkI, turnkD);
-    LoggableTunedNumber.ifChanged(hashCode(), () -> {
-        driveController = new PIDController(drivekP.get(), drivekI.get(), drivekD.get());
-    }, drivekP, drivekI, drivekD);
+
     }   
 
     public SwerveModule(int turnID, InvertedValue flip, int driveID, int encoderID, double offset, CANBus bus){
@@ -135,6 +133,13 @@ public class SwerveModule {
     // }
 
     public void updateStatePID(){
+        LoggableTunedNumber.ifChanged(hashCode(), () -> {
+            turnController = new PIDController(turnkP.get(), turnkI.get(), turnkD.get());
+        }, turnkP, turnkI, turnkD);
+        LoggableTunedNumber.ifChanged(hashCode(), () -> {
+            driveController = new PIDController(drivekP.get(), drivekI.get(), drivekD.get());
+            driveFF = new SimpleMotorFeedforward(drivekS.get(), drivekV.get());
+        }, drivekP, drivekI, drivekD, drivekS,drivekV);
         double currentDriveVelocity = getDriveSpeed();
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
         SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
@@ -142,14 +147,16 @@ public class SwerveModule {
 
         turnController.setSetpoint(optimizedDesiredState.angle.getRadians());
         driveController.setSetpoint(optimizedDesiredState.speedMetersPerSecond);
-
+        double ffVolts = driveFF.calculateWithVelocities(currentDriveVelocity, optimizedDesiredState.speedMetersPerSecond);
         turnMotor.setVoltage(turnController.calculate(currentTurnPosition));
-        driveMotor.setVoltage(driveController.calculate(currentDriveVelocity));
+        driveMotor.setVoltage(driveController.calculate(currentDriveVelocity) + ffVolts);
         Logger.recordOutput("turn encoder", turnEncoder.getAbsolutePosition().getValueAsDouble());
         Logger.recordOutput("turn voltage", turnController.calculate(currentTurnPosition));
         Logger.recordOutput("drive voltage", driveController.calculate(currentDriveVelocity));
         Logger.recordOutput("turn setpoint", optimizedDesiredState.angle.getRadians());
         Logger.recordOutput("drive setpoint", optimizedDesiredState.speedMetersPerSecond);
+        Logger.recordOutput("drive vel", currentDriveVelocity);
+        Logger.recordOutput("drive ff", ffVolts);
 
     }
 

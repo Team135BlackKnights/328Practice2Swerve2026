@@ -28,7 +28,7 @@ public class SwerveS extends SubsystemBase{
     SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
     SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     
-    public static final double kMaxSpeed = 3.0;
+    public static final double kMaxSpeed = 6.0;
     public static final double kMaxAngularSpeed = Math.PI;
 
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -124,51 +124,51 @@ public class SwerveS extends SubsystemBase{
 
 
 
-    public void swervePathPlanner() {
-        // All other subsystem initialization
-        // ...
+//     public void swervePathPlanner() {
+//         // All other subsystem initialization
+//         // ...
 
         
 
-        // Load the RobotConfig from the GUI settings. You should probably
-        // store this in your Constants file
-        RobotConfig config;
-        try{
-            config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
-            config = null;
-            // config = new RobotConfig(Constants.robotMassKG, 0, new ModuleConfig(Constants.SwerveConstants.wheelRadius, Constants.SwerveConstants.maxLinearSpeedMPS, 1000, 2, 12, 1), Constants.SwerveConstants.moduleLocationFrontLeft,Constants.SwerveConstants.moduleLocationFrontRight,Constants.SwerveConstants.moduleLocationBackLeft,Constants.SwerveConstants.moduleLocationBackRight);
-        }
+//         // Load the RobotConfig from the GUI settings. You should probably
+//         // store this in your Constants file
+//         RobotConfig config;
+//         try{
+//             config = RobotConfig.fromGUISettings();
+//         } catch (Exception e) {
+//             // Handle exception as needed
+//             e.printStackTrace();
+//             config = null;
+//             // config = new RobotConfig(Constants.robotMassKG, 0, new ModuleConfig(Constants.SwerveConstants.wheelRadius, Constants.SwerveConstants.maxLinearSpeedMPS, 1000, 2, 12, 1), Constants.SwerveConstants.moduleLocationFrontLeft,Constants.SwerveConstants.moduleLocationFrontRight,Constants.SwerveConstants.moduleLocationBackLeft,Constants.SwerveConstants.moduleLocationBackRight);
+//         }
 
-        // Configure AutoBuilder last
-        AutoBuilder.configure(
-                ()->(m_pose), // Robot pose supplier
-                (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
-                this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-                ),
-                config, // The robot configuration
-                () -> {
-                // Boolean supplier that controls when the path will be mirrored for the red alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+//         // Configure AutoBuilder last
+//         AutoBuilder.configure(
+//                 ()->(m_pose), // Robot pose supplier
+//                 (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
+//                 this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+//                 (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+//                 new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+//                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+//                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+//                 ),
+//                 config, // The robot configuration
+//                 () -> {
+//                 // Boolean supplier that controls when the path will be mirrored for the red alliance
+//                 // This will flip the path being followed to the red side of the field.
+//                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-                },
-                this // Reference to this subsystem to set requirements
-        );
+//                 var alliance = DriverStation.getAlliance();
+//                 if (alliance.isPresent()) {
+//                     return alliance.get() == DriverStation.Alliance.Red;
+//                 }
+//                 return false;
+//                 },
+//                 this // Reference to this subsystem to set requirements
+//         );
 
 
-  }
+//   }
 
 }
 

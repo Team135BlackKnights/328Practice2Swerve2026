@@ -31,7 +31,7 @@ public class MoveIntakeS extends SubsystemBase {
             return;
         }
         double intakeVoltage = intakeController.calculate(encoder.getPosition(), desiredPosition);
-        intakeVoltage = clamp(intakeVoltage, -3, 3);
+        intakeVoltage = clamp(intakeVoltage, -5, 5);
         m_motor.setVoltage(intakeVoltage); 
     }
 
@@ -51,7 +51,7 @@ public class MoveIntakeS extends SubsystemBase {
         }, kP, kI, kD);
         if (zeroing){
             double now = Timer.getFPGATimestamp();
-            setVoltage(3);
+            setVoltage(4);
             double observedAmps = Math.abs(m_motor.getOutputCurrent());
             if(observedAmps > 20){
                 if (Double.isNaN(zeroSpikeStart)){
