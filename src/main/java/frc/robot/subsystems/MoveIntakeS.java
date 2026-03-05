@@ -5,8 +5,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,7 +29,7 @@ public class MoveIntakeS extends SubsystemBase {
             return;
         }
         double intakeVoltage = intakeController.calculate(encoder.getPosition(), desiredPosition);
-        intakeVoltage = clamp(intakeVoltage, -5, 5);
+        intakeVoltage = clamp(intakeVoltage, -5, 4);
         m_motor.setVoltage(intakeVoltage); 
     }
 

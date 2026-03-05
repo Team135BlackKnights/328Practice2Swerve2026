@@ -19,6 +19,7 @@ import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveS;
@@ -47,13 +48,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    drive(false);
+    //drive(false);
     //m_swerve.updateOdometry();
   }
 
   @Override
   public void teleopPeriodic() {
     drive(true);
+    Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
     RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
     if (RobotContainer.rDriverBumper.getAsBoolean()){
       server.setSource(intakeCamera);
@@ -183,7 +185,7 @@ public class Robot extends LoggedRobot {
     
     intakeCamera = CameraServer.startAutomaticCapture(0);
     frontCamera = CameraServer.startAutomaticCapture(1);
-    server = CameraServer.getServer(); 
+    server = CameraServer.getServer();
   }
 
   /**
@@ -212,8 +214,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //TODO m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);

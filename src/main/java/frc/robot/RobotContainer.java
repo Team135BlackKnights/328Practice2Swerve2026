@@ -33,6 +33,7 @@ import frc.robot.commands.ShooterC;
 import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
+import frc.robot.commands.Autos.DriveMeters;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IndexerS;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
+import com.pathplanner.lib.auto.NamedCommands;
 
 
 /**
@@ -49,6 +51,8 @@ import frc.robot.subsystems.SwerveS;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+
   // The robot's subsystems and commands are defined here...
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public static final CommandXboxController m_driverController =
@@ -56,213 +60,211 @@ public class RobotContainer {
   public static final CommandXboxController m_manipulatorController = 
       new CommandXboxController(OperatorConstants.kManipulatorControllerPort);
   
+  
+  
   private final SendableChooser<Command> autoChooser;
-
-  //8.5 linear / 10 radian
-  public static double linearSpeedMultiplier = 6;
-  public static double radianSpeedMultiplier = -10;
-
-  public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
   
-    public static final Trigger xDriverButton = m_driverController.x();
-    public static final Trigger yDriverButton = m_driverController.y();
-    public static final Trigger aDriverButton = m_driverController.a();
-    public static final Trigger bDriverButton = m_driverController.b();
-    public static final Trigger startDriverButton = m_driverController.start();
-    public static final Trigger lDriverBumper = m_driverController.leftBumper();
-    public static final Trigger rDriverBumper = m_driverController.rightBumper();
-    public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
-    public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
-    public static final Trigger rStickDriverButton = m_driverController.rightStick();
-    public static final Trigger lStickDriverButton = m_driverController.leftStick();
-    public static final Trigger dpadDriverRight = new Trigger(() -> {
-      double pov = m_driverController.getHID().getPOV();
-      if (pov > 45 && pov < 135){
-        System.out.println("driver right dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadDriverUp = new Trigger(() -> {
-      double pov = m_driverController.getHID().getPOV();
-      if (pov > 335 || pov < 45){
-        System.out.println("driver up dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadDriverDown = new Trigger(() -> {
-      double pov = m_driverController.getHID().getPOV();
-      if (pov > 135 && pov < 240){
-        System.out.println("driver down dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadDriverLeft = new Trigger(() -> {
-      double pov = m_driverController.getHID().getPOV();
-      if (pov > 240 && pov < 315){
-        System.out.println("driver left dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-
-    public static final Trigger dpadManipRight = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
-      if (pov > 45 && pov < 135){
-        System.out.println("manip right dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadManipUp = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
-      if (pov > 335 || pov < 45){
-        System.out.println("manip up dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadManipDown = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
-      if (pov > 135 && pov < 240){
-        System.out.println("manip down dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger dpadManipLeft = new Trigger(() -> {
-      double pov = m_manipulatorController.getHID().getPOV();
-      if (pov > 240 && pov < 315){
-        System.out.println("manip left dpad");
-        return true;
-      } 
-      else{
-        return false;
-      }
-    });
-
-    public static final Trigger xManipulatorButton = m_manipulatorController.x();
-    public static final Trigger yManipulatorButton = m_manipulatorController.y();
-    public static final Trigger aManipulatorButton = m_manipulatorController.a();
-    public static final Trigger bManipulatorButton = m_manipulatorController.b();
-    public static final Trigger lManipulatorBumper = m_manipulatorController.leftBumper();
-    public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
-    public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
-    public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
-    public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
-    
-    public static final SwerveS m_SwerveS = new SwerveS();
-    public static final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
-    public static final HoodAngleS m_HoodAngleS = new HoodAngleS ();
-    public static final ShooterS m_ShooterS = new ShooterS ();
-    public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
-    public static final HangS m_HangS = new HangS();
-    public static final IndexerS m_IndexerS = new IndexerS();
+    //8.5 linear / 10 radian
+    public static double linearSpeedMultiplier = 6;
+    public static double radianSpeedMultiplier = -10;
   
-    SwerveC m_SwerveC = new SwerveC(m_SwerveS);
-    XLock m_XLock = new XLock(m_SwerveS);
+    public final static Pigeon2 gyro = new Pigeon2(Constants.PigeonConstants.pigeonID, "E13B8EB250374E5320202047380C10FF");
     
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
-       // ...
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    //m_SwerveS.swervePathPlanner();
-    autoChooser = new SendableChooser<Command>();
-    autoChooser.setDefaultOption("Do nothing", Commands.none());
-    autoChooser.addOption("Normal Start Blue", Commands.sequence());
-    
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+      public static final Trigger xDriverButton = m_driverController.x();
+      public static final Trigger yDriverButton = m_driverController.y();
+      public static final Trigger aDriverButton = m_driverController.a();
+      public static final Trigger bDriverButton = m_driverController.b();
+      public static final Trigger startDriverButton = m_driverController.start();
+      public static final Trigger lDriverBumper = m_driverController.leftBumper();
+      public static final Trigger rDriverBumper = m_driverController.rightBumper();
+      public static final Trigger lDriverTrigger = m_driverController.leftTrigger();
+      public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
+      public static final Trigger rStickDriverButton = m_driverController.rightStick();
+      public static final Trigger lStickDriverButton = m_driverController.leftStick();
+      public static final Trigger dpadDriverRight = new Trigger(() -> {
+        double pov = m_driverController.getHID().getPOV();
+        if (pov > 45 && pov < 135){
+          System.out.println("driver right dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadDriverUp = new Trigger(() -> {
+        double pov = m_driverController.getHID().getPOV();
+        if (pov > 335 || pov < 45){
+          System.out.println("driver up dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadDriverDown = new Trigger(() -> {
+        double pov = m_driverController.getHID().getPOV();
+        if (pov > 135 && pov < 240){
+          System.out.println("driver down dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadDriverLeft = new Trigger(() -> {
+        double pov = m_driverController.getHID().getPOV();
+        if (pov > 240 && pov < 315){
+          System.out.println("driver left dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+  
+      public static final Trigger dpadManipRight = new Trigger(() -> {
+        double pov = m_manipulatorController.getHID().getPOV();
+        if (pov > 45 && pov < 135){
+          System.out.println("manip right dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadManipUp = new Trigger(() -> {
+        double pov = m_manipulatorController.getHID().getPOV();
+        if (pov > 335 || pov < 45){
+          System.out.println("manip up dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadManipDown = new Trigger(() -> {
+        double pov = m_manipulatorController.getHID().getPOV();
+        if (pov > 135 && pov < 240){
+          System.out.println("manip down dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger dpadManipLeft = new Trigger(() -> {
+        double pov = m_manipulatorController.getHID().getPOV();
+        if (pov > 240 && pov < 315){
+          System.out.println("manip left dpad");
+          return true;
+        } 
+        else{
+          return false;
+        }
+      });
+  
+      public static final Trigger xManipulatorButton = m_manipulatorController.x();
+      public static final Trigger yManipulatorButton = m_manipulatorController.y();
+      public static final Trigger aManipulatorButton = m_manipulatorController.a();
+      public static final Trigger bManipulatorButton = m_manipulatorController.b();
+      public static final Trigger lManipulatorBumper = m_manipulatorController.leftBumper();
+      public static final Trigger rManipulatorBumper = m_manipulatorController.rightBumper();
+      public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
+      public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
+      public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
       
-      m_SwerveS.setDefaultCommand(m_SwerveC);
-      // Configure the trigger bindings
-      configureBindings();
+      public static final SwerveS m_SwerveS = new SwerveS();
+      public static final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
+      public static final HoodAngleS m_HoodAngleS = new HoodAngleS ();
+      public static final ShooterS m_ShooterS = new ShooterS ();
+      public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
+      public static final HangS m_HangS = new HangS();
+      public static final IndexerS m_IndexerS = new IndexerS();
+  
+      public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
+    
+      SwerveC m_SwerveC = new SwerveC(m_SwerveS);
+      XLock m_XLock = new XLock(m_SwerveS);
+      
+      /** The container for the robot. Contains subsystems, OI devices, and commands. */
+      public RobotContainer() {
+        //blame lee if no work
+      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
+  
+      // Build an auto chooser. This will use Commands.none() as the default option.
+      m_SwerveS.swervePathPlanner();      // autoChooser.setDefaultOption("Do nothing", Commands.none());
+      autoChooser = AutoBuilder.buildAutoChooser();  
+      
+      // Another option that allows you to specify the default auto by its name
+  
+      SmartDashboard.putData("Auto Chooser", autoChooser);
+        
+        m_SwerveS.setDefaultCommand(m_SwerveC);
+        // Configure the trigger bindings
+        configureBindings();
+      }
+  
+      /**
+       * Use this method to define your trigger->command mappings. Triggers can be created via the
+       * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+       * predicate, or via the named factories in {@link
+       * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+       * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+       * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+       * joysticks}.
+       */
+      private void configureBindings() {
+        // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+    
+        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+        // cancelling on release.      
+        
+        xDriverButton.toggleOnTrue(m_XLock);
+        bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
+        //y driver is reserved for hang
+        aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
+  
+        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
+        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
+        leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
+        xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
+        
+        //reverse things
+        aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)).raceWith(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+        //set speed with triggers
+        rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 2)));//.raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+  
+        lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
+        
+      }
+      
+    public static ChassisSpeeds fieldOrientedDrive(double x, double y, double rot){
+    
+      // The origin is always blue. When our alliance is red, X and Y need to be inverted
+      
+  
+      Optional<Alliance> invert = DriverStation.getAlliance();
+      Rotation2d gyroDirection = gyro.getRotation2d();
+      if (invert.get().equals(Alliance.Red)){
+        gyroDirection = gyroDirection.plus(new Rotation2d(Math.PI));
+      }
+      return ChassisSpeeds.fromFieldRelativeSpeeds(x,y, rot, gyroDirection);
+  
     }
-
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-      // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
   
-      // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-      // cancelling on release.      
-      
-      xDriverButton.toggleOnTrue(m_XLock);
-      bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-      //y driver is reserved for hang
-      aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
-
-      lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
-      rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
-      leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
-      xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
-      
-      //reverse things
-      aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)).raceWith(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
-      //set speed with triggers
-      rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, -2)).raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
-
-      lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
-      
-    }
-
-    // field oriented code. snowball's chance in flames it'll work
-    
-    // int invert = 1;
-  
-  public static ChassisSpeeds fieldOrientedDrive(double x, double y, double rot){
-  
-    // The origin is always blue. When our alliance is red, X and Y need to be inverted
-    
-
-    Optional<Alliance> invert = DriverStation.getAlliance();
-    Rotation2d gyroDirection = gyro.getRotation2d();
-    if (invert.get().equals(Alliance.Red)){
-      gyroDirection = gyroDirection.plus(new Rotation2d(Math.PI));
-    }
-    return ChassisSpeeds.fromFieldRelativeSpeeds(x,y, rot, gyroDirection);
-
-  }
-
-  public Command getAutonomousCommand() {
-    // This method loads the auto when it is called, however, it is recommended
-    // to first load your paths/autos when code starts, then return the
-    // pre-loaded auto/path
-    //return new PathPlannerAuto("Example Auto");
-    return autoChooser.getSelected();
+    public Command getAutonomousCommand() {
+      // This method loads the auto when it is called, however, it is recommended
+      // to first load your paths/autos when code starts, then return the
+      // pre-loaded auto/path
+      //return new PathPlannerAuto("Example Auto");
+      return autoChooser.getSelected();
   }
 
   
