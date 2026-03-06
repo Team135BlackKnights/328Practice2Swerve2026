@@ -56,10 +56,14 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
+
     RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    
     if (RobotContainer.rDriverBumper.getAsBoolean()){
+      System.out.println("intake camera feed");
       server.setSource(intakeCamera);
     }else if (RobotContainer.lDriverBumper.getAsBoolean()){
+      System.out.println("front camera feed");
       server.setSource(frontCamera);
     }
   }

@@ -75,20 +75,20 @@ public final class Constants {
   }
 
   public static class HoodConstants {
-    public static final int hoodMotorID = 22;
-    public static final int hoodEncoderID = 23;
+    public static final int hoodMotorID = 36;
+    public static final int hoodEncoderID = 37;
     public static final double minHoodRangeRotations = 0;
     public static final double maxHoodRangeRotations = 35;
     public static final double hoodAngleVoltagePositive = 5.0;
     public static final double hoodAngleVoltageNegative = -5.0;
-    public static final double[] hoodPID = new double[]{1,0,0};
+    public static final double[] hoodPID = new double[]{5,0,0};
   }
   
   public static class ShooterConstants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
-    public static final double shooter1Voltage = -7;
-    public static final double shooter2voltage = 7;
+    public static final double shooter1Voltage = 7;
+    public static final double shooter2voltage = -5;
   } 
 
   public static class IntakeRollerConstants {
@@ -107,7 +107,7 @@ public final class Constants {
   public static class IndexerConstants {
     public static final int indexerMotorID = 20;
     public static final double indexerVoltage = -3.5;
-    public static final boolean indexerRunValue = false; 
+    public static final boolean indexerRunValue = true; 
   }
 }
 

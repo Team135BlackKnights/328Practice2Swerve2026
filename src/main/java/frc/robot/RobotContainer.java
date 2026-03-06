@@ -33,7 +33,6 @@ import frc.robot.commands.ShooterC;
 import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
-import frc.robot.commands.Autos.DriveMeters;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IndexerS;
@@ -188,7 +187,7 @@ public class RobotContainer {
       public static final HangS m_HangS = new HangS();
       public static final IndexerS m_IndexerS = new IndexerS();
   
-      public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
+      //public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
       XLock m_XLock = new XLock(m_SwerveS);
@@ -196,7 +195,7 @@ public class RobotContainer {
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
         //blame lee if no work
-      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
+      //NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
   
       // Build an auto chooser. This will use Commands.none() as the default option.
       m_SwerveS.swervePathPlanner();      // autoChooser.setDefaultOption("Do nothing", Commands.none());
@@ -230,7 +229,8 @@ public class RobotContainer {
         bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
         //y driver is reserved for hang
         aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
-  
+        yDriverButton.onTrue(new InstantCommand(() -> m_SwerveC.inverted = !m_SwerveC.inverted));
+
         lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
         rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
@@ -239,9 +239,10 @@ public class RobotContainer {
         //reverse things
         aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)).raceWith(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
         //set speed with triggers
-        rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.fire(0, 2)));//.raceWith(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
+        rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.idle(-3)));
+        rManipulatorTrigger.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
   
-        lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.fire(0, 0),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
+        lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.stop(),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
         
       }
       

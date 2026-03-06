@@ -50,7 +50,7 @@ public class DriveMeters extends Command{
        if (metersWanted < 0){
         SPEED_X *= -1;
         swerve.setModuleStates(states[0], states[1], states[2], states[3]);
-        Commands.run(() -> shooter.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage), shooter).finallyDo(() -> shooter.fire(0,0)).raceWith(Commands.run(() -> indexer.setVoltage(Constants.IndexerConstants.indexerVoltage), indexer).finallyDo(() -> indexer.setVoltage(0))).withTimeout(5 /* seconds */);
+        //Commands.run(() -> shooter.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage), shooter).finallyDo(() -> shooter.fire(0,0)).raceWith(Commands.run(() -> indexer.setVoltage(Constants.IndexerConstants.indexerVoltage), indexer).finallyDo(() -> indexer.setVoltage(0))).withTimeout(5 /* seconds */);
        }
        swerve.setSpeed(SPEED_X, 0, 0);
     }
