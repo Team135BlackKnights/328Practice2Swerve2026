@@ -4,14 +4,10 @@ import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LoggableTunedNumber;
@@ -74,9 +70,8 @@ public class HoodAngleS extends SubsystemBase {
         //     }
         // }else 
         if (Math.abs(RobotContainer.m_manipulatorController.getLeftY())>0.1){
-            //put the setpoint as if it was a
             //moveRange(-0.3);
-            setVoltage(5*RobotContainer.m_manipulatorController.getLeftY());
+            setVoltage(25*RobotContainer.m_manipulatorController.getLeftY());
         } else {
             setVoltage(0);
         }

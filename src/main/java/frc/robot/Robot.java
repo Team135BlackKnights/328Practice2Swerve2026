@@ -19,9 +19,11 @@ import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveS;
 
 /**
@@ -66,6 +68,25 @@ public class Robot extends LoggedRobot {
       System.out.println("front camera feed");
       server.setSource(frontCamera);
     }
+
+    if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
+      System.out.println("firing");
+      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis());
+      RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
+    } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
+    System.out.println("reversing subsystems");
+      RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
+      RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
+      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.shooter2voltage);
+    }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
+      RobotContainer.m_ShooterS.stop();
+    }else{
+      RobotContainer.m_IndexerS.setVoltage(0);
+      RobotContainer.m_IntakeRollerS.rollerSpeed(0);
+      RobotContainer.m_ShooterS.idle(-1.3);
+    }
+
+    
   }
 
   // simple proportional turning control with Limelight.
@@ -186,10 +207,11 @@ public class Robot extends LoggedRobot {
     * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
     * to the dashboard. Just add this to the robot class constructor.
     */
-    
     intakeCamera = CameraServer.startAutomaticCapture(0);
     frontCamera = CameraServer.startAutomaticCapture(1);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 420, 380, 30);
     server = CameraServer.getServer();
+    server.setSource(intakeCamera);
   }
 
   /**
@@ -219,6 +241,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = null;
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);

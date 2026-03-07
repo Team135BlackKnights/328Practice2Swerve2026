@@ -30,7 +30,7 @@ public final class Constants {
     //if turn is x locking: add Math.toRadians(-90) to offsets
     public static final int frontLeftTurnID = 9;
     public static final int frontLeftDriveID = 6;
-    public static final int frontLeftEncoderID = 1;
+        public static final int frontLeftEncoderID = 1;
     public static final double frontLeftOffsetRadians = Math.toRadians(-90);
 
     public static final int frontRightTurnID = 8;
@@ -79,8 +79,8 @@ public final class Constants {
     public static final int hoodEncoderID = 37;
     public static final double minHoodRangeRotations = 0;
     public static final double maxHoodRangeRotations = 35;
-    public static final double hoodAngleVoltagePositive = 5.0;
-    public static final double hoodAngleVoltageNegative = -5.0;
+    public static final double hoodAngleVoltagePositive = 10.0;
+    public static final double hoodAngleVoltageNegative = -10.0;
     public static final double[] hoodPID = new double[]{5,0,0};
   }
   

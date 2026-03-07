@@ -198,8 +198,10 @@ public class RobotContainer {
       //NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
   
       // Build an auto chooser. This will use Commands.none() as the default option.
-      m_SwerveS.swervePathPlanner();      // autoChooser.setDefaultOption("Do nothing", Commands.none());
-      autoChooser = AutoBuilder.buildAutoChooser();  
+      m_SwerveS.swervePathPlanner();   
+      autoChooser = AutoBuilder.buildAutoChooser();     
+      autoChooser.setDefaultOption("Do nothing", Commands.none());
+      
       
       // Another option that allows you to specify the default auto by its name
   
@@ -231,18 +233,21 @@ public class RobotContainer {
         aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
         yDriverButton.onTrue(new InstantCommand(() -> m_SwerveC.inverted = !m_SwerveC.inverted));
 
-        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
-        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
+        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
+        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
         xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
         
         //reverse things
-        aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)).raceWith(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0))));
-        //set speed with triggers
-        rManipulatorTrigger.whileTrue(Commands.run(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*m_manipulatorController.getRightTriggerAxis()),m_ShooterS).finallyDo(() -> m_ShooterS.idle(-3)));
-        rManipulatorTrigger.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
+        //this has been moved to robot.java
+        //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
+        //aManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage), m_IntakeRollerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
+        //aManipulatorButton.whileTrue(Commands.run(() -> m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.shooter2voltage)));
+        //set speed with triggers (in Robot.java)
+        //TODO add a comment with that code for doing it off a trigger
+        //rManipulatorTrigger.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
   
-        lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.stop(),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
+        //lManipulatorTrigger.onTrue(Commands.run(() -> m_ShooterS.stop(),m_ShooterS)); //sets the flywheel to 0 speed, shoot button will need pressing again
         
       }
       
@@ -262,7 +267,7 @@ public class RobotContainer {
   
     public Command getAutonomousCommand() {
       // This method loads the auto when it is called, however, it is recommended
-      // to first load your paths/autos when code starts, then return the
+      // to       s load your paths/autos when code starts, then return the
       // pre-loaded auto/path
       //return new PathPlannerAuto("Example Auto");
       return autoChooser.getSelected();
