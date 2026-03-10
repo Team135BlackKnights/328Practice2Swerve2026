@@ -75,6 +75,8 @@ public class SwerveModule {
             new CurrentLimitsConfigs()
                 .withStatorCurrentLimit(Amps.of(80))
                 .withStatorCurrentLimitEnable(true)
+                .withSupplyCurrentLimit(Amps.of(30))
+                .withSupplyCurrentLimitEnable(true)
         );
 
         TalonFXConfigurator driveConfigurator = driveMotor.getConfigurator();

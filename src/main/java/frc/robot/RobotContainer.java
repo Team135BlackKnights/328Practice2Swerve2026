@@ -6,6 +6,10 @@ package frc.robot;
 
 
 
+import static edu.wpi.first.units.Units.Micro;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -22,6 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -33,6 +39,7 @@ import frc.robot.commands.ShooterC;
 import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
+import frc.robot.commands.Autos.ShootAutoNoSwerve;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IndexerS;
@@ -191,6 +198,8 @@ public class RobotContainer {
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
       XLock m_XLock = new XLock(m_SwerveS);
+      ShootAutoNoSwerve shootauto = new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS);
+
       
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
@@ -201,7 +210,23 @@ public class RobotContainer {
       m_SwerveS.swervePathPlanner();   
       autoChooser = AutoBuilder.buildAutoChooser();     
       autoChooser.setDefaultOption("Do nothing", Commands.none());
-      
+      //what this *should* do is shoot and index for 6 seconds. should literally not move swerve at all
+      autoChooser.addOption("shootauto", 
+          new SequentialCommandGroup(
+            Commands.run(
+              () -> m_ShooterS.idle(-1.3), m_ShooterS
+            )
+            .alongWith(
+              Commands.run(() -> m_SwerveS.setSpeed(0, 0, 0), m_SwerveS)
+            )
+            .withDeadline(
+              Commands.waitTime(Seconds.of(5))
+            ),
+            shootauto.withDeadline(
+              Commands.waitTime(Seconds.of(6))
+            )
+          )
+      );
       
       // Another option that allows you to specify the default auto by its name
   

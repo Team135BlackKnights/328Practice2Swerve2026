@@ -50,7 +50,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    //drive(false);
+    //drive(false);   ~QQ
     //m_swerve.updateOdometry();
   }
 
@@ -58,6 +58,9 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     drive(true);
     Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
+    Logger.recordOutput("Gyro X Accel", RobotContainer.gyro.getAccelerationX().getValueAsDouble());
+    Logger.recordOutput("Gyro Y Accel", RobotContainer.gyro.getAccelerationY().getValueAsDouble());
+    Logger.recordOutput("Gyro Z Accel", RobotContainer.gyro.getAccelerationZ().getValueAsDouble());
 
     RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
     
@@ -70,7 +73,7 @@ public class Robot extends LoggedRobot {
     }
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-      System.out.println("firing");
+      //System.out.println("firing");
       RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis());
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
@@ -80,7 +83,10 @@ public class Robot extends LoggedRobot {
       RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.shooter2voltage);
     }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
       RobotContainer.m_ShooterS.stop();
-    }else{
+    }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
+      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.shooter2voltage);
+    }else
+    {
       RobotContainer.m_IndexerS.setVoltage(0);
       RobotContainer.m_IntakeRollerS.rollerSpeed(0);
       RobotContainer.m_ShooterS.idle(-1.3);
@@ -241,7 +247,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    m_autonomousCommand = null;
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
