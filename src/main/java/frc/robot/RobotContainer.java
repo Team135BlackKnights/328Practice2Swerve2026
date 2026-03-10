@@ -87,6 +87,8 @@ public class RobotContainer {
       public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
       public static final Trigger rStickDriverButton = m_driverController.rightStick();
       public static final Trigger lStickDriverButton = m_driverController.leftStick();
+
+
       public static final Trigger dpadDriverRight = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 45 && pov < 135){
@@ -186,6 +188,7 @@ public class RobotContainer {
       public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
       public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
       
+
       public static final SwerveS m_SwerveS = new SwerveS();
       public static final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
       public static final HoodAngleS m_HoodAngleS = new HoodAngleS ();
@@ -262,7 +265,9 @@ public class RobotContainer {
         rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
         xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
-        
+        rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));
+        lDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(-4 * m_driverController.getRightTriggerAxis()), m_SwerveS));
+
         //reverse things
         //this has been moved to robot.java
         //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
@@ -298,5 +303,11 @@ public class RobotContainer {
       return autoChooser.getSelected();
   }
 
-  
+  public double getflWheelVotage(){
+    return m_SwerveS.getflTurnVoltage();
+  }
+
+  public double getflWheelPos(){
+    return m_SwerveS.getflTurnPos();
+  }
 }

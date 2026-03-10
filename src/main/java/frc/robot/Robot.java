@@ -20,6 +20,10 @@ import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.PixelFormat;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -48,6 +52,17 @@ public class Robot extends LoggedRobot {
   VideoSink server;
   CvSource output;
 
+  DataLog log;
+  DoubleArrayLogEntry motorLog;
+
+  @Override
+  public void robotInit(){
+    DataLogManager.start();
+    log = DataLogManager.getLog();
+    DriverStation.startDataLog(log);
+    motorLog = new DoubleArrayLogEntry(log, "/Motor/PositionVoltage");
+  }
+
   @Override
   public void autonomousPeriodic() {
     //drive(false);   ~QQ
@@ -56,6 +71,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
+
     drive(true);
     Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
     Logger.recordOutput("Gyro X Accel", RobotContainer.gyro.getAccelerationX().getValueAsDouble());
@@ -234,6 +250,7 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    motorLog.append(new double[] {m_robotContainer.getflWheelPos(), m_robotContainer.getflWheelVotage()});
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

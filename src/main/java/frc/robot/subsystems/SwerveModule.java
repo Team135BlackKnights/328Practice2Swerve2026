@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.generated.TunerConstants;
 import frc.robot.LoggableTunedNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,7 +25,10 @@ public class SwerveModule {
     private final TalonFX driveMotor; 
     private final CANcoder turnEncoder; 
     private final double offsetRadians;
-    private SwerveModuleState desiredState; 
+    private SwerveModuleState desiredState;
+    public double turnVoltage; 
+    private int currentRotation = 0;
+    private double currentPos = 0;
     
     private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
     private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
@@ -42,7 +44,17 @@ public class SwerveModule {
     
     //TODO tune swerve PID (drive and turn)
     public void periodic(){
+        double updatedPos = getTurnPosition();
+        int updatedRegion = (int) (updatedPos * 3);
+        int oldRegion = (int) (currentPos * 3);
 
+        if(oldRegion == 0 && updatedRegion == 2){
+            currentRotation --;
+        } else if(oldRegion == 2 && updatedRegion == 0){
+            currentRotation ++;
+        }
+
+        currentPos = updatedPos;
     }   
 
     public SwerveModule(int turnID, InvertedValue flip, int driveID, int encoderID, double offset, CANBus bus){
@@ -90,6 +102,7 @@ public class SwerveModule {
     }
 
     public void setTurnVoltage(double voltage){
+        this.turnVoltage = voltage;
         turnMotor.setVoltage(voltage);
     }
 
@@ -103,6 +116,10 @@ public class SwerveModule {
     
     public double getPosition(){
         return driveMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getPositionCumulative(){
+        return currentPos + currentRotation;
     }
 
     public double getDriveSpeed(){
@@ -150,8 +167,8 @@ public class SwerveModule {
         turnController.setSetpoint(optimizedDesiredState.angle.getRadians());
         driveController.setSetpoint(optimizedDesiredState.speedMetersPerSecond);
         double ffVolts = driveFF.calculateWithVelocities(currentDriveVelocity, optimizedDesiredState.speedMetersPerSecond);
-        turnMotor.setVoltage(turnController.calculate(currentTurnPosition));
-        driveMotor.setVoltage(driveController.calculate(currentDriveVelocity) + ffVolts);
+        setTurnVoltage(turnController.calculate(currentTurnPosition));
+        setDriveVoltage(driveController.calculate(currentDriveVelocity) + ffVolts);
         Logger.recordOutput("turn encoder", turnEncoder.getAbsolutePosition().getValueAsDouble());
         Logger.recordOutput("turn voltage", turnController.calculate(currentTurnPosition));
         Logger.recordOutput("drive voltage", driveController.calculate(currentDriveVelocity));

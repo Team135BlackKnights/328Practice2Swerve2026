@@ -88,7 +88,7 @@ public final class Constants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
-    public static final double shooter2voltage = -4.25;
+    public static final double shooter2voltage = -0.0;
   } 
 
   public static class IntakeRollerConstants {
