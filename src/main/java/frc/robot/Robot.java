@@ -74,17 +74,17 @@ public class Robot extends LoggedRobot {
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
       //System.out.println("firing");
-      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.shooter2voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis());
+      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
     System.out.println("reversing subsystems");
       RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
       RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
-      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.shooter2voltage);
+      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
     }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
       RobotContainer.m_ShooterS.stop();
     }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
-      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.shooter2voltage);
+      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
     }else
     {
       RobotContainer.m_IndexerS.setVoltage(0);

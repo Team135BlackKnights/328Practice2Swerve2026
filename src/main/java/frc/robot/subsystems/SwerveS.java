@@ -48,10 +48,14 @@ public class SwerveS extends SubsystemBase{
         frontRightModule.updateStatePID();
         backLeftModule.updateStatePID();
         backRightModule.updateStatePID();
-        // System.out.println("FR:" + frontLeftModule.getTurnPosition());
-        // System.out.println("FL:" + frontRightModule.getTurnPosition());
-        // System.out.println("BL:" + backLeftModule.getTurnPosition());
-        // System.out.println("BR:" + backRightModule.getTurnPosition());
+        // if(print > 0) {
+        //     System.out.println("FR:" + frontLeftModule.getTurnPosition());
+        //     System.out.println("FL:" + frontRightModule.getTurnPosition());
+        //     System.out.println("BL:" + backLeftModule.getTurnPosition());
+        //     System.out.println("BR:" + backRightModule.getTurnPosition());
+        //     System.out.println();
+        //     print = 0;
+        // } else print ++;
         var gyroAngle = RobotContainer.gyro.getRotation2d();
         // Update the pose
         m_pose = m_odometry.update(gyroAngle,
@@ -170,6 +174,18 @@ public class SwerveS extends SubsystemBase{
 
   }
 
+
+  public double getflTurnVoltage(){
+    return frontLeftModule.turnVoltage;
+  }
+
+  public double getflTurnPos(){
+    return frontLeftModule.getPosition();
+  }
+
+  public void setflTurnVoltage(double voltage){
+    frontLeftModule.setTurnVoltage(voltage);
+  }
 }
 
 

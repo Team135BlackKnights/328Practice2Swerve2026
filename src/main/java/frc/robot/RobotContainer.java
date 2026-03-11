@@ -87,10 +87,12 @@ public class RobotContainer {
       public static final Trigger rDriverTrigger = m_driverController.rightTrigger();
       public static final Trigger rStickDriverButton = m_driverController.rightStick();
       public static final Trigger lStickDriverButton = m_driverController.leftStick();
+
+
       public static final Trigger dpadDriverRight = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 45 && pov < 135){
-          System.out.println("driver right dpad");
+          //System.out.println("driver right dpad");
           return true;
         } 
         else{
@@ -101,7 +103,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverUp = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 335 || pov < 45){
-          System.out.println("driver up dpad");
+          //System.out.println("driver up dpad");
           return true;
         } 
         else{
@@ -112,7 +114,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverDown = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 135 && pov < 240){
-          System.out.println("driver down dpad");
+          //System.out.println("driver down dpad");
           return true;
         } 
         else{
@@ -123,7 +125,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverLeft = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 240 && pov < 315){
-          System.out.println("driver left dpad");
+          //System.out.println("driver left dpad");
           return true;
         } 
         else{
@@ -135,7 +137,7 @@ public class RobotContainer {
       public static final Trigger dpadManipRight = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 45 && pov < 135){
-          System.out.println("manip right dpad");
+          //System.out.println("manip right dpad");
           return true;
         } 
         else{
@@ -146,7 +148,7 @@ public class RobotContainer {
       public static final Trigger dpadManipUp = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 335 || pov < 45){
-          System.out.println("manip up dpad");
+          //System.out.println("manip up dpad");
           return true;
         } 
         else{
@@ -157,7 +159,7 @@ public class RobotContainer {
       public static final Trigger dpadManipDown = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 135 && pov < 240){
-          System.out.println("manip down dpad");
+          //System.out.println("manip down dpad");
           return true;
         } 
         else{
@@ -168,7 +170,7 @@ public class RobotContainer {
       public static final Trigger dpadManipLeft = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 240 && pov < 315){
-          System.out.println("manip left dpad");
+          //System.out.println("manip left dpad");
           return true;
         } 
         else{
@@ -186,6 +188,7 @@ public class RobotContainer {
       public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
       public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
       
+
       public static final SwerveS m_SwerveS = new SwerveS();
       public static final MoveIntakeS m_MoveIntakeS = new MoveIntakeS();
       public static final HoodAngleS m_HoodAngleS = new HoodAngleS ();
@@ -262,7 +265,9 @@ public class RobotContainer {
         rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
         xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
-        
+        rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));
+        lDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(-4 * m_driverController.getRightTriggerAxis()), m_SwerveS));
+
         //reverse things
         //this has been moved to robot.java
         //aManipulatorButton.whileTrue(Commands.run(() -> m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage), m_IndexerS).finallyDo(() -> m_IndexerS.setVoltage(0)));
@@ -298,5 +303,11 @@ public class RobotContainer {
       return autoChooser.getSelected();
   }
 
-  
+  public double getflWheelVotage(){
+    return m_SwerveS.getflTurnVoltage();
+  }
+
+  public double getflWheelPos(){
+    return m_SwerveS.getflTurnPos();
+  }
 }

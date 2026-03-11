@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -12,7 +14,8 @@ import frc.robot.LoggableTunedNumber;
 
 public class MoveIntakeS extends SubsystemBase {
     private final SparkMax m_motor = new SparkMax(Constants.IntakeConstants.intakeVertMotorID, MotorType.kBrushless);
-    RelativeEncoder encoder = m_motor.getEncoder();
+    DutyCycleEncoder encoder = new DutyCycleEncoder(0);
+    double offset = 0;
     //private final Encoder m_Encoder = new Encoder(Constants.IntakeConstants.intakeVertEncoderID);
     boolean zeroing = false;
     private double zeroSpikeStart = Double.NaN;
@@ -28,7 +31,7 @@ public class MoveIntakeS extends SubsystemBase {
         if (zeroing){
             return;
         }
-        double intakeVoltage = intakeController.calculate(encoder.getPosition(), desiredPosition);
+        double intakeVoltage = intakeController.calculate(encoder.get() - offset, desiredPosition);
         intakeVoltage = clamp(intakeVoltage, -5, 4);
         m_motor.setVoltage(intakeVoltage); 
     }
@@ -60,11 +63,12 @@ public class MoveIntakeS extends SubsystemBase {
                 zeroSpikeStart = Double.NaN;
             }
             if (!Double.isNaN(zeroSpikeStart) && (now - zeroSpikeStart) >= 0.1){
-                encoder.setPosition(0);
+                offset = encoder.get();
                 zeroSpikeStart = Double.NaN;
                 zeroing = false;
             }
         }
+        Logger.recordOutput("Intake/Intake Offset", encoder.get());
     }
 
 
