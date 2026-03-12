@@ -1,18 +1,18 @@
 package frc.robot.subsystems;
 
+import java.util.Arrays;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.MathUsageId;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,19 +21,22 @@ import frc.robot.Constants;
 public class ShooterS extends SubsystemBase{
     private final SparkMax kickMotor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
     private final SparkMax shootMotor = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
-    private final PIDController flyController = new PIDController(1, 0, 0);
-    private final PIDController kickController = new PIDController(1, 0, 0);
+    private final PIDController flyController = new PIDController(0.05, 0, 0);
     //dio channel
     private final RelativeEncoder kickupEncoder = kickMotor.getEncoder();
     private final DutyCycleEncoder shooterEncoder = new DutyCycleEncoder(1);
     double flyPreviousPosition = shooterEncoder.get();
+    double flyCumulativeRotations = 0;
+    double[] flyVelocities = new double[10];
+    double flymean = 0;
+    int period = 0;
+
     //double kickPreviousPosition = kickupEncoder.get();
     double previousTime;
     public double flyVelocity;
     //public double kickVelocity;
     // rpms in volts / rpms
     // so if 1 volt gives 300 rpm the number is 300, as 1/300 volts would then give 1 rpm
-    private double flyvoltageconstant = 1000;
     //private double kickvoltageconstant = 500;
 
     public ShooterS(){
@@ -46,20 +49,17 @@ public class ShooterS extends SubsystemBase{
     }
 
     public void fire(double kickupVoltage, double desiredFlyVelocity){
-        double flywheelVoltage = flyController.calculate(flyVelocity, desiredFlyVelocity) / flyvoltageconstant;
-        //double kickupVoltage = kickController.calculate(kickVelocity, desiredKickVelocity) / kickvoltageconstant;
-        //kickupVoltage = kickupController.calculate(kickupVoltage);
-        //flywheelVoltage = shooterController.calculate(flywheelVoltage);
-        //kickupVoltage = MathUtil.clamp(kickupVoltage, -1*Math.abs(Constants.ShooterConstants.shooter1Voltage), Math.abs(Constants.ShooterConstants.shooter1Voltage));
-        //flywheelVoltage = MathUtil.clamp(flywheelVoltage, -1*Math.abs(Constants.ShooterConstants.shooter2voltage), Math.abs(Constants.ShooterConstants.shooter2voltage));
+        // converts to rad per sec
+        double desiredFlyVelocityRadPS = Math.toRadians(desiredFlyVelocity*6);
+        double flyVelocityRadPS = Math.toRadians(flyVelocity*6);
+        double flywheelVoltage = MathUtil.clamp(flyController.calculate(flyVelocityRadPS, desiredFlyVelocityRadPS), -6.5, 6.5);
         kickMotor.setVoltage(kickupVoltage);
         shootMotor.setVoltage(flywheelVoltage);
     }
 
     public void idle(double idleVoltage){
         kickMotor.setVoltage(0);
-        //
-        idleVoltage = MathUtil.clamp(idleVoltage, -0.5*Math.abs(Constants.ShooterConstants.flywheelRPM), 0.5*Math.abs(Constants.ShooterConstants.flywheelRPM));
+        idleVoltage = MathUtil.clamp(idleVoltage, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant);
         shootMotor.setVoltage(idleVoltage);
     }
 
@@ -79,25 +79,62 @@ public class ShooterS extends SubsystemBase{
         // delta position over delta time
         
         flyCurrentPosition = shooterEncoder.get();
-        int updatedRegion = (int) (flyCurrentPosition * 3);
-        int oldRegion = (int) (flyPreviousPosition * 3);
 
-        if(oldRegion == 0 && updatedRegion == 2){
-            flyCurrentPosition --;
-        } else if(oldRegion == 2 && updatedRegion == 0){
-            flyCurrentPosition ++;
+        // if (flyCurrentPosition - flyPreviousPosition < 0){
+        //     flyPreviousPosition -= 1;
+        // } else if (flyPreviousPosition - flyCurrentPosition < 0){
+        //     flyCurrentPosition -= 1 ;
+        // }
+
+        if(flyCurrentPosition > 0.75 && flyPreviousPosition < 0.25){
+            flyPreviousPosition++;
+        } else if(flyPreviousPosition > 0.75 && flyCurrentPosition < 0.25) {
+            flyPreviousPosition--;
         }
 
-        flyVelocity = ((flyCurrentPosition - flyPreviousPosition) / (time - previousTime));
+        // int updatedRegion = (int) (flyCurrentPosition * 3);
+        // int oldRegion = (int) (flyPreviousPosition * 3);
+
+        // if(oldRegion == 0 && updatedRegion == 2){
+        //     flyCurrentPosition --;
+        // } else if(oldRegion == 2 && updatedRegion == 0){
+        //     flyCurrentPosition ++;
+        // }
+
+        // if (shooterEncoder.get() > 0.99){
+        //     flyCumulativeRotations = flyCumulativeRotations + 1;
+        // } else if (shooterEncoder.get() < 0.001){
+        //     flyCumulativeRotations = flyCumulativeRotations + 1;
+        // }
+
+        flyVelocity = (flyCurrentPosition - flyPreviousPosition) / (time - previousTime);
+        for(int i = 0; i < flyVelocities.length-1; i++){
+            flyVelocities[i] = flyVelocities[i+1];
+        }
+        flyVelocities[flyVelocities.length - 1] = -1*flyVelocity;
+
+        double[] flyVelocitiesCopy = Arrays.copyOf(flyVelocities, flyVelocities.length);
+        Arrays.sort(flyVelocitiesCopy);
+        double medianVel = flyVelocitiesCopy[(int) (flyVelocitiesCopy.length/2)];
+        
+        
 
         //kickVelocity = ((kickCurrentPosition - kickPreviousPosition) / (time - previousTime));
         //Note: the kickup and shooter RPMs lie to you, put an absolute encoder on the flywheel plz
         // there should be one on the flywheel and kicker now, ignore previous note
+        Logger.recordOutput("Shooter/CumulativePos", flyCumulativeRotations);
         Logger.recordOutput("Shooter/KickupRPM", Math.abs(kickupEncoder.getVelocity()));
-        Logger.recordOutput("Shooter/ShooterRPM", Math.abs(flyVelocity));
+        Logger.recordOutput("Shooter/ShooterRPM", Math.abs(flyVelocity*60));
         Logger.recordOutput("Shooter/ShooterRotations", flyPreviousPosition);
         Logger.recordOutput("Shooter/ShooterAmps", shootMotor.getOutputCurrent());
         Logger.recordOutput("Shooter/KickupAmps", kickMotor.getOutputCurrent());
+
+        Logger.recordOutput("Shooter/flyCurrentPos", flyCurrentPosition);
+        Logger.recordOutput("Shooter/flyPrevPos", flyPreviousPosition);
+        Logger.recordOutput("Shooter/time", time);
+        Logger.recordOutput("Shooter/prevtime", previousTime);
+        Logger.recordOutput("Shooter/flymed", medianVel*60);
+
         flyPreviousPosition = flyCurrentPosition;
         //kickPreviousPosition = kickCurrentPosition; 
         previousTime = time;

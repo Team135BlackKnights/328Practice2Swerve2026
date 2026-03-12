@@ -90,6 +90,8 @@ public final class Constants {
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
     public static final double flywheelRPM = -5000;
+    // (volts per rotations)^-1
+    public static final double flyvoltageconstant = 550;
   } 
 
   public static class IntakeRollerConstants {

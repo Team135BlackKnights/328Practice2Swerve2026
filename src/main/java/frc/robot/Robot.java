@@ -89,7 +89,7 @@ public class Robot extends LoggedRobot {
     {
       RobotContainer.m_IndexerS.setVoltage(0);
       RobotContainer.m_IntakeRollerS.rollerSpeed(0);
-      RobotContainer.m_ShooterS.idle(-1.3);
+      RobotContainer.m_ShooterS.idle(-2);
     }
 
     
