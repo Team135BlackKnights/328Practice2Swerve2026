@@ -51,6 +51,7 @@ import frc.robot.subsystems.SwerveS;
 import frc.robot.subsystems.Vision;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 
 /**
@@ -216,7 +217,7 @@ public class RobotContainer {
       // Build an auto chooser. This will use Commands.none() as the default option.
       m_SwerveS.swervePathPlanner();   
       autoChooser = AutoBuilder.buildAutoChooser();     
-      autoChooser.setDefaultOption("Do nothing", Commands.none());
+      autoChooser.setDefaultOption("null", null);
       //what this *should* do is shoot and index for 6 seconds. should literally not move swerve at all
       autoChooser.addOption("shootauto", 
           new SequentialCommandGroup(
@@ -235,9 +236,9 @@ public class RobotContainer {
           )
       );
       
-      // Another option that allows you to specify the default auto by its name
+        // Another option that allows you to specify the default auto by its name
   
-      SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
         
         m_SwerveS.setDefaultCommand(m_SwerveC);
         // Configure the trigger bindings
@@ -303,7 +304,7 @@ public class RobotContainer {
       // This method loads the auto when it is called, however, it is recommended
       // to       s load your paths/autos when code starts, then return the
       // pre-loaded auto/path
-      //return new PathPlannerAuto("Example Auto");
+      //return new PathPlannerAuto("lalendjehueuajefijefbhfeijefbjef");
       return autoChooser.getSelected();
   }
 

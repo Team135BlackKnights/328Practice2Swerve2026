@@ -72,7 +72,7 @@ public final class Constants {
     public static final int intakeVertEncoderID = 21;
     // these are in rotations
     public static final double downPositionSetpoint = 0; 
-    public static final double upPositionSetpoint = -0.28;
+    public static final double upPositionSetpoint = -0.28 ;
   }
 
   public static class HoodConstants {

@@ -44,7 +44,7 @@ public class SwerveS extends SubsystemBase{
         new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
-    Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(/* Math.PI */));
+    Pose2d m_pose = new Pose2d(3.460,3.000, new Rotation2d(Math.toRadians(180)));
     
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics, 
@@ -70,6 +70,11 @@ public class SwerveS extends SubsystemBase{
         //     System.out.println();
         //     print = 0;
         // } else print ++;
+        
+        
+    }
+
+    public void updatePose(){
         var gyroAngle = RobotContainer.gyro.getRotation2d();
         // Update the pose
         m_pose = m_odometry.update(gyroAngle,
@@ -80,6 +85,9 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
         });
 
+    }
+
+    public void updatePoseEsitmator(){
         poseEstimator.update(RobotContainer.gyro.getRotation2d(), 
         new SwerveModulePosition[] {
             new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),

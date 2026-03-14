@@ -21,6 +21,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -50,8 +51,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    //drive(false);   ~QQ
-    //m_swerve.updateOdometry();
+    System.out.println("Auto Command: " + m_autonomousCommand.getName());
   }
 
   @Override
@@ -62,35 +62,35 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Gyro Y Accel", RobotContainer.gyro.getAccelerationY().getValueAsDouble());
     Logger.recordOutput("Gyro Z Accel", RobotContainer.gyro.getAccelerationZ().getValueAsDouble());
 
-    RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    // RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
     
-    if (RobotContainer.rDriverBumper.getAsBoolean()){
-      System.out.println("intake camera feed");
-      server.setSource(intakeCamera);
-    }else if (RobotContainer.lDriverBumper.getAsBoolean()){
-      System.out.println("front camera feed");
-      server.setSource(frontCamera);
-    }
+    // if (RobotContainer.rDriverBumper.getAsBoolean()){
+    //   System.out.println("intake camera feed");
+    //   server.setSource(intakeCamera);
+    // }else if (RobotContainer.lDriverBumper.getAsBoolean()){
+    //   System.out.println("front camera feed");
+    //   server.setSource(frontCamera);
+    // }
 
-    if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-      System.out.println("firing");
-      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
-      RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
-    } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
-      System.out.println("reversing subsystems");
-      RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
-      RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
-      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
-    }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
-      RobotContainer.m_ShooterS.stop();
-    }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
-      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
-    }else
-    {
-      RobotContainer.m_IndexerS.setVoltage(0);
-      RobotContainer.m_IntakeRollerS.rollerSpeed(0);
-      RobotContainer.m_ShooterS.idle(-1.3);
-    }
+    // if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
+    //   System.out.println("firing");
+    //   RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
+    //   RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
+    // } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
+    //   System.out.println("reversing subsystems");
+    //   RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
+    //   RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
+    //   RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
+    // }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
+    //   RobotContainer.m_ShooterS.stop();
+    // }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
+    //   RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
+    // }else
+    // {
+    //   RobotContainer.m_IndexerS.setVoltage(0);
+    //   RobotContainer.m_IntakeRollerS.rollerSpeed(0);
+    //   RobotContainer.m_ShooterS.idle(-1.3);
+    // }
 
     
   }
@@ -233,6 +233,8 @@ public class Robot extends LoggedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    RobotContainer.m_SwerveS.updatePose();
+    RobotContainer.m_SwerveS.updatePoseEsitmator();
     CommandScheduler.getInstance().run();
   }
 
@@ -248,9 +250,9 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
-    }
+    //if (m_autonomousCommand != null) {
+    //  CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    //}
   }
 
   @Override
