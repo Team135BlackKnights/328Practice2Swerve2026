@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.RobotContainer;
@@ -76,6 +79,7 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
         });
+
         poseEstimator.update(RobotContainer.gyro.getRotation2d(), 
         new SwerveModulePosition[] {
             new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
@@ -116,7 +120,7 @@ public class SwerveS extends SubsystemBase{
     }
 
     public Pose2d getPose(){
-        return m_pose;
+        return poseEstimator.getEstimatedPosition();
     }
     public void setSpeedFromState(ChassisSpeeds state){
         setSpeed(state.vxMetersPerSecond, state.vyMetersPerSecond, state.omegaRadiansPerSecond);
@@ -166,27 +170,27 @@ public class SwerveS extends SubsystemBase{
 
         // Configure AutoBuilder last
         AutoBuilder.configure(
-                ()->(m_pose), // Robot pose supplier
-                (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
-                this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.1) // Rotation PID constants
-                ),
-                config, // The robot configuration
-                () -> {
+            this::getPose, // Robot pose supplier
+            (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, ff) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(5.0, 0.0, 0.1) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
                 // Boolean supplier that controls when the path will be mirrored for the red alliance
                 // This will flip the path being followed to the red side of the field.
                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-                var alliance = DriverStation.getAlliance();
+                Optional<Alliance> alliance = DriverStation.getAlliance();
                 if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;
                 }
                 return false;
-                },
-                this // Reference to this subsystem to set requirements
+            },
+            this // Reference to this subsystem to set requirements
         );
 
 
