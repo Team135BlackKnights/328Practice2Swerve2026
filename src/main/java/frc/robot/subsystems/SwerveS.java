@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,7 +42,17 @@ public class SwerveS extends SubsystemBase{
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
     Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(/* Math.PI */));
-      
+    
+    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+        m_kinematics, 
+        RobotContainer.gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+        }, 
+        m_pose);
 
     public void periodic(){
         frontLeftModule.updateStatePID();
@@ -65,7 +76,14 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
         });
-
+        poseEstimator.update(RobotContainer.gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+        }
+        );
     }
 
     public ChassisSpeeds getState(){
@@ -153,8 +171,8 @@ public class SwerveS extends SubsystemBase{
                 this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.1) // Rotation PID constants
                 ),
                 config, // The robot configuration
                 () -> {

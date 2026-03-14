@@ -21,12 +21,13 @@ import frc.robot.Constants;
 public class ShooterS extends SubsystemBase{
     private final SparkMax kickMotor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
     private final SparkMax shootMotor = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
-    private final PIDController flyController = new PIDController(0.05, 0, 0);
+    private final PIDController flyController = new PIDController(1, 0, 0);
     //dio channel
     private final RelativeEncoder kickupEncoder = kickMotor.getEncoder();
     private final DutyCycleEncoder shooterEncoder = new DutyCycleEncoder(1);
     double flyPreviousPosition = shooterEncoder.get();
     double flyCumulativeRotations = 0;
+    double DesiredFlyVelocity;
     double[] flyVelocities = new double[10];
     double flymean = 0;
     int period = 0;
@@ -50,6 +51,7 @@ public class ShooterS extends SubsystemBase{
 
     public void fire(double kickupVoltage, double desiredFlyVelocity){
         // converts to rad per sec
+        DesiredFlyVelocity = desiredFlyVelocity;
         double desiredFlyVelocityRadPS = Math.toRadians(desiredFlyVelocity*6);
         double flyVelocityRadPS = Math.toRadians(flyVelocity*6);
         double flywheelVoltage = MathUtil.clamp(flyController.calculate(flyVelocityRadPS, desiredFlyVelocityRadPS), -6.5, 6.5);
@@ -59,17 +61,13 @@ public class ShooterS extends SubsystemBase{
 
     public void idle(double idleVoltage){
         kickMotor.setVoltage(0);
-        idleVoltage = MathUtil.clamp(idleVoltage, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant);
+        //idleVoltage = MathUtil.clamp(idleVoltage, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant, Math.abs(Constants.ShooterConstants.flywheelRPM)/Constants.ShooterConstants.flyvoltageconstant);
         shootMotor.setVoltage(idleVoltage);
     }
 
     public void stop(){
         kickMotor.setVoltage(0);
         shootMotor.setVoltage(0);
-    }
-
-    public void getPos(){
-        
     }
 
     public void periodic(){
@@ -133,7 +131,9 @@ public class ShooterS extends SubsystemBase{
         Logger.recordOutput("Shooter/flyPrevPos", flyPreviousPosition);
         Logger.recordOutput("Shooter/time", time);
         Logger.recordOutput("Shooter/prevtime", previousTime);
-        Logger.recordOutput("Shooter/flymed", medianVel*60);
+        Logger.recordOutput("Shooter/flymedvel", medianVel*60);
+
+        Logger.recordOutput("Shooter/flySetSpeed", DesiredFlyVelocity);
 
         flyPreviousPosition = flyCurrentPosition;
         //kickPreviousPosition = kickCurrentPosition; 

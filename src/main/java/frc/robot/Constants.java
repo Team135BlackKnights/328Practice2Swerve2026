@@ -71,8 +71,8 @@ public final class Constants {
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     // these are in rotations
-    public static final double downPositionP = 0; 
-    public static final double upPositionP = 0.3;
+    public static final double downPositionSetpoint = 0; 
+    public static final double upPositionSetpoint = -0.28;
   }
 
   public static class HoodConstants {
@@ -89,7 +89,7 @@ public final class Constants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
-    public static final double flywheelRPM = -5000;
+    public static final double flywheelRPM = -3500;
     // (volts per rotations)^-1
     public static final double flyvoltageconstant = 550;
   } 

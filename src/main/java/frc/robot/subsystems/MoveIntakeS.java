@@ -14,8 +14,9 @@ import frc.robot.LoggableTunedNumber;
 
 public class MoveIntakeS extends SubsystemBase {
     private final SparkMax motor = new SparkMax(Constants.IntakeConstants.intakeVertMotorID, MotorType.kBrushless);
-    DutyCycleEncoder encoder = new DutyCycleEncoder(0);
-    double offset = 0;
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(0);
+    private final RelativeEncoder relencoder = motor.getEncoder();
+    double offset = 0.935;
     //private final Encoder m_Encoder = new Encoder(Constants.IntakeConstants.intakeVertEncoderID);
     boolean zeroing = false;
     private double zeroSpikeStart = Double.NaN;
@@ -69,9 +70,15 @@ public class MoveIntakeS extends SubsystemBase {
         //         zeroing = false;
         //     }
         // }
-        Logger.recordOutput("Intake/Encoder.get", encoder.get());
+        Logger.recordOutput("Intake/Encoder pos", encoder.get());
+        Logger.recordOutput("Intake/Encoder with offset", encoder.get() - offset);
+        Logger.recordOutput("Intake/Encoder connected", encoder.isConnected());
+        Logger.recordOutput("Intake/RelEncoder pos", relencoder.getPosition());
     }
 
+    public double getEncoderPosition(){
+        return encoder.get();
+    }
 
     // public void vertDownMovement() {
     //     m_motor.setVoltage(0.8);

@@ -40,6 +40,7 @@ import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.commands.Autos.ShootAutoNoSwerve;
+import frc.robot.commands.Autos.intakeA;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IndexerS;
@@ -47,6 +48,8 @@ import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.subsystems.Vision;
+
 import com.pathplanner.lib.auto.NamedCommands;
 
 
@@ -196,7 +199,8 @@ public class RobotContainer {
       public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
       public static final HangS m_HangS = new HangS();
       public static final IndexerS m_IndexerS = new IndexerS();
-  
+
+      
       //public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
@@ -207,8 +211,8 @@ public class RobotContainer {
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
         //blame lee if no work
-      //NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
-  
+      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.flywheelRPM), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,0)));
+      NamedCommands.registerCommand("intake", new intakeA(m_MoveIntakeS, m_IntakeRollerS));
       // Build an auto chooser. This will use Commands.none() as the default option.
       m_SwerveS.swervePathPlanner();   
       autoChooser = AutoBuilder.buildAutoChooser();     
@@ -261,8 +265,8 @@ public class RobotContainer {
         aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
         yDriverButton.onTrue(new InstantCommand(() -> m_SwerveC.inverted = !m_SwerveC.inverted));
 
-        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
-        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
+        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint));
+        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
         xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
         rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));

@@ -73,11 +73,11 @@ public class Robot extends LoggedRobot {
     }
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-      //System.out.println("firing");
+      System.out.println("firing");
       RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
-    System.out.println("reversing subsystems");
+      System.out.println("reversing subsystems");
       RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
       RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
       RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
@@ -89,7 +89,7 @@ public class Robot extends LoggedRobot {
     {
       RobotContainer.m_IndexerS.setVoltage(0);
       RobotContainer.m_IntakeRollerS.rollerSpeed(0);
-      RobotContainer.m_ShooterS.idle(-2);
+      RobotContainer.m_ShooterS.idle(-1.3);
     }
 
     
