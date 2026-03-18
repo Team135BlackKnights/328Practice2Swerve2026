@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers; // lots of code will likely be copied from the limelight vision docs so go there
 
@@ -12,8 +16,16 @@ public class Vision extends SubsystemBase {
     double txnc = LimelightHelpers.getTXNC("limelight");  // Horizontal offset from principal pixel/point to target in degrees
     double tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
 
+    int[] validIDs = {3,4}; // ids to track
+    boolean doRejectUpdate = false;
+    PoseEstimator estimator;
+    Pigeon2 gyro;
+
+    public Vision(PoseEstimator m_estimator, Pigeon2 m_gyro){
+        estimator = m_estimator;
+        gyro = m_gyro;
         
-    public Vision(){
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
 
         // Switch to pipeline 0
         LimelightHelpers.setPipelineIndex("limelight", 0);
@@ -42,9 +54,59 @@ public class Vision extends SubsystemBase {
         );
 
         // Configure AprilTag detection
-        LimelightHelpers.SetFiducialIDFiltersOverride("", new int[]{1, 2, 3, 4}); // Only track these tag IDs
         LimelightHelpers.SetFiducialDownscalingOverride("", 2.0f); // Process at half resolution for improved framerate and reduced range
     }
+
+    public void periodic(){
+        LimelightHelpers.SetRobotOrientation("limelight", estimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        
+        // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+        if(Math.abs(gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360)
+        {
+            doRejectUpdate = true;
+        }
+        if(mt2.tagCount == 0)
+        {
+            doRejectUpdate = true;
+        }
+        if(!doRejectUpdate)
+        {
+            estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            estimator.addVisionMeasurement(
+                mt2.pose,
+                mt2.timestampSeconds);
+        }
+    }
+
+    public double limelight_aim_proportional(){    
+    // kP (constant of proportionality)
+    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
+    // if it is too high, the robot will oscillate.
+    // if it is too low, the robot will never reach its target
+    // if the robot never turns in the correct direction, kP should be inverted.
+    double kP = .035;
+
+    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
+    // your limelight 3 feed, tx should return roughly 31 degrees.
+    double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
+
+    // convert to radians per second for our drive method
+    targetingAngularVelocity *= SwerveS.kMaxAngularSpeed;
+
+    //invert since tx is positive when the target is to the right of the crosshair
+    targetingAngularVelocity *= -1.0;
+
+    return targetingAngularVelocity;
+  }
+
+  public double limelight_range_proportional(){    
+    double kP = .1;
+    double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
+    targetingForwardSpeed *= SwerveS.kMaxSpeed;
+    targetingForwardSpeed *= -1.0;
+    return targetingForwardSpeed;
+  }
     
 }
 

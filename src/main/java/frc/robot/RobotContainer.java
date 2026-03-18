@@ -200,14 +200,13 @@ public class RobotContainer {
       public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
       public static final HangS m_HangS = new HangS();
       public static final IndexerS m_IndexerS = new IndexerS();
-
+      public static final Vision vis = new Vision(m_SwerveS.poseEstimator, gyro);
       
       //public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
       XLock m_XLock = new XLock(m_SwerveS);
       ShootAutoNoSwerve shootauto = new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS);
-
       
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {

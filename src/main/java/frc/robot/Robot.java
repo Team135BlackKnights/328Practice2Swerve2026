@@ -18,6 +18,7 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.RobotController;
@@ -42,6 +43,7 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  private boolean doRejectUpdate = false;
 
   UsbCamera intakeCamera;
   UsbCamera frontCamera;
@@ -62,35 +64,35 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Gyro Y Accel", RobotContainer.gyro.getAccelerationY().getValueAsDouble());
     Logger.recordOutput("Gyro Z Accel", RobotContainer.gyro.getAccelerationZ().getValueAsDouble());
 
-    // RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
+    RobotContainer.m_MoveIntakeS.moveTo(intakeSetpoint);
     
-    // if (RobotContainer.rDriverBumper.getAsBoolean()){
-    //   System.out.println("intake camera feed");
-    //   server.setSource(intakeCamera);
-    // }else if (RobotContainer.lDriverBumper.getAsBoolean()){
-    //   System.out.println("front camera feed");
-    //   server.setSource(frontCamera);
-    // }
+    if (RobotContainer.rDriverBumper.getAsBoolean()){
+      System.out.println("intake camera feed");
+      server.setSource(intakeCamera);
+    }else if (RobotContainer.lDriverBumper.getAsBoolean()){
+      System.out.println("front camera feed");
+      server.setSource(frontCamera);
+    }
 
-    // if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-    //   System.out.println("firing");
-    //   RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
-    //   RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
-    // } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
-    //   System.out.println("reversing subsystems");
-    //   RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
-    //   RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
-    //   RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
-    // }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
-    //   RobotContainer.m_ShooterS.stop();
-    // }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
-    //   RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
-    // }else
-    // {
-    //   RobotContainer.m_IndexerS.setVoltage(0);
-    //   RobotContainer.m_IntakeRollerS.rollerSpeed(0);
-    //   RobotContainer.m_ShooterS.idle(-1.3);
-    // }
+    if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
+      System.out.println("firing");
+      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
+      RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
+    } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
+      System.out.println("reversing subsystems");
+      RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
+      RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
+      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
+    }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
+      RobotContainer.m_ShooterS.stop();
+    }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
+      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
+    }else
+    {
+      RobotContainer.m_IndexerS.setVoltage(0);
+      RobotContainer.m_IntakeRollerS.rollerSpeed(0);
+      RobotContainer.m_ShooterS.idle(-1.3);
+    }
 
     
   }
@@ -99,40 +101,12 @@ public class Robot extends LoggedRobot {
   // "proportional control" is a control algorithm in which the output is proportional to the error.
   // in this case, we are going to return an angular velocity that is proportional to the 
   // "tx" value from the Limelight.
-  double limelight_aim_proportional()
-  {    
-    // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
-    // if it is too high, the robot will oscillate.
-    // if it is too low, the robot will never reach its target
-    // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
-
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
-    // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
-
-    // convert to radians per second for our drive method
-    targetingAngularVelocity *= SwerveS.kMaxAngularSpeed;
-
-    //invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
-
-    return targetingAngularVelocity;
-  }
+  
 
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()
-  {    
-    double kP = .1;
-    double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
-    targetingForwardSpeed *= SwerveS.kMaxSpeed;
-    targetingForwardSpeed *= -1.0;
-    return targetingForwardSpeed;
-  }
-
+  
   private void drive(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
@@ -156,23 +130,7 @@ public class Robot extends LoggedRobot {
         -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
             * SwerveS.kMaxAngularSpeed;
 
-    // while the Y-button is pressed, overwrite some of the driving values with the output of our limelight methods
-
-    
-
-    if(RobotContainer.yDriverButton.getAsBoolean())
-    {
-        final var rot_limelight = limelight_aim_proportional();
-        rot = rot_limelight;
-
-        final var forward_limelight = limelight_range_proportional();
-        xSpeed = forward_limelight;
-
-        //while using Limelight, turn off field-relative driving.
-        fieldRelative = false;
-    }
-
-    // m_swerve.setSpeed(xSpeed, ySpeed, rot); i dont know why limelight has this here but it's there
+  
   }
 
   /**

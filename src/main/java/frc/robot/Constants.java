@@ -89,7 +89,7 @@ public final class Constants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
-    public static final double flywheelRPM = -3500;
+    public static final double flywheelRPM = -200;
     // (volts per rotations)^-1
     public static final double flyvoltageconstant = 550;
   } 

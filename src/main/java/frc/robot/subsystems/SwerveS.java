@@ -23,14 +23,14 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.RobotContainer;
 
 public class SwerveS extends SubsystemBase{
-    SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
+    static SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
-    CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
+    static CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
     //public static CANBus bus = new CANBus("canivore", "./logs/example.hoot");
-    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
-    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
-    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
-    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
+    static SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
+    static SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
+    static SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
+    static SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     
     public static final double kMaxSpeed = 6.0;
     public static final double kMaxAngularSpeed = Math.PI;
@@ -44,9 +44,9 @@ public class SwerveS extends SubsystemBase{
         new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
-    Pose2d m_pose = new Pose2d(3.460,3.000, new Rotation2d(Math.toRadians(180)));
+    static Pose2d m_pose = new Pose2d(3.460,3.000, new Rotation2d(Math.toRadians(180)));
     
-    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+    public final static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics, 
         RobotContainer.gyro.getRotation2d(), 
         new SwerveModulePosition[] {
