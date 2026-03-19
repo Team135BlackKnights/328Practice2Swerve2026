@@ -6,8 +6,8 @@ package frc.robot;
 
 
 
-import static edu.wpi.first.units.Units.Micro;
-import static edu.wpi.first.units.Units.Second;
+// import static edu.wpi.first.units.Units.Micro;
+// import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Optional;
@@ -27,16 +27,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+// import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.HangC;
-import frc.robot.commands.IndexerC;
-import frc.robot.commands.IntakeRollerC;
-import frc.robot.commands.MoveIntakeC;
-import frc.robot.commands.ShooterC;
-import frc.robot.commands.ShooterHoodC;
+// import frc.robot.commands.HangC;
+// import frc.robot.commands.IndexerC;
+// import frc.robot.commands.IntakeRollerC;
+// import frc.robot.commands.MoveIntakeC;
+// import frc.robot.commands.ShooterC;
+// import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.commands.Autos.ShootAutoNoSwerve;
@@ -51,7 +51,7 @@ import frc.robot.subsystems.SwerveS;
 import frc.robot.subsystems.Vision;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+//import com.pathplanner.lib.commands.PathPlannerAuto;
 
 
 /**
@@ -200,7 +200,7 @@ public class RobotContainer {
       public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
       public static final HangS m_HangS = new HangS();
       public static final IndexerS m_IndexerS = new IndexerS();
-      public static final Vision vis = new Vision(m_SwerveS.poseEstimator, gyro);
+      public static final Vision vis = new Vision();
       
       //public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
     

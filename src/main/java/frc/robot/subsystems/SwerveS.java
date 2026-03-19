@@ -17,9 +17,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+//import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 
 public class SwerveS extends SubsystemBase{
@@ -94,8 +96,10 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
-        }
+            }
         );
+        //adding vision measurement is done in SwerveS
+        //poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"), Timer.getFPGATimestamp());
     }
 
     public ChassisSpeeds getState(){

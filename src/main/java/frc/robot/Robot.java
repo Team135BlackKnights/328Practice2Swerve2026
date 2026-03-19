@@ -16,16 +16,16 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+//import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.VecBuilder;
+//import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
+//import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveS;
 
 /**
@@ -43,7 +43,7 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-  private boolean doRejectUpdate = false;
+  //private boolean doRejectUpdate = false;
 
   UsbCamera intakeCamera;
   UsbCamera frontCamera;
@@ -200,17 +200,20 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {}
 
-  @Override
+ // @Override
   public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    // schedule the autonomous command (example)
-    //if (m_autonomousCommand != null) {
-    //  CommandScheduler.getInstance().schedule(m_autonomousCommand);
-    //}
+    //schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+    for (int i = 0;  i == 50; i++){
+    System.out.println("Running Auto: " + m_autonomousCommand.getName());
+    }
+    CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    }
   }
 
   @Override

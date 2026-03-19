@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
+//import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers; // lots of code will likely be copied from the limelight vision docs so go there
+import frc.robot.RobotContainer;
 
 public class Vision extends SubsystemBase {
     double tx = LimelightHelpers.getTX("limelight");  // Horizontal offset from crosshair to target in degrees
@@ -18,12 +18,8 @@ public class Vision extends SubsystemBase {
 
     int[] validIDs = {3,4}; // ids to track
     boolean doRejectUpdate = false;
-    PoseEstimator estimator;
-    Pigeon2 gyro;
-
-    public Vision(PoseEstimator m_estimator, Pigeon2 m_gyro){
-        estimator = m_estimator;
-        gyro = m_gyro;
+    //@SuppressWarnings("rawtypes")
+    public Vision(){
         
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
 
@@ -58,11 +54,11 @@ public class Vision extends SubsystemBase {
     }
 
     public void periodic(){
-        LimelightHelpers.SetRobotOrientation("limelight", estimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation("limelight", SwerveS.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         
         // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-        if(Math.abs(gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360)
+        if(Math.abs(RobotContainer.gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360)
         {
             doRejectUpdate = true;
         }
@@ -72,8 +68,8 @@ public class Vision extends SubsystemBase {
         }
         if(!doRejectUpdate)
         {
-            estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            estimator.addVisionMeasurement(
+            SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            SwerveS.poseEstimator.addVisionMeasurement(
                 mt2.pose,
                 mt2.timestampSeconds);
         }
