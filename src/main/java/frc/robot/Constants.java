@@ -67,11 +67,12 @@ public final class Constants {
   public static final double robotMassKG = 50;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {0.6,0,0.05};
+    public static final double[] intakePID = new double[] {0.8,0,0.05};
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
-    public static final double downPositionP = 0; 
-    public static final double upPositionP = -6;
+    // these are in rotations
+    public static final double downPositionSetpoint = 0; 
+    public static final double upPositionSetpoint = -0.28 ;
   }
 
   public static class HoodConstants {
@@ -88,7 +89,9 @@ public final class Constants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
-    public static final double shooter2voltage = -0.0;
+    public static final double flywheelRPM = -200;
+    // (volts per rotations)^-1
+    public static final double flyvoltageconstant = 550;
   } 
 
   public static class IntakeRollerConstants {

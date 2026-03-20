@@ -6,8 +6,8 @@ package frc.robot;
 
 
 
-import static edu.wpi.first.units.Units.Micro;
-import static edu.wpi.first.units.Units.Second;
+// import static edu.wpi.first.units.Units.Micro;
+// import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Optional;
@@ -27,19 +27,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+// import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.HangC;
-import frc.robot.commands.IndexerC;
-import frc.robot.commands.IntakeRollerC;
-import frc.robot.commands.MoveIntakeC;
-import frc.robot.commands.ShooterC;
-import frc.robot.commands.ShooterHoodC;
+// import frc.robot.commands.HangC;
+// import frc.robot.commands.IndexerC;
+// import frc.robot.commands.IntakeRollerC;
+// import frc.robot.commands.MoveIntakeC;
+// import frc.robot.commands.ShooterC;
+// import frc.robot.commands.ShooterHoodC;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.XLock;
 import frc.robot.commands.Autos.ShootAutoNoSwerve;
+import frc.robot.commands.Autos.intakeA;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.HoodAngleS;
 import frc.robot.subsystems.IndexerS;
@@ -47,7 +48,10 @@ import frc.robot.subsystems.IntakeRollerS;
 import frc.robot.subsystems.MoveIntakeS;
 import frc.robot.subsystems.ShooterS;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.subsystems.Vision;
+
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 
 /**
@@ -92,7 +96,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverRight = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 45 && pov < 135){
-          System.out.println("driver right dpad");
+          //System.out.println("driver right dpad");
           return true;
         } 
         else{
@@ -103,7 +107,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverUp = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 335 || pov < 45){
-          System.out.println("driver up dpad");
+          //System.out.println("driver up dpad");
           return true;
         } 
         else{
@@ -114,7 +118,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverDown = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 135 && pov < 240){
-          System.out.println("driver down dpad");
+          //System.out.println("driver down dpad");
           return true;
         } 
         else{
@@ -125,7 +129,7 @@ public class RobotContainer {
       public static final Trigger dpadDriverLeft = new Trigger(() -> {
         double pov = m_driverController.getHID().getPOV();
         if (pov > 240 && pov < 315){
-          System.out.println("driver left dpad");
+          //System.out.println("driver left dpad");
           return true;
         } 
         else{
@@ -137,7 +141,7 @@ public class RobotContainer {
       public static final Trigger dpadManipRight = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 45 && pov < 135){
-          System.out.println("manip right dpad");
+          //System.out.println("manip right dpad");
           return true;
         } 
         else{
@@ -148,7 +152,7 @@ public class RobotContainer {
       public static final Trigger dpadManipUp = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 335 || pov < 45){
-          System.out.println("manip up dpad");
+          //System.out.println("manip up dpad");
           return true;
         } 
         else{
@@ -159,7 +163,7 @@ public class RobotContainer {
       public static final Trigger dpadManipDown = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 135 && pov < 240){
-          System.out.println("manip down dpad");
+          //System.out.println("manip down dpad");
           return true;
         } 
         else{
@@ -170,7 +174,7 @@ public class RobotContainer {
       public static final Trigger dpadManipLeft = new Trigger(() -> {
         double pov = m_manipulatorController.getHID().getPOV();
         if (pov > 240 && pov < 315){
-          System.out.println("manip left dpad");
+          //System.out.println("manip left dpad");
           return true;
         } 
         else{
@@ -196,23 +200,23 @@ public class RobotContainer {
       public static final IntakeRollerS m_IntakeRollerS = new IntakeRollerS ();
       public static final HangS m_HangS = new HangS();
       public static final IndexerS m_IndexerS = new IndexerS();
-  
+      public static final Vision vis = new Vision();
+      
       //public static final DriveMeters driveturn = new DriveMeters(m_SwerveS, m_ShooterS, m_IndexerS, 3, 45);
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
       XLock m_XLock = new XLock(m_SwerveS);
       ShootAutoNoSwerve shootauto = new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS);
-
       
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
         //blame lee if no work
-      //NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage)).finallyDo(() -> m_ShooterS.fire(0,0)));
-  
+      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.flywheelRPM), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,0)));
+      NamedCommands.registerCommand("intake", new intakeA(m_MoveIntakeS, m_IntakeRollerS));
       // Build an auto chooser. This will use Commands.none() as the default option.
       m_SwerveS.swervePathPlanner();   
       autoChooser = AutoBuilder.buildAutoChooser();     
-      autoChooser.setDefaultOption("Do nothing", Commands.none());
+      autoChooser.setDefaultOption("null", null);
       //what this *should* do is shoot and index for 6 seconds. should literally not move swerve at all
       autoChooser.addOption("shootauto", 
           new SequentialCommandGroup(
@@ -231,9 +235,9 @@ public class RobotContainer {
           )
       );
       
-      // Another option that allows you to specify the default auto by its name
+        // Another option that allows you to specify the default auto by its name
   
-      SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
         
         m_SwerveS.setDefaultCommand(m_SwerveC);
         // Configure the trigger bindings
@@ -261,8 +265,8 @@ public class RobotContainer {
         aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
         yDriverButton.onTrue(new InstantCommand(() -> m_SwerveC.inverted = !m_SwerveC.inverted));
 
-        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionP));
-        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionP));
+        lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint));
+        rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
         xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
         rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));
@@ -299,7 +303,7 @@ public class RobotContainer {
       // This method loads the auto when it is called, however, it is recommended
       // to       s load your paths/autos when code starts, then return the
       // pre-loaded auto/path
-      //return new PathPlannerAuto("Example Auto");
+      //return new PathPlannerAuto("lalendjehueuajefijefbhfeijefbjef");
       return autoChooser.getSelected();
   }
 

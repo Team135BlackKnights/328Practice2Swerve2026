@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4618859649122804,
-        "y": 5.737072368421052
+        "x": 3.8176864035087723,
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8848245614035086,
-        "y": 5.900548245614034
+        "x": 2.7216557017543863,
+        "y": 5.929484649122807
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 0.5674013157894737,
+        "y": 4.765833333333332
       },
       "prevControl": {
-        "x": 2.0,
-        "y": 4.0
+        "x": 0.6924122807017541,
+        "y": 3.438793859649121
+      },
+      "nextControl": {
+        "x": 0.4423903508771935,
+        "y": 6.092872807017543
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.5674013157894737,
+        "y": 7.448760964912281
+      },
+      "prevControl": {
+        "x": 0.6058662280701754,
+        "y": 8.179594298245615
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,26 +47,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "fire",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "deadline",
-        "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 5.0
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

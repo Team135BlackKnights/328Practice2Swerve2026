@@ -17,6 +17,8 @@ public class SwerveC extends Command{
     public boolean inverted = false;
     private static final double deadbandTranslate = 0;
     private static final double deadbandRotate = 0;
+    public boolean fieldRelative = true;
+    public boolean targeting = false;
 
     public SwerveC(SwerveS subsystem){
         addRequirements(subsystem);
@@ -52,14 +54,31 @@ public class SwerveC extends Command{
             rot *= 1;
         }
 
-        // System.out.println("l         x: " + x);
-        // System.out.println("l         y: " + y);
-        // System.out.println("l         rot: " + rot);
+        
 
+        if(RobotContainer.yDriverButton.getAsBoolean()){
+        final double rot_limelight = RobotContainer.vis.limelight_aim_proportional();
+        rot = rot_limelight;
+
+        final double forward_limelight = RobotContainer.vis.limelight_range_proportional();
+        x = forward_limelight;
+
+            //while using Limelight, turn off field-relative driving.
+            fieldRelative = false;
+            targeting = true;
+        } else {
+            //while not using Limelight, turn on field relative driving.
+            fieldRelative = true;
+            targeting = false;
+        }
 
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
-        final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
-        m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
+        if (fieldRelative == false){
+            final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
+            m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
+        } else if (targeting == true){
+            m_Swerve.setSpeed(x, y, rot);
+        }
         
     }
 

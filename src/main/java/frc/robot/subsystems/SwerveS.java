@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,23 +17,25 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 
 public class SwerveS extends SubsystemBase{
-    SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
+    static SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.moduleLocationFrontLeft,SwerveConstants.moduleLocationFrontRight,
     SwerveConstants.moduleLocationBackLeft, SwerveConstants.moduleLocationBackRight);
-    CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
+    static CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
     //public static CANBus bus = new CANBus("canivore", "./logs/example.hoot");
-    SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
-    SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
-    SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
-    SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
+    static SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
+    static SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
+    static SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
+    static SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     
-    public static final double kMaxSpeed = 6.0;
-    public static final double kMaxAngularSpeed = Math.PI;
-    private int print = 0;
+    public static final double kMaxSpeed = 2; // max translational speed limelight is allowed to use
+    public static final double kMaxAngularSpeed = 2; // max aim limelight is allowed to use
 
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
     m_kinematics, RobotContainer.gyro.getRotation2d(),
@@ -41,8 +46,18 @@ public class SwerveS extends SubsystemBase{
         new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
   }, new Pose2d(5.0, 13.5, new Rotation2d()));//todonot
 
-    Pose2d m_pose = new Pose2d(3.572,2.682, new Rotation2d(/* Math.PI */));
-      
+    static Pose2d m_pose = new Pose2d(3.460,3.000, new Rotation2d(Math.toRadians(180)));
+    
+    public final static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+        m_kinematics, 
+        RobotContainer.gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+        }, 
+        m_pose);
 
     public void periodic(){
         frontLeftModule.updateStatePID();
@@ -57,6 +72,11 @@ public class SwerveS extends SubsystemBase{
         //     System.out.println();
         //     print = 0;
         // } else print ++;
+        
+        
+    }
+
+    public void updatePose(){
         var gyroAngle = RobotContainer.gyro.getRotation2d();
         // Update the pose
         m_pose = m_odometry.update(gyroAngle,
@@ -67,6 +87,19 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
         });
 
+    }
+
+    public void updatePoseEsitmator(){
+        poseEstimator.update(RobotContainer.gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(frontLeftModule.getPosition(), frontLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(frontRightModule.getPosition(), frontRightModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backLeftModule.getPosition(), backLeftModule.getTurnPositionRotation2D()),
+            new SwerveModulePosition(backRightModule.getPosition(), backRightModule.getTurnPositionRotation2D())
+            }
+        );
+        //adding vision measurement is done in SwerveS
+        //poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"), Timer.getFPGATimestamp());
     }
 
     public ChassisSpeeds getState(){
@@ -99,7 +132,7 @@ public class SwerveS extends SubsystemBase{
     }
 
     public Pose2d getPose(){
-        return m_pose;
+        return poseEstimator.getEstimatedPosition();
     }
     public void setSpeedFromState(ChassisSpeeds state){
         setSpeed(state.vxMetersPerSecond, state.vyMetersPerSecond, state.omegaRadiansPerSecond);
@@ -149,27 +182,29 @@ public class SwerveS extends SubsystemBase{
 
         // Configure AutoBuilder last
         AutoBuilder.configure(
-                ()->(m_pose), // Robot pose supplier
-                (newPose)->{m_pose = newPose;}, // Method to reset odometry (will be called if your auto has a starting pose)
-                this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                (speeds) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-                ),
-                config, // The robot configuration
-                () -> {
+            this::getPose, // Robot pose supplier
+            (newPose)->{m_pose = newPose;
+            RobotContainer.gyro.setYaw(newPose.getRotation().getDegrees());
+            }, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, ff) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(5.0, 0.0, 0.01) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
                 // Boolean supplier that controls when the path will be mirrored for the red alliance
                 // This will flip the path being followed to the red side of the field.
                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-                var alliance = DriverStation.getAlliance();
+                Optional<Alliance> alliance = DriverStation.getAlliance();
                 if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;
                 }
                 return false;
-                },
-                this // Reference to this subsystem to set requirements
+            },
+            this // Reference to this subsystem to set requirements
         );
 
 
