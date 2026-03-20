@@ -33,7 +33,8 @@ public class Vision extends SubsystemBase {
         // Switch to pipeline 0
         LimelightHelpers.setPipelineIndex("limelight", 0);
 
-        LimelightHelpers.setLEDMode_ForceOff("limelight");
+        LimelightHelpers.setLEDMode_ForceOff("limelight"); 
+        //LimelightHelpers.setLEDMode_PipelineControl("limelight"); 
 
         // Set a custom crop window for improved performance (-1 to 1 for each value)
         LimelightHelpers.setCropWindow("limelight", -0.5, 0.5, -0.5, 0.5);
@@ -41,8 +42,8 @@ public class Vision extends SubsystemBase {
 
         // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
         LimelightHelpers.setCameraPose_RobotSpace("limelight", 
-            0.4216,    // Forward offset (meters)
-            0.1905,    // Side offset (meters)
+            0.4191,    // Forward offset (meters)
+            -0.1524,    // Side offset (meters)
             0.2286,    // Height offset (meters)
             0.0,    // Roll (degrees)
             30.0,   // Pitch (degrees)
