@@ -51,7 +51,7 @@ import frc.robot.subsystems.SwerveS;
 import frc.robot.subsystems.Vision;
 
 import com.pathplanner.lib.auto.NamedCommands;
-//import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 
 /**

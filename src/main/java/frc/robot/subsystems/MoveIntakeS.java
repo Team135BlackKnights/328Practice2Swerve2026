@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-//import frc.robot.LoggableTunedNumber;
+import frc.robot.LoggableTunedNumber;
 
 public class MoveIntakeS extends SubsystemBase {
     private final SparkMax motor = new SparkMax(Constants.IntakeConstants.intakeVertMotorID, MotorType.kBrushless);

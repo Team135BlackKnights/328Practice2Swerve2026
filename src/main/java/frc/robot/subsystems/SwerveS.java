@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
-//import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 
 public class SwerveS extends SubsystemBase{
@@ -34,8 +34,8 @@ public class SwerveS extends SubsystemBase{
     static SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
     static SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     
-    public static final double kMaxSpeed = 6.0;
-    public static final double kMaxAngularSpeed = Math.PI;
+    public static final double kMaxSpeed = 2; // max translational speed limelight is allowed to use
+    public static final double kMaxAngularSpeed = 2; // max aim limelight is allowed to use
 
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
     m_kinematics, RobotContainer.gyro.getRotation2d(),

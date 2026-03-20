@@ -67,7 +67,7 @@ public final class Constants {
   public static final double robotMassKG = 50;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {0.6,0,0.05};
+    public static final double[] intakePID = new double[] {0.8,0,0.05};
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     // these are in rotations

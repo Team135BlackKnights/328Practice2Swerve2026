@@ -1,11 +1,15 @@
 package frc.robot.subsystems;
 
-//import com.ctre.phoenix6.hardware.Pigeon2;
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers; // lots of code will likely be copied from the limelight vision docs so go there
+import frc.robot.LoggableTunedNumber;
 import frc.robot.RobotContainer;
+import frc.robot.LimelightHelpers.PoseEstimate;
 
 public class Vision extends SubsystemBase {
     double tx = LimelightHelpers.getTX("limelight");  // Horizontal offset from crosshair to target in degrees
@@ -16,9 +20,12 @@ public class Vision extends SubsystemBase {
     double txnc = LimelightHelpers.getTXNC("limelight");  // Horizontal offset from principal pixel/point to target in degrees
     double tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
 
-    int[] validIDs = {3,4}; // ids to track
+    int[] validIDs = {5,8,9,10,4,3,2,11}; // ids to track
     boolean doRejectUpdate = false;
-    //@SuppressWarnings("rawtypes")
+
+    PoseEstimate mt2;
+
+    @SuppressWarnings("")
     public Vision(){
         
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
@@ -26,17 +33,17 @@ public class Vision extends SubsystemBase {
         // Switch to pipeline 0
         LimelightHelpers.setPipelineIndex("limelight", 0);
 
-        LimelightHelpers.setLEDMode_ForceOn("limelight");
+        LimelightHelpers.setLEDMode_ForceOff("limelight");
 
         // Set a custom crop window for improved performance (-1 to 1 for each value)
         LimelightHelpers.setCropWindow("limelight", -0.5, 0.5, -0.5, 0.5);
 
 
         // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
-        LimelightHelpers.setCameraPose_RobotSpace("", 
-            0.5,    // Forward offset (meters)
-            0.0,    // Side offset (meters)
-            0.5,    // Height offset (meters)
+        LimelightHelpers.setCameraPose_RobotSpace("limelight", 
+            0.4216,    // Forward offset (meters)
+            0.1905,    // Side offset (meters)
+            0.2286,    // Height offset (meters)
             0.0,    // Roll (degrees)
             30.0,   // Pitch (degrees)
             0.0     // Yaw (degrees)
@@ -46,7 +53,7 @@ public class Vision extends SubsystemBase {
         LimelightHelpers.setFiducial3DOffset("", 
             0.0,    // Forward offset
             0.0,    // Side offset  
-            0.5     // Height offset
+            0.0     // Height offset
         );
 
         // Configure AprilTag detection
@@ -58,21 +65,23 @@ public class Vision extends SubsystemBase {
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         
         // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-        if(Math.abs(RobotContainer.gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360)
-        {
+        if(Math.abs(RobotContainer.gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360 && mt2 != null){
             doRejectUpdate = true;
-        }
-        if(mt2.tagCount == 0)
-        {
+
+        } else if(mt2.tagCount == 0) {
             doRejectUpdate = true;
-        }
-        if(!doRejectUpdate)
-        {
+
+        } else if(!doRejectUpdate) {
+            
             SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
             SwerveS.poseEstimator.addVisionMeasurement(
                 mt2.pose,
                 mt2.timestampSeconds);
         }
+
+        Logger.recordOutput("Vision/tx", LimelightHelpers.getTX("limelight"));
+        Logger.recordOutput("Vision/ty", LimelightHelpers.getTY("limelight"));
+        Logger.recordOutput("Vision/ta", LimelightHelpers.getTA("limelight"));        
     }
 
     public double limelight_aim_proportional(){    
