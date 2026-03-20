@@ -20,7 +20,7 @@ public class Vision extends SubsystemBase {
     double txnc = LimelightHelpers.getTXNC("limelight");  // Horizontal offset from principal pixel/point to target in degrees
     double tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
 
-    int[] validIDs = {5,8,9,10,4,3,2,11}; // ids to track
+    int[] validIDs = {10}; // ids to track
     boolean doRejectUpdate = false;
 
     PoseEstimate mt2;
