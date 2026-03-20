@@ -21,6 +21,10 @@ import edu.wpi.first.math.MathUtil;
 //import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.PixelFormat;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +55,17 @@ public class Robot extends LoggedRobot {
   VideoSink server;
   CvSource output;
 
+  DataLog log;
+  DoubleArrayLogEntry motorLog;
+
+  @Override
+  public void robotInit(){
+    DataLogManager.start();
+    log = DataLogManager.getLog();
+    DriverStation.startDataLog(log);
+    motorLog = new DoubleArrayLogEntry(log, "/Motor/PositionVoltage");
+  }
+
   @Override
   public void autonomousPeriodic() {
     System.out.println("Auto Command: " + m_autonomousCommand.getName());
@@ -58,6 +73,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
+
     drive(true);
     Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
     Logger.recordOutput("Gyro X Accel", RobotContainer.gyro.getAccelerationX().getValueAsDouble());
@@ -194,6 +210,7 @@ public class Robot extends LoggedRobot {
     RobotContainer.m_SwerveS.updatePose();
     RobotContainer.m_SwerveS.updatePoseEsitmator();
     CommandScheduler.getInstance().run();
+    motorLog.append(new double[] {m_robotContainer.getflWheelPos(), m_robotContainer.getflWheelVotage()});
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -31,6 +31,7 @@ public class SwerveC extends Command{
         double x = -RobotContainer.m_driverController.getLeftX();
         double y = RobotContainer.m_driverController.getLeftY();
         double angle = Math.atan2(y,x);
+
         double magnitude = Math.hypot(x, y);
         double a = 0.6;
         magnitude = a*Math.pow(magnitude,5)+magnitude*(1-a);
@@ -38,6 +39,7 @@ public class SwerveC extends Command{
         if (Math.abs(magnitude) < deadbandTranslate){
             magnitude = 0;
         }
+        
         x = Math.cos(angle) * magnitude;
         y = Math.sin(angle) * magnitude;
 
