@@ -17,7 +17,7 @@ public class intakeA extends Command{
 
     public void execute(){
         moveintake.moveTo(Constants.IntakeConstants.downPositionSetpoint);
-        if (moveintake.getEncoderPosition() < 0.2 && moveintake.getEncoderPosition() > 0.5){
+        if (moveintake.getEncoderPositionWithOffset() < 0.2 && moveintake.getEncoderPositionWithOffset() > 0.5){
             rollers.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage);
         } else {
             rollers.rollerSpeed(0);

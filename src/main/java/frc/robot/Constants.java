@@ -6,7 +6,9 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -56,9 +58,10 @@ public final class Constants {
 
     public static final double[] turnPID = new double[] {5,0,0.1};
     public static final double[] drivePID = new double[] {1,0,0,.3,2.1};
+    public static final double[] aimPID = {6,0,0.05};
 
     public static final double gearRatioSpeed = (1/5.9); 
-    public static final double wheelRadius = 2 * 0.0254;
+    public static final double wheelRadiusMeters = 2 * 0.0254;
 
     public static final double maxLinearSpeedMPS = 6;
     public static final double maxRadSpeedRPS = 10;
@@ -67,12 +70,12 @@ public final class Constants {
   public static final double robotMassKG = 50;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {0.8,0,0.05};
+    public static final double[] intakePID = new double[] {10,0,0.6};
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     // these are in rotations
-    public static final double downPositionSetpoint = 0; 
-    public static final double upPositionSetpoint = -0.28 ;
+    public static final double downPositionSetpoint = -0.27; 
+    public static final double upPositionSetpoint = 0 ;
   }
 
   public static class HoodConstants {
@@ -89,9 +92,10 @@ public final class Constants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
     public static final double shooter1Voltage = 7;
-    public static final double flywheelRPM = -200;
+    public static final double flywheelRPM = -1200; // speed at 0 distance to hub
     // (volts per rotations)^-1
     public static final double flyvoltageconstant = 550;
+    public static final double[] flyPID = {1,0,0};
   } 
 
   public static class IntakeRollerConstants {
@@ -111,6 +115,13 @@ public final class Constants {
     public static final int indexerMotorID = 20;
     public static final double indexerVoltage = -3.5;
     public static final boolean indexerRunValue = true; 
+  }
+
+  public static class fieldConstants {
+    public static final double redHubXPosM = Units.inchesToMeters(468.56);
+    public static final double redHubYPosM = Units.inchesToMeters(158.32);
+    public static final double blueHubXPosM = Units.inchesToMeters(181.56);
+    public static final double blueHubYPosM = Units.inchesToMeters(158.32);
   }
 }
 

@@ -116,16 +116,16 @@ public class SwerveModule {
         return new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI);
     }
     
-    public double getPosition(){
-        return driveMotor.getPosition().getValueAsDouble();
+    public double getPositionMeters(){
+        return driveMotor.getPosition().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * Constants.SwerveConstants.wheelRadiusMeters;
     }
 
     public double getPositionCumulative(){
         return currentPos + currentRotation;
     }
 
-    public double getDriveSpeed(){
-        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadius;
+    public double getDriveSpeedMetersPerSecond(){
+        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadiusMeters;
     }
 
     public void setDesiredModuleState(SwerveModuleState moduleState){
@@ -162,9 +162,19 @@ public class SwerveModule {
             driveController = new PIDController(drivekP.get(), drivekI.get(), drivekD.get());
             driveFF = new SimpleMotorFeedforward(drivekS.get(), drivekV.get());
         }, drivekP, drivekI, drivekD, drivekS,drivekV);
-        double currentDriveVelocity = getDriveSpeed();
+
+
+        double currentDriveVelocity = getDriveSpeedMetersPerSecond();
         double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
-        SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+
+
+        desiredState.optimize(new Rotation2d(currentTurnPosition));
+        double speed = desiredState.speedMetersPerSecond;
+        double angle = desiredState.angle.getRadians();
+        speed = speed * Math.cos(currentTurnPosition-angle);
+
+        SwerveModuleState optimizedDesiredState = new SwerveModuleState(speed, new Rotation2d(angle));
+        
         // Rotation2d currentRotation =new Rotation2d(currentTurnPosition);
         // System.out.println(currentRotation);
         // System.out.println(optimizedDesiredState.angle);

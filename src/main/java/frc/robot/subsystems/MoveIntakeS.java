@@ -19,9 +19,9 @@ public class MoveIntakeS extends SubsystemBase {
     boolean zeroing = false;
     //private double zeroSpikeStart = Double.NaN;
     private PIDController intakeController = new PIDController(Constants.IntakeConstants.intakePID[0], Constants.IntakeConstants.intakePID[1], Constants.IntakeConstants.intakePID[2]);
-    // private final LoggableTunedNumber kP = new LoggableTunedNumber("Intake/kP",Constants.IntakeConstants.intakePID[0],true);
-    // private final LoggableTunedNumber kI = new LoggableTunedNumber("Intake/kI",Constants.IntakeConstants.intakePID[1],true);
-    // private final LoggableTunedNumber kD = new LoggableTunedNumber("Intake/kD",Constants.IntakeConstants.intakePID[2],true);
+    private final LoggableTunedNumber kP = new LoggableTunedNumber("Intake/kP",Constants.IntakeConstants.intakePID[0],true);
+    private final LoggableTunedNumber kI = new LoggableTunedNumber("Intake/kI",Constants.IntakeConstants.intakePID[1],true);
+    private final LoggableTunedNumber kD = new LoggableTunedNumber("Intake/kD",Constants.IntakeConstants.intakePID[2],true);
     private double clamp(double a, double min, double max){
         return  Math.max(Math.min(a, max), min);
     }
@@ -30,7 +30,7 @@ public class MoveIntakeS extends SubsystemBase {
         if (zeroing){
             return;
         }
-        double intakeVoltage = intakeController.calculate(encoder.get() - offset, desiredPosition);
+        double intakeVoltage = intakeController.calculate(getEncoderPositionWithOffset(), desiredPosition);
         intakeVoltage = clamp(intakeVoltage, -5, 4);
         setVoltage(intakeVoltage); 
     }
@@ -47,9 +47,9 @@ public class MoveIntakeS extends SubsystemBase {
     @Override
     public void periodic(){
         // setVoltage(-3);        
-        // LoggableTunedNumber.ifChanged(hashCode(), () -> {
-        //     intakeController = new PIDController(kP.get(), kI.get(), kD.get());
-        // }, kP, kI, kD);
+        LoggableTunedNumber.ifChanged(hashCode(), () -> {
+            intakeController = new PIDController(kP.get(), kI.get(), kD.get());
+        }, kP, kI, kD);
         // if (zeroing){
         //     double now = Timer.getFPGATimestamp();
         //     setVoltage(4);
@@ -69,13 +69,13 @@ public class MoveIntakeS extends SubsystemBase {
         //     }
         // }
         Logger.recordOutput("Intake/Encoder pos", encoder.get());
-        Logger.recordOutput("Intake/Encoder with offset", encoder.get() - offset);
+        Logger.recordOutput("Intake/Encoder with offset", getEncoderPositionWithOffset());
         Logger.recordOutput("Intake/Encoder connected", encoder.isConnected());
         Logger.recordOutput("Intake/RelEncoder pos", relencoder.getPosition());
     }
 
-    public double getEncoderPosition(){
-        return encoder.get();
+    public double getEncoderPositionWithOffset(){
+        return encoder.get() - offset;
     }
 
     // public void vertDownMovement() {

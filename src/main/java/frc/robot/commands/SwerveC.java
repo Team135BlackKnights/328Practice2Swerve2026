@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 //import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.subsystems.Vision;
 
 
 
@@ -52,34 +53,20 @@ public class SwerveC extends Command{
             x *= -1;
             y *= -1;
             rot *= 1;
-        }
-
-        
-
-        if(RobotContainer.yDriverButton.getAsBoolean()){
-        final double rot_limelight = RobotContainer.vis.limelightAimProportional();
-        rot = rot_limelight;
-
-        final double forward_limelight = RobotContainer.vis.limelightRangeProportional();
-        x = forward_limelight;
-
-            //while using Limelight, turn off field-relative driving.
-            fieldRelative = false;
-            targeting = true;
-        } else {
-            //while not using Limelight, turn on field relative driving.
-            fieldRelative = true;
-            targeting = false;
-        }
+        }   
 
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
-        if (fieldRelative == false){
-            final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
-            m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
-        } else if (targeting == true){
-            m_Swerve.setSpeed(x, y, rot);
+        final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
+
+        if (targeting == true){
+            m_Swerve.setSpeed(
+                RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, 
+                RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, 
+                SwerveS.getAimToPointSpeedRadians(Vision.getHubAngleFieldRelative())
+            );        
+        } else {
+            m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);        
         }
-        
     }
 
     @Override

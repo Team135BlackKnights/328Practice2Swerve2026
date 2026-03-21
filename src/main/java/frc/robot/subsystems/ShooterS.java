@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.QuadratureConfigs;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -14,16 +15,23 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LoggableTunedNumber;
+import frc.robot.RobotContainer;
 
 public class ShooterS extends SubsystemBase{
     private final SparkMax kickMotor = new SparkMax(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
     private final SparkMax shootMotor = new SparkMax(Constants.ShooterConstants.shooterMotor2ID, MotorType.kBrushless);
-    private final PIDController flyController = new PIDController(1, 0, 0);
+    private PIDController flyController = new PIDController(1, 0, 0);
+    private final LoggableTunedNumber kP = new LoggableTunedNumber("Shooter/kP",Constants.ShooterConstants.flyPID[0],true);
+    private final LoggableTunedNumber kI = new LoggableTunedNumber("Shooter/kI",Constants.ShooterConstants.flyPID[1],true);
+    private final LoggableTunedNumber kD = new LoggableTunedNumber("Shooter/kD",Constants.ShooterConstants.flyPID[2],true);
     //dio channel
     private final RelativeEncoder kickupEncoder = kickMotor.getEncoder();
+    private final Encoder shooterencoder = new Encoder(1, 2);
     private final DutyCycleEncoder shooterEncoder = new DutyCycleEncoder(1);
     double flyPreviousPosition = shooterEncoder.get();
     double flyCumulativeRotations = 0;
@@ -52,9 +60,9 @@ public class ShooterS extends SubsystemBase{
     public void fire(double kickupVoltage, double desiredFlyVelocity){
         // converts to rad per sec
         DesiredFlyVelocity = desiredFlyVelocity;
-        double desiredFlyVelocityRadPS = Math.toRadians(desiredFlyVelocity*6);
-        double flyVelocityRadPS = Math.toRadians(flyVelocity*6);
-        double flywheelVoltage = MathUtil.clamp(flyController.calculate(flyVelocityRadPS, desiredFlyVelocityRadPS), -6.5, 6.5);
+        // double desiredFlyVelocityRadPS = Math.toRadians(desiredFlyVelocity*6);
+        // double flyVelocityRadPS = Math.toRadians(flyVelocity*6);
+        double flywheelVoltage = MathUtil.clamp(flyController.calculate(flyVelocity, desiredFlyVelocity)*12, -12, 12);
         kickMotor.setVoltage(kickupVoltage);
         shootMotor.setVoltage(flywheelVoltage);
     }
@@ -70,7 +78,20 @@ public class ShooterS extends SubsystemBase{
         shootMotor.setVoltage(0);
     }
 
+    //this is to try and make the shooter shoot with more power the further it is from the hub
+    //since changes in x would result in not hitting the hub we only consider a y value (distance)
+    public double getShooterProportionalControlSpeed(){
+        double distM = 1 * RobotContainer.vis.getHubDistanceFieldRelative();
+        double desiredSpeed = MathUtil.clamp(( -1100 * distM - 176.6), -3000, -500);
+        System.out.println("Desired Speed:" + desiredSpeed);
+        return desiredSpeed;
+    }
+
+
     public void periodic(){
+        LoggableTunedNumber.ifChanged(hashCode(), () -> {
+            flyController = new PIDController(kP.get(), kI.get(), kD.get());
+        }, kP, kI, kD);
         double flyCurrentPosition = shooterEncoder.get(); 
         //double kickCurrentPosition = kickupEncoder.get();
         double time = Timer.getFPGATimestamp();

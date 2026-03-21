@@ -49,26 +49,26 @@ public class Robot extends LoggedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
   //private boolean doRejectUpdate = false;
 
-  UsbCamera intakeCamera;
-  UsbCamera frontCamera;
+  //UsbCamera intakeCamera;
+  //UsbCamera frontCamera;
   //UsbCamera camera3;
-  VideoSink server;
-  CvSource output;
+  //VideoSink server;
+  //CvSource output;
 
   DataLog log;
-  DoubleArrayLogEntry motorLog;
+  //DoubleArrayLogEntry motorLog;
 
   @Override
   public void robotInit(){
-    DataLogManager.start();
-    log = DataLogManager.getLog();
-    DriverStation.startDataLog(log);
-    motorLog = new DoubleArrayLogEntry(log, "/Motor/PositionVoltage");
+    //DataLogManager.start();
+    //log = DataLogManager.getLog();
+    //DriverStation.startDataLog(log);
+    //motorLog = new DoubleArrayLogEntry(log, "/Motor/PositionVoltage");
   }
 
   @Override
   public void autonomousPeriodic() {
-    System.out.println("Auto Command: " + m_autonomousCommand.getName());
+    //System.out.println("Auto Command: " + m_autonomousCommand.getName());
   }
 
   @Override
@@ -84,15 +84,15 @@ public class Robot extends LoggedRobot {
     
     if (RobotContainer.rDriverBumper.getAsBoolean()){
       System.out.println("intake camera feed");
-      server.setSource(intakeCamera);
+      //server.setSource(intakeCamera);
     }else if (RobotContainer.lDriverBumper.getAsBoolean()){
       System.out.println("front camera feed");
-      server.setSource(frontCamera);
+      //server.setSource(frontCamera);
     }
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
       System.out.println("firing");
-      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),Constants.ShooterConstants.flywheelRPM*RobotContainer.m_manipulatorController.getRightTriggerAxis());
+      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),RobotContainer.m_ShooterS.getShooterProportionalControlSpeed());
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
       System.out.println("reversing subsystems");
@@ -187,11 +187,11 @@ public class Robot extends LoggedRobot {
     * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
     * to the dashboard. Just add this to the robot class constructor.
     */
-    intakeCamera = CameraServer.startAutomaticCapture(0);
-    frontCamera = CameraServer.startAutomaticCapture(1);
-    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 420, 380, 30);
-    server = CameraServer.getServer();
-    server.setSource(intakeCamera);
+    //intakeCamera = CameraServer.startAutomaticCapture(0);
+    //frontCamera = CameraServer.startAutomaticCapture(1);
+    //intakeCamera.setVideoMode(PixelFormat.kMJPEG, 420, 380, 30);
+    //server = CameraServer.getServer();
+    //server.setSource(intakeCamera);
   }
 
   /**
@@ -210,7 +210,8 @@ public class Robot extends LoggedRobot {
     RobotContainer.m_SwerveS.updatePose();
     RobotContainer.m_SwerveS.updatePoseEsitmator();
     CommandScheduler.getInstance().run();
-    motorLog.append(new double[] {m_robotContainer.getflWheelPos(), m_robotContainer.getflWheelVotage()});
+    //motorLog.append(new double[] {m_robotContainer.getflWheelPos(), m_robotContainer.getflWheelVotage()});
+    Logger.recordOutput("gyroPosition", Utils.mod(RobotContainer.gyro.getYaw().getValueAsDouble(), 360)/180 * Math.PI);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

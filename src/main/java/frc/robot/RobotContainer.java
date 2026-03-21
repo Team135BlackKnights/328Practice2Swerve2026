@@ -259,6 +259,7 @@ public class RobotContainer {
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.      
         
+        rDriverTrigger.onTrue(new InstantCommand(() -> m_SwerveC.targeting = !m_SwerveC.targeting));
         xDriverButton.toggleOnTrue(m_XLock);
         bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
         //y driver is reserved for hang
