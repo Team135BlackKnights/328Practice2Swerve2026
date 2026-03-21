@@ -57,10 +57,10 @@ public class SwerveC extends Command{
         
 
         if(RobotContainer.yDriverButton.getAsBoolean()){
-        final double rot_limelight = RobotContainer.vis.limelight_aim_proportional();
+        final double rot_limelight = RobotContainer.vis.limelightAimProportional();
         rot = rot_limelight;
 
-        final double forward_limelight = RobotContainer.vis.limelight_range_proportional();
+        final double forward_limelight = RobotContainer.vis.limelightRangeProportional();
         x = forward_limelight;
 
             //while using Limelight, turn off field-relative driving.

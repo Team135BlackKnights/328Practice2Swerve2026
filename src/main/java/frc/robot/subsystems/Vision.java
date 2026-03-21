@@ -85,7 +85,7 @@ public class Vision extends SubsystemBase {
         Logger.recordOutput("Vision/ta", LimelightHelpers.getTA("limelight"));        
     }
 
-    public double limelight_aim_proportional(){    
+    public double limelightAimProportional(){    
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
     // if it is too high, the robot will oscillate.
@@ -106,7 +106,7 @@ public class Vision extends SubsystemBase {
     return targetingAngularVelocity;
   }
 
-  public double limelight_range_proportional(){    
+  public double limelightRangeProportional(){    
     double kP = .1;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
     targetingForwardSpeed *= SwerveS.kMaxSpeed;
