@@ -30,7 +30,7 @@ public class Vision extends SubsystemBase {
     static double xPositionHubRelative = 0;
     static double yPositionHubRelative = 0;
     
-        int[] validIDs = {10}; // ids to track
+        int[] validIDs = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28}; // ids to track
         boolean rejectUpdate = true;
     
         PoseEstimate mt2;
@@ -107,7 +107,7 @@ public class Vision extends SubsystemBase {
                 + Math.PI
             );
             Logger.recordOutput("Vision/hubDistanceFieldRelative", RobotContainer.vis.getHubDistanceFieldRelative());
-            Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterProportionalControlSpeed());
+            Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterProportionalControlSpeedRPM());
         }
       
         public static double getHubAngleFieldRelative() {

@@ -211,7 +211,7 @@ public class RobotContainer {
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
         //blame lee if no work
-      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.flywheelRPM), m_ShooterS).finallyDo(() -> m_ShooterS.fire(0,0)));
+      NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage), m_ShooterS).finallyDo(() -> m_ShooterS.stop()));
       NamedCommands.registerCommand("intake", new intakeA(m_MoveIntakeS, m_IntakeRollerS));
       // Build an auto chooser. This will use Commands.none() as the default option.
       m_SwerveS.swervePathPlanner();   

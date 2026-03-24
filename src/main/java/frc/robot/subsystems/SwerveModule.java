@@ -44,7 +44,6 @@ public class SwerveModule {
     private final LoggableTunedNumber drivekS = new LoggableTunedNumber("drive/kS",Constants.SwerveConstants.drivePID[3],true);
     private final LoggableTunedNumber drivekV = new LoggableTunedNumber("drive/kV",Constants.SwerveConstants.drivePID[4],true);
     
-    //TODO tune swerve PID (drive and turn)
     public void periodic(){
         double updatedPos = getTurnPosition();
         int updatedRegion = (int) (updatedPos * 3);
@@ -73,7 +72,6 @@ public class SwerveModule {
                 .withInverted(SwerveConstants.turnInversion)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-            //TODO MAKE THIS LESS IT'LL KILL THE BATTERY SO FAST
                 .withStatorCurrentLimit(Amps.of(80))
                 .withStatorCurrentLimitEnable(true)
         );
@@ -135,7 +133,7 @@ public class SwerveModule {
     // public void updateStateBangBang(double driveVoltage, double turnVoltage){
     //     double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble();
     //     double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI;
-    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;//TODO fix +- so it dont go backwards also units
+    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;
     //     double angularError = desiredState.angle.getRadians() - currentTurnPosition; 
     //     if(angularError < -0.01){
     //         turnMotor.setVoltage(turnVoltage);

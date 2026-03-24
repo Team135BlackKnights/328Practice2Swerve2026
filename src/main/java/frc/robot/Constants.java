@@ -75,7 +75,7 @@ public final class Constants {
     public static final int intakeVertEncoderID = 21;
     // these are in rotations
     public static final double downPositionSetpoint = -0.27; 
-    public static final double upPositionSetpoint = 0 ;
+    public static final double upPositionSetpoint = 0.07;
   }
 
   public static class HoodConstants {
@@ -91,11 +91,14 @@ public final class Constants {
   public static class ShooterConstants {
     public static final int shooterMotorID = 24;//kicker
     public static final int shooterMotor2ID = 25;//flywheel
-    public static final double shooter1Voltage = 7;
+    public static final double constantKickupVoltage = 7;
     public static final double flywheelRPM = -1200; // speed at 0 distance to hub
     // (volts per rotations)^-1
     public static final double flyvoltageconstant = 550;
-    public static final double[] flyPID = {1,0,0};
+    public static final double constantFlyVoltage = -5;
+    public static final double[] flyPID = {0.0016,0,0.000003};
+    public static final double flyFF = 0.0015;
+    // 2700 rpm @ 2.2 m
   } 
 
   public static class IntakeRollerConstants {

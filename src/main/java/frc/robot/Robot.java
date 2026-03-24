@@ -18,8 +18,8 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
 //import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.MathUtil;
-//import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+//import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 //import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveS;
 
@@ -42,11 +44,8 @@ public class Robot extends LoggedRobot {
   //  private final Swerve m_swerve = new Swerve(); used in the last setSpeed by limelight, irrevelent
 
   private final RobotContainer m_robotContainer;
-  public static double intakeSetpoint = 0;
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  public static double intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint;
+  public static boolean firing = false;
   //private boolean doRejectUpdate = false;
 
   //UsbCamera intakeCamera;
@@ -74,7 +73,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
 
-    drive(true);
     Logger.recordOutput("Battery Voltage", RobotController.getBatteryVoltage());
     Logger.recordOutput("Gyro X Accel", RobotContainer.gyro.getAccelerationX().getValueAsDouble());
     Logger.recordOutput("Gyro Y Accel", RobotContainer.gyro.getAccelerationY().getValueAsDouble());
@@ -91,18 +89,16 @@ public class Robot extends LoggedRobot {
     }
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-      System.out.println("firing");
-      RobotContainer.m_ShooterS.fire(Constants.ShooterConstants.shooter1Voltage*RobotContainer.m_manipulatorController.getRightTriggerAxis(),RobotContainer.m_ShooterS.getShooterProportionalControlSpeed());
+      RobotContainer.m_ShooterS.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage);
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
-      System.out.println("reversing subsystems");
       RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
       RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
-      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.shooter1Voltage, -1*Constants.ShooterConstants.flywheelRPM);
+      RobotContainer.m_ShooterS.fire(-1*Constants.ShooterConstants.constantKickupVoltage, -1*Constants.ShooterConstants.constantFlyVoltage);
     }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
       RobotContainer.m_ShooterS.stop();
     }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
-      RobotContainer.m_ShooterS.fire(0,Constants.ShooterConstants.flywheelRPM);
+      RobotContainer.m_ShooterS.spinup();
     }else
     {
       RobotContainer.m_IndexerS.setVoltage(0);
@@ -111,42 +107,6 @@ public class Robot extends LoggedRobot {
     }
 
     
-  }
-
-  // simple proportional turning control with Limelight.
-  // "proportional control" is a control algorithm in which the output is proportional to the error.
-  // in this case, we are going to return an angular velocity that is proportional to the 
-  // "tx" value from the Limelight.
-  
-
-  // simple proportional ranging control with Limelight's "ty" value
-  // this works best if your Limelight's mount height and target mount height are different.
-  // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  
-  private void drive(boolean fieldRelative) {
-    // Get the x speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
-    var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), 0.02))
-            * SwerveS.kMaxSpeed;
-
-    // Get the y speed or sideways/strafe speed. We are inverting this because
-    // we want a positive value when we pull to the left. Xbox controllers
-    // return positive values when you pull to the right by default.
-    var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), 0.02))
-            * SwerveS.kMaxSpeed;
-
-    // Get the rate of angular rotation. We are inverting this because we want a
-    // positive value when we pull to the left (remember, CCW is positive in
-    // mathematics). Xbox controllers return positive values when you pull to
-  
-    // the right by default.
-    var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(RobotContainer.m_driverController.getRightX(), 0.02))
-            * SwerveS.kMaxAngularSpeed;
-
-  
   }
 
   /**
@@ -211,7 +171,8 @@ public class Robot extends LoggedRobot {
     RobotContainer.m_SwerveS.updatePoseEsitmator();
     CommandScheduler.getInstance().run();
     //motorLog.append(new double[] {m_robotContainer.getflWheelPos(), m_robotContainer.getflWheelVotage()});
-    Logger.recordOutput("gyroPosition", Utils.mod(RobotContainer.gyro.getYaw().getValueAsDouble(), 360)/180 * Math.PI);
+    Logger.recordOutput("gyroPositionRadians", Utils.mod(RobotContainer.gyro.getYaw().getValueAsDouble(), 360)/180 * Math.PI);
+    Logger.recordOutput("firing", firing);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

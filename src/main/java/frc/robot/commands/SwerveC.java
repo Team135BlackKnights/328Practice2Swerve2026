@@ -49,7 +49,7 @@ public class SwerveC extends Command{
             rot = 0;
         }
         rot = a*Math.pow(rot,5)+rot*(1-a);
-        if (inverted == true){
+        if (inverted){
             x *= -1;
             y *= -1;
             rot *= 1;
@@ -58,9 +58,9 @@ public class SwerveC extends Command{
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
         final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
 
-        if (targeting == true){
+        if (targeting){
             m_Swerve.setSpeed(
-                RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, 
+                RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond,  
                 RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, 
                 SwerveS.getAimToPointSpeedRadians(Vision.getHubAngleFieldRelative())
             );        

@@ -4,6 +4,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,7 +38,7 @@ public class MoveIntakeS extends SubsystemBase {
     }
 
     public void setVoltage(double voltage){
-        //TODO clamp setvoltage
+        voltage = MathUtil.clamp(voltage, -5, 4);
         motor.setVoltage(voltage);
     }
 
