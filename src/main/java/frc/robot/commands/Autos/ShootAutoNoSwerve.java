@@ -23,7 +23,7 @@ public class ShootAutoNoSwerve extends Command{
     public void execute(){
         swerve.setSpeed(0,0,0);
         moveintake.zero();
-        shooter.fire(Constants.ShooterConstants.constantKickupVoltage, 4.5);
+        shooter.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage);
         indexer.setVoltage(Constants.IndexerConstants.indexerVoltage);
         
     }

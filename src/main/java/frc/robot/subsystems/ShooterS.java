@@ -41,20 +41,20 @@ public class ShooterS extends SubsystemBase{
 
     //dio
     private final RelativeEncoder kickupEncoder = kickMotor.getEncoder();
-    private final Encoder shooterencoder = new Encoder(1, 2, false, EncodingType.k1X);
-    public static final SlewRateLimiter limiter = new SlewRateLimiter(12,-5,0);
-    //private final DutyCycleEncoder shooterEncoder = new DutyCycleEncoder(1);
-    //double flyPreviousPosition = shooterEncoder.get();
+    private final Encoder shooterencoder = new Encoder(2, 3, false, EncodingType.k1X);
+    public static final SlewRateLimiter limiter = new SlewRateLimiter(2);
+    // private final DutyCycleEncoder shooterEncoder = new DutyCycleEncoder(1);
+    // double flyPreviousPosition = shooterEncoder.get();
     // double flyCumulativeRotations = 0;
     // double DesiredFlyVelocity;
     // double[] flyVelocities = new double[10];
     // double flymean = 0;
     // int period = 0;
 
-    //double kickPreviousPosition = kickupEncoder.get();
-    //double previousTime;
-    //public double flyVelocity;
-    //public double kickVelocity;
+    // double kickPreviousPosition = kickupEncoder.get();
+    // double previousTime;
+    // public double flyVelocity;
+    // public double kickVelocity;
     // rpms in volts / rpms
     // so if 1 volt gives 300 rpm the number is 300, as 1/300 volts would then give 1 rpm
     //private double kickvoltageconstant = 500;
@@ -79,25 +79,28 @@ public class ShooterS extends SubsystemBase{
 
     public void fireControlledSpeed(double kickupVoltage){
         Robot.firing = true;
-        if (volts.get() == 0 && rpm.get() > 0) {//&& getShooterRPM() > getShooterProportionalControlSpeedRPM() - 300 && getShooterRPM() < getShooterProportionalControlSpeedRPM() + 300){
-            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()) + kff.get() * getShooterProportionalControlSpeedRPM(), -12, 3);
+        if (volts.get() == 0 && rpm.get() == 0 && getShooterRPM() > getShooterProportionalControlSpeedRPM() - 300 && getShooterRPM() < getShooterProportionalControlSpeedRPM() + 300){
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()) + Constants.ShooterConstants.flyFF * getShooterProportionalControlSpeedRPM(), -12, 3);
             flywheelVoltage = limiter.calculate(flywheelVoltage);
             kickMotor.setVoltage(kickupVoltage); 
             shootMotor.setVoltage(flywheelVoltage);
         } else if (volts.get() > 0){
             shootMotor.setVoltage(volts.get());
         } else if (rpm.get() > 0){
-            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), rpm.get()) + kff.get() * rpm.get(), -12, 3);
+            double grpm = -1 * Math.abs(rpm.get());
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), grpm) + Constants.ShooterConstants.flyFF * grpm, -12, 3);
             flywheelVoltage = limiter.calculate(flywheelVoltage);
             shootMotor.setVoltage(flywheelVoltage);
-        } 
+            kickMotor.setVoltage(kickupVoltage);
+        } else {
+            spinup();
+        }
     }
 
     public void spinup(){
-        double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()), -12, 3);
-        flywheelVoltage = limiter.calculate(flywheelVoltage);
+        double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()) + Constants.ShooterConstants.flyFF * getShooterProportionalControlSpeedRPM(), -12, 3);
+        kickMotor.setVoltage(0); 
         shootMotor.setVoltage(flywheelVoltage);
-        kickMotor.setVoltage(0);
     }
     public void idle(double idleVoltage){
         Robot.firing = false;
@@ -117,7 +120,7 @@ public class ShooterS extends SubsystemBase{
     //since changes in x would result in not hitting the hub we only consider a y value (distance)
     public double getShooterProportionalControlSpeedRPM(){
         double distM = 1 * RobotContainer.vis.getHubDistanceFieldRelative();
-        double desiredSpeed = MathUtil.clamp(( -1100 * distM - 176.6), -5000, -500);
+        double desiredSpeed = MathUtil.clamp(( -652.4 * distM - 1615.5), -5000, -500);
         return desiredSpeed;
     }
 

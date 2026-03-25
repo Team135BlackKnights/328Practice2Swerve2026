@@ -47,7 +47,7 @@ public class Vision extends SubsystemBase {
             //LimelightHelpers.setLEDMode_PipelineControl("limelight"); 
     
             // Set a custom crop window for improved performance (-1 to 1 for each value)
-            LimelightHelpers.setCropWindow("limelight", -0.5, 0.5, -0.5, 0.5);
+            LimelightHelpers.setCropWindow("limelight", -0.73, 0.73, -0.73, 0.73);
     
     
             // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
@@ -84,7 +84,7 @@ public class Vision extends SubsystemBase {
             } 
             
             if (!rejectUpdate) {
-                RobotContainer.m_SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,999));
+                RobotContainer.m_SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,0.7));
                 RobotContainer.m_SwerveS.poseEstimator.addVisionMeasurement(
                     mt2.pose,
                     mt2.timestampSeconds);

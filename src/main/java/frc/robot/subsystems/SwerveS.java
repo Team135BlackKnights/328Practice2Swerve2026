@@ -232,7 +232,8 @@ public class SwerveS extends SubsystemBase{
         AutoBuilder.configure(
             this::getPose, // Robot pose supplier
             (newPose)->{m_pose = newPose;
-            RobotContainer.gyro.setYaw(newPose.getRotation().getDegrees());
+            RobotContainer.gyro.setYaw(0);//newPose.getRotation().getDegrees());
+            m_odometry.resetPose(newPose);
             }, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, ff) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards

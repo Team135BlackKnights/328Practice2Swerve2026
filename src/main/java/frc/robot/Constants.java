@@ -97,8 +97,11 @@ public final class Constants {
     public static final double flyvoltageconstant = 550;
     public static final double constantFlyVoltage = -5;
     public static final double[] flyPID = {0.0016,0,0.000003};
-    public static final double flyFF = 0.0015;
+    public static final double flyFF = 0.0016;
     // 2700 rpm @ 2.2 m
+    // 3560 rpm @ 3.1 m
+    // 2550 rpm @ 1.2 m
+    // 3850 rpm @ 3.0 m
   } 
 
   public static class IntakeRollerConstants {
