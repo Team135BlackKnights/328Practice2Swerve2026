@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 //import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.subsystems.Vision;
 
 
 
@@ -17,6 +18,8 @@ public class SwerveC extends Command{
     public boolean inverted = false;
     private static final double deadbandTranslate = 0;
     private static final double deadbandRotate = 0;
+    public boolean fieldRelative = true;
+    public boolean targeting = false;
 
     public SwerveC(SwerveS subsystem){
         addRequirements(subsystem);
@@ -29,6 +32,7 @@ public class SwerveC extends Command{
         double x = -RobotContainer.m_driverController.getLeftX();
         double y = RobotContainer.m_driverController.getLeftY();
         double angle = Math.atan2(y,x);
+
         double magnitude = Math.hypot(x, y);
         double a = 0.6;
         magnitude = a*Math.pow(magnitude,5)+magnitude*(1-a);
@@ -36,6 +40,7 @@ public class SwerveC extends Command{
         if (Math.abs(magnitude) < deadbandTranslate){
             magnitude = 0;
         }
+        
         x = Math.cos(angle) * magnitude;
         y = Math.sin(angle) * magnitude;
 
@@ -44,16 +49,24 @@ public class SwerveC extends Command{
             rot = 0;
         }
         rot = a*Math.pow(rot,5)+rot*(1-a);
-        if (inverted == true){
+        if (inverted){
             x *= -1;
             y *= -1;
             rot *= 1;
-        }
+        }   
 
         // m_Swerve.setSpeed(-3*x, 3*y, 10*rot);
         final ChassisSpeeds cspeeds = RobotContainer.fieldOrientedDrive(x,y,rot);
-        m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);
-        
+
+        if (targeting){
+            m_Swerve.setSpeed(
+                RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond,  
+                RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, 
+                SwerveS.getAimToPointSpeedRadians(Vision.getHubAngleFieldRelative())
+            );        
+        } else {
+            m_Swerve.setSpeed(RobotContainer.linearSpeedMultiplier*cspeeds.vxMetersPerSecond, RobotContainer.linearSpeedMultiplier*cspeeds.vyMetersPerSecond, RobotContainer.radianSpeedMultiplier*cspeeds.omegaRadiansPerSecond);        
+        }
     }
 
     @Override

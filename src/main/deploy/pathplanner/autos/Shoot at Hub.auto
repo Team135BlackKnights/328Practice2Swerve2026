@@ -9,18 +9,6 @@
           "data": {
             "pathName": "fire"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bump from Hub"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Intake 1 Side"
-          }
         }
       ]
     }

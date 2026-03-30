@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+//import static edu.wpi.first.units.Units.Rotation;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -11,13 +12,13 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.generated.TunerConstants;
 import frc.robot.LoggableTunedNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,7 +27,10 @@ public class SwerveModule {
     private final TalonFX driveMotor; 
     private final CANcoder turnEncoder; 
     private final double offsetRadians;
-    private SwerveModuleState desiredState; 
+    private SwerveModuleState desiredState;
+    public double turnVoltage; 
+    private int currentRotation = 0;
+    private double currentPos = 0;
     
     private PIDController turnController = new PIDController(SwerveConstants.turnPID[0], SwerveConstants.turnPID[1], SwerveConstants.turnPID[2]);
     private PIDController driveController = new PIDController(SwerveConstants.drivePID[0], SwerveConstants.drivePID[1], SwerveConstants.drivePID[2]);
@@ -40,9 +44,18 @@ public class SwerveModule {
     private final LoggableTunedNumber drivekS = new LoggableTunedNumber("drive/kS",Constants.SwerveConstants.drivePID[3],true);
     private final LoggableTunedNumber drivekV = new LoggableTunedNumber("drive/kV",Constants.SwerveConstants.drivePID[4],true);
     
-    //TODO tune swerve PID (drive and turn)
     public void periodic(){
+        double updatedPos = getTurnPosition();
+        int updatedRegion = (int) (updatedPos * 3);
+        int oldRegion = (int) (currentPos * 3);
 
+        if(oldRegion == 0 && updatedRegion == 2){
+            currentRotation --;
+        } else if(oldRegion == 2 && updatedRegion == 0){
+            currentRotation ++;
+        }
+
+        currentPos = updatedPos;
     }   
 
     public SwerveModule(int turnID, InvertedValue flip, int driveID, int encoderID, double offset, CANBus bus){
@@ -59,9 +72,10 @@ public class SwerveModule {
                 .withInverted(SwerveConstants.turnInversion)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-            //TODO MAKE THIS LESS IT'LL KILL THE BATTERY SO FAST
-                .withStatorCurrentLimit(Amps.of(80))
+                .withStatorCurrentLimit(Amps.of(40))
                 .withStatorCurrentLimitEnable(true)
+                .withSupplyCurrentLimit(25)
+                .withSupplyCurrentLimitEnable(true)
         );
 
         TalonFXConfigurator turnConfigurator = turnMotor.getConfigurator();
@@ -73,9 +87,9 @@ public class SwerveModule {
                 .withInverted(flip)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(80))
+                .withStatorCurrentLimit(Amps.of(40))
                 .withStatorCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(Amps.of(30))
+                .withSupplyCurrentLimit(Amps.of(25))
                 .withSupplyCurrentLimitEnable(true)
         );
 
@@ -90,6 +104,7 @@ public class SwerveModule {
     }
 
     public void setTurnVoltage(double voltage){
+        this.turnVoltage = voltage;
         turnMotor.setVoltage(voltage);
     }
 
@@ -101,12 +116,16 @@ public class SwerveModule {
         return new Rotation2d(turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI);
     }
     
-    public double getPosition(){
-        return driveMotor.getPosition().getValueAsDouble();
+    public double getPositionMeters(){
+        return driveMotor.getPosition().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * Constants.SwerveConstants.wheelRadiusMeters;
     }
 
-    public double getDriveSpeed(){
-        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadius;
+    public double getPositionCumulative(){
+        return currentPos + currentRotation;
+    }
+
+    public double getDriveSpeedMetersPerSecond(){
+        return driveMotor.getVelocity().getValueAsDouble() * 2 * Math.PI * SwerveConstants.gearRatioSpeed * SwerveConstants.wheelRadiusMeters;
     }
 
     public void setDesiredModuleState(SwerveModuleState moduleState){
@@ -116,7 +135,7 @@ public class SwerveModule {
     // public void updateStateBangBang(double driveVoltage, double turnVoltage){
     //     double currentDriveVelocity = driveMotor.getVelocity().getValueAsDouble();
     //     double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI;
-    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;//TODO fix +- so it dont go backwards also units
+    //     double driveVelocityError = desiredState.speedMetersPerSecond - currentDriveVelocity;
     //     double angularError = desiredState.angle.getRadians() - currentTurnPosition; 
     //     if(angularError < -0.01){
     //         turnMotor.setVoltage(turnVoltage);
@@ -137,21 +156,35 @@ public class SwerveModule {
     public void updateStatePID(){
         LoggableTunedNumber.ifChanged(hashCode(), () -> {
             turnController = new PIDController(turnkP.get(), turnkI.get(), turnkD.get());
+            turnController.enableContinuousInput(-Math.PI, Math.PI);
         }, turnkP, turnkI, turnkD);
         LoggableTunedNumber.ifChanged(hashCode(), () -> {
             driveController = new PIDController(drivekP.get(), drivekI.get(), drivekD.get());
             driveFF = new SimpleMotorFeedforward(drivekS.get(), drivekV.get());
         }, drivekP, drivekI, drivekD, drivekS,drivekV);
-        double currentDriveVelocity = getDriveSpeed();
-        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
-        SwerveModuleState optimizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-        optimizedDesiredState.optimize(new Rotation2d(currentTurnPosition));
 
-        turnController.setSetpoint(optimizedDesiredState.angle.getRadians());
+
+        double currentDriveVelocity = getDriveSpeedMetersPerSecond();
+        double currentTurnPosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - offsetRadians;
+
+
+        desiredState.optimize(new Rotation2d(currentTurnPosition));
+        double speed = desiredState.speedMetersPerSecond;
+        double angle = desiredState.angle.getRadians();
+        speed = speed * Math.cos(currentTurnPosition-angle);
+
+        SwerveModuleState optimizedDesiredState = new SwerveModuleState(speed, new Rotation2d(angle));
+        
+        // Rotation2d currentRotation =new Rotation2d(currentTurnPosition);
+        // System.out.println(currentRotation);
+        // System.out.println(optimizedDesiredState.angle);
+        // System.out.println("hiiiiiii");
+        // optimizedDesiredState.optimize(currentRotation);
+        turnController.setSetpoint(optimizedDesiredState.angle.getRadians());//yo this is wrong
         driveController.setSetpoint(optimizedDesiredState.speedMetersPerSecond);
         double ffVolts = driveFF.calculateWithVelocities(currentDriveVelocity, optimizedDesiredState.speedMetersPerSecond);
-        turnMotor.setVoltage(turnController.calculate(currentTurnPosition));
-        driveMotor.setVoltage(driveController.calculate(currentDriveVelocity) + ffVolts);
+        setTurnVoltage(turnController.calculate(currentTurnPosition));
+        setDriveVoltage(driveController.calculate(currentDriveVelocity) + ffVolts);
         Logger.recordOutput("turn encoder", turnEncoder.getAbsolutePosition().getValueAsDouble());
         Logger.recordOutput("turn voltage", turnController.calculate(currentTurnPosition));
         Logger.recordOutput("drive voltage", driveController.calculate(currentDriveVelocity));
@@ -164,4 +197,10 @@ public class SwerveModule {
 
 
 
+	public static double closerAngleToZero(Rotation2d angle) {
+		// Normalize the angle to be within the range of -180 to 180 degrees
+		double angleDegrees = angle.getDegrees();
+		double normalizedAngle = MathUtil.inputModulus(angleDegrees, -180, 180);
+		return normalizedAngle;
+	}
 }

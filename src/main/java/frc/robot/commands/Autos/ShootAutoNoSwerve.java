@@ -22,11 +22,12 @@ public class ShootAutoNoSwerve extends Command{
 
     public void execute(){
         swerve.setSpeed(0,0,0);
-        moveintake.zero();
-        shooter.fire(Constants.ShooterConstants.shooter1Voltage, Constants.ShooterConstants.shooter2voltage);
+        //moveintake.zero();
+        shooter.fire(Constants.ShooterConstants.constantKickupVoltage, -2550);
         indexer.setVoltage(Constants.IndexerConstants.indexerVoltage);
         
     }
+
     public void end(){
         shooter.idle(-4);
         indexer.setVoltage(0);
