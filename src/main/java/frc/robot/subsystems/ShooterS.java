@@ -63,7 +63,7 @@ public class ShooterS extends SubsystemBase{
         SparkMaxConfig config = new SparkMaxConfig();   
         config.voltageCompensation(12);
         //make higher if motor no work
-        config.smartCurrentLimit(65);
+        config.smartCurrentLimit(50);
         config.idleMode(IdleMode.kCoast);
         kickMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         shootMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -71,16 +71,35 @@ public class ShooterS extends SubsystemBase{
         shooterencoder.setSamplesToAverage(127);
     }
 
-    public void fire(double kickupVoltage, double flywheelVoltage){
-        Robot.firing = true;
+    
+    /**
+    * if you are using this something has gone horribly wrong
+    */
+    public void setVoltage(double kickupVoltage, double flyVolts){
+        kickupVoltage = MathUtil.clamp(kickupVoltage, -12, 12);
+        flyVolts = MathUtil.clamp(flyVolts, -12, 12);
         kickMotor.setVoltage(kickupVoltage);
-        shootMotor.setVoltage(flywheelVoltage);
+        shootMotor.setVoltage(flyVolts);
+    }
+
+    public void fire(double kickupVoltage, double flySpeed){
+        Robot.firing = true;
+        if (getShooterRPM() > flySpeed - 300 && getShooterRPM() < flySpeed + 300){
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), flySpeed) + Constants.ShooterConstants.flyFF * flySpeed, -12, 3);
+            flywheelVoltage = limiter.calculate(flywheelVoltage);
+            kickMotor.setVoltage(kickupVoltage); 
+            shootMotor.setVoltage(flywheelVoltage);
+        } else {
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), flySpeed) + Constants.ShooterConstants.flyFF * flySpeed, -12, 3);
+            flywheelVoltage = limiter.calculate(flywheelVoltage);
+            shootMotor.setVoltage(flywheelVoltage);
+        }
     }
 
     public void fireControlledSpeed(double kickupVoltage){
         Robot.firing = true;
-        if (volts.get() == 0 && rpm.get() == 0 && getShooterRPM() > getShooterProportionalControlSpeedRPM() - 300 && getShooterRPM() < getShooterProportionalControlSpeedRPM() + 300){
-            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()) + Constants.ShooterConstants.flyFF * getShooterProportionalControlSpeedRPM(), -12, 3);
+        if (volts.get() == 0 && rpm.get() == 0 && getShooterRPM() > getShooterSetpointRPM() - 300 && getShooterRPM() < getShooterSetpointRPM() + 300){
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterSetpointRPM()) + Constants.ShooterConstants.flyFF * getShooterSetpointRPM(), -12, 3);
             flywheelVoltage = limiter.calculate(flywheelVoltage);
             kickMotor.setVoltage(kickupVoltage); 
             shootMotor.setVoltage(flywheelVoltage);
@@ -98,7 +117,7 @@ public class ShooterS extends SubsystemBase{
     }
 
     public void spinup(){
-        double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterProportionalControlSpeedRPM()) + Constants.ShooterConstants.flyFF * getShooterProportionalControlSpeedRPM(), -12, 3);
+        double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), getShooterSetpointRPM()) + Constants.ShooterConstants.flyFF * getShooterSetpointRPM(), -12, 3);
         kickMotor.setVoltage(0); 
         shootMotor.setVoltage(flywheelVoltage);
     }
@@ -118,7 +137,7 @@ public class ShooterS extends SubsystemBase{
 
     //this is to try and make the shooter shoot with more power the further it is from the hub
     //since changes in x would result in not hitting the hub we only consider a y value (distance)
-    public double getShooterProportionalControlSpeedRPM(){
+    public double getShooterSetpointRPM(){
         double distM = 1 * RobotContainer.vis.getHubDistanceFieldRelative();
         double desiredSpeed = MathUtil.clamp(( -652.4 * distM - 1615.5), -5000, -500);
         return desiredSpeed;
@@ -128,6 +147,18 @@ public class ShooterS extends SubsystemBase{
         return -1 * (shooterencoder.getRate() / 2048) * 60;
     }
 
+    public void shootAtHub(){
+        if (getShooterRPM() > -2850 && getShooterRPM() < -2250){
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), -2550) + Constants.ShooterConstants.flyFF * -2550, -12, 3);
+            flywheelVoltage = limiter.calculate(flywheelVoltage);
+            kickMotor.setVoltage(Constants.ShooterConstants.constantKickupVoltage); 
+            shootMotor.setVoltage(flywheelVoltage);
+        } else {
+            double flywheelVoltage = MathUtil.clamp(flyController.calculate(getShooterRPM(), -2550) + Constants.ShooterConstants.flyFF * -2550, -12, 3);
+            flywheelVoltage = limiter.calculate(flywheelVoltage);
+            shootMotor.setVoltage(flywheelVoltage);
+        }
+    }
 
     public void periodic(){
         LoggableTunedNumber.ifChanged(hashCode(), () -> {
@@ -142,7 +173,7 @@ public class ShooterS extends SubsystemBase{
         Logger.recordOutput("Shooter/ShooterAmps", shootMotor.getOutputCurrent());
         Logger.recordOutput("Shooter/KickupAmps", kickMotor.getOutputCurrent());
 
-        Logger.recordOutput("Shooter/flySetSpeed", getShooterProportionalControlSpeedRPM());
+        Logger.recordOutput("Shooter/flySetSpeed", getShooterSetpointRPM());
 
         // double flyCurrentPosition = shooterEncoder.get(); 
         //double kickCurrentPosition = kickupEncoder.get();

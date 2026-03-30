@@ -56,9 +56,55 @@ public class SwerveS extends SubsystemBase{
 
     public SwerveS(){
         aimController.enableContinuousInput(0, 2 * Math.PI);
+
+        // All other subsystem initialization
+        // ...
+
+        
+
+        // Load the RobotConfig from the GUI settings. You should probably
+        // store this in your Constants file
+        RobotConfig config;
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+            config = null;
+            // config = new RobotConfig(Constants.robotMassKG, 0, new ModuleConfig(Constants.SwerveConstants.wheelRadius, Constants.SwerveConstants.maxLinearSpeedMPS, 1000, 2, 12, 1), Constants.SwerveConstants.moduleLocationFrontLeft,Constants.SwerveConstants.moduleLocationFrontRight,Constants.SwerveConstants.moduleLocationBackLeft,Constants.SwerveConstants.moduleLocationBackRight);
+        }
+
+        // Configure AutoBuilder last
+        AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            (newPose)->{m_pose = newPose;
+                RobotContainer.gyro.setYaw(180);//newPose.getRotation().getDegrees());
+                this.resetPose(newPose);
+            }, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, ff) -> setSpeedFromStateYX(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(0.5, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+                // Boolean supplier that controls when the path will be mirrored for the red alliance
+                // This will flip the path being followed to the red side of the field.
+                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this // Reference to this subsystem to set requirements
+        );
+
     }
 
-    SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+    public SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
         m_kinematics, 
         RobotContainer.gyro.getRotation2d(),
         new SwerveModulePosition[] {
@@ -69,8 +115,17 @@ public class SwerveS extends SubsystemBase{
         }, 
         m_pose
     );
+    
+    public static double getAllianceRotation(){
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.get().equals(Alliance.Blue)){
+            return 0;
+        } else {
+            return Math.PI;
+        }
+    }
 
-    static Pose2d m_pose = new Pose2d(Units.inchesToMeters(510),Units.inchesToMeters(150), new Rotation2d(Math.toRadians(180)));
+    static Pose2d m_pose = new Pose2d(Units.inchesToMeters(530),Units.inchesToMeters(150), new Rotation2d(getAllianceRotation()));
     
     public final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics, 
@@ -81,7 +136,8 @@ public class SwerveS extends SubsystemBase{
             new SwerveModulePosition(backLeftModule.getPositionMeters(), backLeftModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(backRightModule.getPositionMeters(), backRightModule.getTurnPositionRotation2D())
         }, 
-        m_pose);
+        m_pose
+    );
 
     public void periodic(){
 
@@ -115,7 +171,7 @@ public class SwerveS extends SubsystemBase{
     public void updatePose(){
         var gyroAngle = RobotContainer.gyro.getRotation2d();
         // Update the pose
-        m_pose = m_odometry.update(gyroAngle,
+        m_pose = poseEstimator.update(gyroAngle,
         new SwerveModulePosition[] {
             new SwerveModulePosition(frontLeftModule.getPositionMeters(), frontLeftModule.getTurnPositionRotation2D()),
             new SwerveModulePosition(frontRightModule.getPositionMeters(), frontRightModule.getTurnPositionRotation2D()),
@@ -136,6 +192,15 @@ public class SwerveS extends SubsystemBase{
         );
         //adding vision measurement is done in Vision
         //poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"), Timer.getFPGATimestamp());
+    }
+
+    public SwerveModulePosition[] getSwerveModulePositions(){
+        return new SwerveModulePosition[] {
+        new SwerveModulePosition(frontLeftModule.getPositionMeters(), frontLeftModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(frontRightModule.getPositionMeters(), frontRightModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(backLeftModule.getPositionMeters(), backLeftModule.getTurnPositionRotation2D()),
+        new SwerveModulePosition(backRightModule.getPositionMeters(), backRightModule.getTurnPositionRotation2D())
+        };
     }
 
     public ChassisSpeeds getState(){
@@ -174,6 +239,10 @@ public class SwerveS extends SubsystemBase{
         setSpeed(state.vxMetersPerSecond, state.vyMetersPerSecond, state.omegaRadiansPerSecond);
     }
 
+    public void setSpeedFromStateYX(ChassisSpeeds state){
+        setSpeed(state.vyMetersPerSecond, state.vxMetersPerSecond, state.omegaRadiansPerSecond);
+    }
+
     public void setModuleStates(SwerveModuleState frontLeft, SwerveModuleState frontRight, SwerveModuleState backLeft, SwerveModuleState backRight){
         frontLeftModule.setDesiredModuleState(frontLeft);
         frontRightModule.setDesiredModuleState(frontRight);
@@ -209,55 +278,9 @@ public class SwerveS extends SubsystemBase{
         return aimController.calculate(gyroAngle, fieldRelativeAngle);
     }
 
-
-    public void swervePathPlanner() {
-        // All other subsystem initialization
-        // ...
-
-        
-
-        // Load the RobotConfig from the GUI settings. You should probably
-        // store this in your Constants file
-        RobotConfig config;
-        try{
-            config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
-            config = null;
-            // config = new RobotConfig(Constants.robotMassKG, 0, new ModuleConfig(Constants.SwerveConstants.wheelRadius, Constants.SwerveConstants.maxLinearSpeedMPS, 1000, 2, 12, 1), Constants.SwerveConstants.moduleLocationFrontLeft,Constants.SwerveConstants.moduleLocationFrontRight,Constants.SwerveConstants.moduleLocationBackLeft,Constants.SwerveConstants.moduleLocationBackRight);
-        }
-
-        // Configure AutoBuilder last
-        AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            (newPose)->{m_pose = newPose;
-            RobotContainer.gyro.setYaw(0);//newPose.getRotation().getDegrees());
-            m_odometry.resetPose(newPose);
-            }, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getState, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, ff) -> setSpeedFromState(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-                new PIDConstants(5.0, 0.0, 0.01) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-                // Boolean supplier that controls when the path will be mirrored for the red alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                Optional<Alliance> alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this // Reference to this subsystem to set requirements
-        );
-
-
-  }
+    public void resetPose(Pose2d pose){
+        poseEstimator.resetPose(pose);
+    }
 
 
   public double getflTurnVoltage(){

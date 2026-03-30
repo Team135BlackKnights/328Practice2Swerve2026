@@ -70,12 +70,12 @@ public final class Constants {
   public static final double robotMassKG = 50;
 
   public static class IntakeConstants {
-    public static final double[] intakePID = new double[] {10,0,0.6};
+    public static final double[] intakePID = new double[] {12,0,0.6};
     public static final int intakeVertMotorID = 30;
     public static final int intakeVertEncoderID = 21;
     // these are in rotations
-    public static final double downPositionSetpoint = -0.27; 
-    public static final double upPositionSetpoint = 0.07;
+    public static final double downPositionSetpoint = -0.77; 
+    public static final double upPositionSetpoint = -0.03;
   }
 
   public static class HoodConstants {
@@ -106,7 +106,7 @@ public final class Constants {
 
   public static class IntakeRollerConstants {
     public static final int rollerMotorID = 31;
-    public static final double rollerVoltage = 7;
+    public static final double rollerVoltage = 8;
   }
 
   public static class PigeonConstants {
@@ -119,7 +119,7 @@ public final class Constants {
 
   public static class IndexerConstants {
     public static final int indexerMotorID = 20;
-    public static final double indexerVoltage = -3.5;
+    public static final double indexerVoltage = -5;
     public static final boolean indexerRunValue = true; 
   }
 

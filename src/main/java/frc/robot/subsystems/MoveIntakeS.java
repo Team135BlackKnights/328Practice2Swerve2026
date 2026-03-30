@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.EncoderConfig;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
@@ -24,6 +26,12 @@ public class MoveIntakeS extends SubsystemBase {
     private final LoggableTunedNumber kP = new LoggableTunedNumber("Intake/kP",Constants.IntakeConstants.intakePID[0],true);
     private final LoggableTunedNumber kI = new LoggableTunedNumber("Intake/kI",Constants.IntakeConstants.intakePID[1],true);
     private final LoggableTunedNumber kD = new LoggableTunedNumber("Intake/kD",Constants.IntakeConstants.intakePID[2],true);
+    private static final boolean reduceCompression = false; // if we want to reduce compression then set to true
+
+    public MoveIntakeS(){
+        encoder.setInverted(true);
+    }
+
     private double clamp(double a, double min, double max){
         return  Math.max(Math.min(a, max), min);
     }
@@ -33,6 +41,9 @@ public class MoveIntakeS extends SubsystemBase {
             return;
         }
         double intakeVoltage = intakeController.calculate(getEncoderPositionWithOffset(), desiredPosition);
+        if (desiredPosition < -0.22 && reduceCompression) {
+            intakeVoltage = 0;
+        }
         intakeVoltage = clamp(intakeVoltage, -5, 4);
         setVoltage(intakeVoltage); 
     }

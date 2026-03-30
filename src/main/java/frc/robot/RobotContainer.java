@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 // import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -206,7 +207,7 @@ public class RobotContainer {
     
       SwerveC m_SwerveC = new SwerveC(m_SwerveS);
       XLock m_XLock = new XLock(m_SwerveS);
-      ShootAutoNoSwerve shootauto = new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS);
+      //ShootAutoNoSwerve shootauto = new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS);
       
       /** The container for the robot. Contains subsystems, OI devices, and commands. */
       public RobotContainer() {
@@ -214,26 +215,12 @@ public class RobotContainer {
       NamedCommands.registerCommand("fire", new InstantCommand(() -> m_ShooterS.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage), m_ShooterS).finallyDo(() -> m_ShooterS.stop()));
       NamedCommands.registerCommand("intake", new intakeA(m_MoveIntakeS, m_IntakeRollerS));
       // Build an auto chooser. This will use Commands.none() as the default option.
-      m_SwerveS.swervePathPlanner();   
       autoChooser = AutoBuilder.buildAutoChooser();     
       autoChooser.setDefaultOption("null", null);
       //what this *should* do is shoot and index for 6 seconds. should literally not move swerve at all
-      autoChooser.addOption("shootauto", 
-          new SequentialCommandGroup(
-            Commands.run(
-              () -> m_ShooterS.idle(-1.3), m_ShooterS
-            )
-            .alongWith(
-              Commands.run(() -> m_SwerveS.setSpeed(0, 0, 0), m_SwerveS)
-            )
-            .withDeadline(
-              Commands.waitTime(Seconds.of(5))
-            ),
-            shootauto.withDeadline(
-              Commands.waitTime(Seconds.of(6))
-            )
-          )
-      );
+      autoChooser.addOption("shootAuto", 
+          new ParallelDeadlineGroup(Commands.waitSeconds(7), new ShootAutoNoSwerve(m_IndexerS, m_ShooterS, m_MoveIntakeS, m_SwerveS)));
+
       
         // Another option that allows you to specify the default auto by its name
   
@@ -261,15 +248,18 @@ public class RobotContainer {
         
         rDriverTrigger.onTrue(new InstantCommand(() -> m_SwerveC.targeting = !m_SwerveC.targeting));
         xDriverButton.toggleOnTrue(m_XLock);
-        bDriverButton.onTrue(new InstantCommand(() -> gyro.setYaw(0)));
-        //y driver is reserved for hang
+        bDriverButton.onTrue(new InstantCommand(() -> {
+          gyro.setYaw(180);
+          m_SwerveS.m_odometry.resetRotation(new Rotation2d(Math.toRadians(gyro.getYaw().getValueAsDouble())));
+          m_SwerveS.poseEstimator.resetRotation(new Rotation2d(Math.toRadians(gyro.getYaw().getValueAsDouble())));
+        }));
         aDriverButton.onTrue(new InstantCommand(() -> RobotContainer.linearSpeedMultiplier = 10 ).finallyDo(() -> RobotContainer.linearSpeedMultiplier = 7.5));
         yDriverButton.onTrue(new InstantCommand(() -> m_SwerveC.inverted = !m_SwerveC.inverted));
 
         lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint));
         rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
-        xManipulatorButton.whileTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).finallyDo(() -> m_IntakeRollerS.rollerSpeed(0)));
+        xManipulatorButton.onTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).withDeadline(Commands.waitSeconds(10)));
         rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));
         lDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(-4 * m_driverController.getRightTriggerAxis()), m_SwerveS));
 

@@ -72,8 +72,10 @@ public class SwerveModule {
                 .withInverted(SwerveConstants.turnInversion)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(80))
+                .withStatorCurrentLimit(Amps.of(40))
                 .withStatorCurrentLimitEnable(true)
+                .withSupplyCurrentLimit(25)
+                .withSupplyCurrentLimitEnable(true)
         );
 
         TalonFXConfigurator turnConfigurator = turnMotor.getConfigurator();
@@ -85,9 +87,9 @@ public class SwerveModule {
                 .withInverted(flip)
         ).withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(80))
+                .withStatorCurrentLimit(Amps.of(40))
                 .withStatorCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(Amps.of(30))
+                .withSupplyCurrentLimit(Amps.of(25))
                 .withSupplyCurrentLimitEnable(true)
         );
 

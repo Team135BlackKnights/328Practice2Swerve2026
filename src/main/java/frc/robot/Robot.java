@@ -89,8 +89,10 @@ public class Robot extends LoggedRobot {
     }
 
     if (RobotContainer.m_manipulatorController.getRightTriggerAxis() > 0){
-      RobotContainer.m_ShooterS.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage);
+      RobotContainer.m_ShooterS.shootAtHub();
+      //oRobotContainer.m_ShooterS.fireControlledSpeed(Constants.ShooterConstants.constantKickupVoltage);
       RobotContainer.m_IndexerS.setVoltage(Constants.IndexerConstants.indexerVoltage);
+      RobotContainer.m_IntakeRollerS.rollerSpeed(0);
     } else if (RobotContainer.aManipulatorButton.getAsBoolean()){
       RobotContainer.m_IndexerS.setVoltage(-1*Constants.IndexerConstants.indexerVoltage);
       RobotContainer.m_IntakeRollerS.rollerSpeed(-1*Constants.IntakeRollerConstants.rollerVoltage);
@@ -98,7 +100,7 @@ public class Robot extends LoggedRobot {
     }else if (RobotContainer.lManipulatorTrigger.getAsBoolean()){
       RobotContainer.m_ShooterS.stop();
     }else if (RobotContainer.yManipulatorButton.getAsBoolean()){
-      RobotContainer.m_ShooterS.spinup();
+      RobotContainer.m_ShooterS.setVoltage(0, -12);
     }else
     {
       RobotContainer.m_IndexerS.setVoltage(0);

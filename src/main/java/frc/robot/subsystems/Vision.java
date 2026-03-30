@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -30,20 +32,20 @@ public class Vision extends SubsystemBase {
     static double xPositionHubRelative = 0;
     static double yPositionHubRelative = 0;
     
-        int[] validIDs = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28}; // ids to track
+        int[] validIDs = {1,2,3,4,5,7,8,9,10,11,12,18,19,20,21,23,24,25,26,27,28}; // ids to trackl 
         boolean rejectUpdate = true;
     
         PoseEstimate mt2;
     
         @SuppressWarnings("")
         public Vision(){
-            
-            LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
     
             // Switch to pipeline 0
             LimelightHelpers.setPipelineIndex("limelight", 0);
+
+            LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
     
-            LimelightHelpers.setLEDMode_PipelineControl("limelight"); 
+            LimelightHelpers.setLEDMode_ForceOff("limelight"); 
             //LimelightHelpers.setLEDMode_PipelineControl("limelight"); 
     
             // Set a custom crop window for improved performance (-1 to 1 for each value)
@@ -89,6 +91,10 @@ public class Vision extends SubsystemBase {
                     mt2.pose,
                     mt2.timestampSeconds);
             }
+
+            if (mt2.pose == null) {
+                mt2.pose = RobotContainer.m_SwerveS.m_pose;
+            }
     
             Logger.recordOutput("Vision/tx", LimelightHelpers.getTX("limelight"));
             Logger.recordOutput("Vision/ty", LimelightHelpers.getTY("limelight"));
@@ -107,7 +113,8 @@ public class Vision extends SubsystemBase {
                 + Math.PI
             );
             Logger.recordOutput("Vision/hubDistanceFieldRelative", RobotContainer.vis.getHubDistanceFieldRelative());
-            Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterProportionalControlSpeedRPM());
+            Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterSetpointRPM());
+            Logger.recordOutput("Vision/mt2Pose", mt2.pose);
         }
       
         public static double getHubAngleFieldRelative() {
@@ -119,7 +126,7 @@ public class Vision extends SubsystemBase {
                 xPositionHubRelative = Constants.fieldConstants.redHubXPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getX();
                 yPositionHubRelative = Constants.fieldConstants.redHubYPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getY();
             }
-        return Math.atan2(yPositionHubRelative, xPositionHubRelative) + Math.PI;
+        return Math.atan2(yPositionHubRelative, xPositionHubRelative);
         }
 
     public double getHubDistanceFieldRelative() {
