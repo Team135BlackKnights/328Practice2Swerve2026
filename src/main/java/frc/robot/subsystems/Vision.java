@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers; // lots of code will likely be copied from the limelight vision docs so go there
 import frc.robot.LoggableTunedNumber;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
@@ -35,7 +36,7 @@ public class Vision extends SubsystemBase {
         int[] validIDs = {1,2,3,4,5,7,8,9,10,11,12,18,19,20,21,23,24,25,26,27,28}; // ids to trackl 
         boolean rejectUpdate = true;
     
-        PoseEstimate mt2;
+        public PoseEstimate mt2;
     
         @SuppressWarnings("")
         public Vision(){
@@ -75,46 +76,45 @@ public class Vision extends SubsystemBase {
     
         public void periodic(){
             
-            LimelightHelpers.SetRobotOrientation("limelight", RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+            // LimelightHelpers.SetRobotOrientation("limelight", RobotContainer.gyro.getYaw().getValueAsDouble(), 0, 0, 0, 0, 0);
+            // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
             
-            // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-            if(mt2 == null || mt2.tagCount < 1 || Math.abs(RobotContainer.gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360){
-                rejectUpdate = true;
-            } else {
-                rejectUpdate = false;
-            } 
+            // // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+            // if(mt2 == null || mt2.tagCount < 1 || Math.abs(RobotContainer.gyro.getAngularVelocityYDevice().getValueAsDouble()) > 360){
+            //     rejectUpdate = true;
+            // } else {
+            //     rejectUpdate = false;
+            // } 
             
-            if (!rejectUpdate) {
-                RobotContainer.m_SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,0.7));
-                RobotContainer.m_SwerveS.poseEstimator.addVisionMeasurement(
-                    mt2.pose,
-                    mt2.timestampSeconds);
-            }
+            // if (!rejectUpdate) {
+            //     RobotContainer.m_SwerveS.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,0.7));
+            //     RobotContainer.m_SwerveS.poseEstimator.addVisionMeasurement(
+            //         mt2.pose,
+            //         mt2.timestampSeconds);
+            // }
 
-            if (mt2.pose == null) {
-                mt2.pose = RobotContainer.m_SwerveS.m_pose;
-            }
+            // if (mt2.pose == null) {
+            //     mt2.pose = RobotContainer.m_SwerveS.m_pose;
+            // }
     
-            Logger.recordOutput("Vision/tx", LimelightHelpers.getTX("limelight"));
-            Logger.recordOutput("Vision/ty", LimelightHelpers.getTY("limelight"));
-            Logger.recordOutput("Vision/ta", LimelightHelpers.getTA("limelight"));
-            Logger.recordOutput("Vision/robotPose", RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition());
-            Logger.recordOutput("Vision/tagsSeen", (rejectUpdate ? 0 : mt2.tagCount));
-            Logger.recordOutput("Vision/xPositionHubRelative", Constants.fieldConstants.redHubXPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getX());
-            Logger.recordOutput("Vision/yPositionHubRelative", Constants.fieldConstants.redHubYPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getY());
-            Logger.recordOutput("Vision/hubAngleFieldRelative",
-                Math.atan2(
-                    Constants.fieldConstants.redHubYPosM
-                        - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getY(),
-                    Constants.fieldConstants.redHubXPosM
-                        - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getX()
-                )  
-                + Math.PI
-            );
-            Logger.recordOutput("Vision/hubDistanceFieldRelative", RobotContainer.vis.getHubDistanceFieldRelative());
-            Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterSetpointRPM());
-            Logger.recordOutput("Vision/mt2Pose", mt2.pose);
+            // Logger.recordOutput("Vision/tx", LimelightHelpers.getTX("limelight"));
+            // Logger.recordOutput("Vision/ty", LimelightHelpers.getTY("limelight"));
+            // Logger.recordOutput("Vision/ta", LimelightHelpers.getTA("limelight"));
+            // Logger.recordOutput("Vision/tagsSeen", (rejectUpdate ? 0 : mt2.tagCount));
+            // Logger.recordOutput("Vision/xPositionHubRelative", Constants.fieldConstants.redHubXPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getX());
+            // Logger.recordOutput("Vision/yPositionHubRelative", Constants.fieldConstants.redHubYPosM - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getY());
+            // Logger.recordOutput("Vision/hubAngleFieldRelative",
+            //     Math.atan2(
+            //         Constants.fieldConstants.redHubYPosM
+            //             - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getY(),
+            //         Constants.fieldConstants.redHubXPosM
+            //             - RobotContainer.m_SwerveS.poseEstimator.getEstimatedPosition().getX()
+            //     )  
+            //     + Math.PI
+            // );
+            // Logger.recordOutput("Vision/hubDistanceFieldRelative", RobotContainer.vis.getHubDistanceFieldRelative());
+            // Logger.recordOutput("Vision/proportionalShooterSpeed", RobotContainer.m_ShooterS.getShooterSetpointRPM());
+            // Logger.recordOutput("Vision/mt2Pose", mt2.pose);
         }
       
         public static double getHubAngleFieldRelative() {

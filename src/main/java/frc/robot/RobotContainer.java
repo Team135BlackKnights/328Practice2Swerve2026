@@ -192,6 +192,8 @@ public class RobotContainer {
       public static final Trigger lManipulatorTrigger = m_manipulatorController.leftTrigger();
       public static final Trigger rManipulatorTrigger = m_manipulatorController.rightTrigger();
       public static final Trigger leftStickManipulatorButton = m_manipulatorController.leftStick();
+      public static final Trigger rStickManipulatorButton = m_manipulatorController.rightStick();
+
       
 
       public static final SwerveS m_SwerveS = new SwerveS();
@@ -259,9 +261,7 @@ public class RobotContainer {
         lManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.upPositionSetpoint));
         rManipulatorBumper.whileTrue(new InstantCommand(() -> Robot.intakeSetpoint = Constants.IntakeConstants.downPositionSetpoint));
         leftStickManipulatorButton.onTrue(Commands.runOnce(() -> m_MoveIntakeS.zero()));
-        xManipulatorButton.onTrue(Commands.run(() -> m_IntakeRollerS.rollerSpeed(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).withDeadline(Commands.waitSeconds(10)));
-        rDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(4 * m_driverController.getLeftTriggerAxis()), m_SwerveS));
-        lDriverBumper.whileTrue(Commands.run(() -> m_SwerveS.setflTurnVoltage(-4 * m_driverController.getRightTriggerAxis()), m_SwerveS));
+        xManipulatorButton.onTrue(Commands.run(() -> m_IntakeRollerS.setVoltage(Constants.IntakeRollerConstants.rollerVoltage),m_IntakeRollerS).withDeadline(Commands.waitSeconds(10)));
 
         //reverse things
         //this has been moved to robot.java

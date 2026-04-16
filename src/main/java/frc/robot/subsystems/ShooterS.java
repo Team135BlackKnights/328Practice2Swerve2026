@@ -57,7 +57,7 @@ public class ShooterS extends SubsystemBase{
     // public double kickVelocity;
     // rpms in volts / rpms
     // so if 1 volt gives 300 rpm the number is 300, as 1/300 volts would then give 1 rpm
-    //private double kickvoltageconstant = 500;
+    // private double kickvoltageconstant = 500;
 
     public ShooterS(){
         SparkMaxConfig config = new SparkMaxConfig();   

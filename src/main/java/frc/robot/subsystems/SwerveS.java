@@ -40,15 +40,15 @@ public class SwerveS extends SubsystemBase{
     static CANBus bus = new CANBus("E13B8EB250374E5320202047380C10FF");
     //public static CANBus bus = new CANBus("canivore", "./logs/example.hoot");
 
-    private final LoggableTunedNumber kP = new LoggableTunedNumber("Aim/kP",Constants.SwerveConstants.aimPID[0],true);
+    final LoggableTunedNumber kP = new LoggableTunedNumber("Aim/kP",Constants.SwerveConstants.aimPID[0],true);
     private final LoggableTunedNumber kI = new LoggableTunedNumber("Aim/kI",Constants.SwerveConstants.aimPID[1],true);
     private final LoggableTunedNumber kD = new LoggableTunedNumber("Aim/kD",Constants.SwerveConstants.aimPID[2],true);
     
 
-    static SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
-    static SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
-    static SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
-    static SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
+    public static SwerveModule frontLeftModule = new SwerveModule(SwerveConstants.frontLeftTurnID, SwerveConstants.driveLeftInversion,SwerveConstants.frontLeftDriveID, SwerveConstants.frontLeftEncoderID, SwerveConstants.frontLeftOffsetRadians, bus);
+    public static SwerveModule frontRightModule = new SwerveModule(SwerveConstants.frontRightTurnID , SwerveConstants.driveRightInversion,SwerveConstants.frontRightDriveID, SwerveConstants.frontRightEncoderID, SwerveConstants.frontRightOffsetRadians, bus);
+    public static SwerveModule backLeftModule = new SwerveModule(SwerveConstants.backLeftTurnID, SwerveConstants.driveLeftInversion, SwerveConstants.backLeftDriveID, SwerveConstants.backLeftEncoderID, SwerveConstants.backLeftOffsetRadians, bus);
+    public static SwerveModule backRightModule = new SwerveModule(SwerveConstants.backRightTurnID, SwerveConstants.driveRightInversion, SwerveConstants.backRightDriveID, SwerveConstants.backRightEncoderID, SwerveConstants.backRightOffsetRadians, bus);
     static PIDController aimController =  new PIDController(SwerveConstants.aimPID[0], SwerveConstants.aimPID[1], SwerveConstants.aimPID[2]); 
     
     public static final double kMaxSpeed = 2; // max translational speed limelight is allowed to use
@@ -116,16 +116,16 @@ public class SwerveS extends SubsystemBase{
         m_pose
     );
     
-    public static double getAllianceRotation(){
+    public static Pose2d getAlliancePose(){
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.get().equals(Alliance.Blue)){
-            return 0;
+            return new Pose2d(Units.inchesToMeters(140), Units.inchesToMeters(150), new Rotation2d(0));
         } else {
-            return Math.PI;
+            return new Pose2d(Units.inchesToMeters(530),Units.inchesToMeters(150), new Rotation2d(Math.PI));
         }
     }
 
-    static Pose2d m_pose = new Pose2d(Units.inchesToMeters(530),Units.inchesToMeters(150), new Rotation2d(getAllianceRotation()));
+    static Pose2d m_pose = getAlliancePose();
     
     public final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
         m_kinematics, 
@@ -291,9 +291,6 @@ public class SwerveS extends SubsystemBase{
     return frontLeftModule.getPositionMeters();
   }
 
-  public void setflTurnVoltage(double voltage){
-    frontLeftModule.setTurnVoltage(voltage);
-  }
 }
 
 

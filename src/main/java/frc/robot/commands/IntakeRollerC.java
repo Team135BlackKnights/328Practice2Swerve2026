@@ -16,7 +16,7 @@ public class IntakeRollerC extends Command{
     
     @Override
     public void execute(){
-       m_IntakeRollerS.rollerSpeed(voltage);
+       m_IntakeRollerS.setVoltage(voltage);
     }
 
     @Override

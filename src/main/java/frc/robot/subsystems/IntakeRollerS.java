@@ -25,7 +25,7 @@ public class IntakeRollerS extends SubsystemBase{
         m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public void rollerSpeed(double rollerVoltage){
+    public void setVoltage(double rollerVoltage){
         limiter.calculate(rollerVoltage);
         m_motor.setVoltage(rollerVoltage); 
     }

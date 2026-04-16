@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 //import static edu.wpi.first.units.Units.Rotation;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -20,11 +21,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.LoggableTunedNumber;
+import frc.robot.Robot;
+
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
-    private final TalonFX turnMotor; 
-    private final TalonFX driveMotor; 
+    public final TalonFX turnMotor; 
+    public final TalonFX driveMotor; 
     private final CANcoder turnEncoder; 
     private final double offsetRadians;
     private SwerveModuleState desiredState;
@@ -76,7 +79,7 @@ public class SwerveModule {
                 .withStatorCurrentLimitEnable(true)
                 .withSupplyCurrentLimit(25)
                 .withSupplyCurrentLimitEnable(true)
-        );
+        ).withAudio(Robot.audioconfig);
 
         TalonFXConfigurator turnConfigurator = turnMotor.getConfigurator();
         turnConfigurator.apply(turnConfigs); 
@@ -91,7 +94,7 @@ public class SwerveModule {
                 .withStatorCurrentLimitEnable(true)
                 .withSupplyCurrentLimit(Amps.of(25))
                 .withSupplyCurrentLimitEnable(true)
-        );
+        ).withAudio(Robot.audioconfig);
 
         TalonFXConfigurator driveConfigurator = driveMotor.getConfigurator();
         driveConfigurator.apply(driveConfigs); 
